@@ -1,0 +1,38 @@
+<div id="top"  class="header">
+
+
+<div class="logo">
+<img routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page"src="./assets/img/white_itruth_logo2.webp" title="LOGO" alt="LOGO">
+</div>
+<a id="navlinks" routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page">Home</a>
+<a id="navlinks" routerLink="/technology" routerLinkActive="active" ariaCurrentWhenActive="page">Technology</a>
+<a id="navlinks" routerLink="/politics" routerLinkActive="active" ariaCurrentWhenActive="page">Politics</a>
+<a id="navlinks" routerLink="/music" routerLinkActive="active" ariaCurrentWhenActive="page" >Music</a>
+<a id="navlinks" routerLink="/sports" routerLinkActive="active" ariaCurrentWhenActive="page">Sports</a>
+<button  routerLink="/contribute" routerLinkActive="active" ariaCurrentWhenActive="page" class="subbtn">Contribute</button>
+
+</div>
+
+<!--small screen-->
+<nav class="navbar">
+<div class="logo">
+<a style="color: #fff;" routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page">
+<img src="./assets/img/white_itruth_logo2.webp" title="LOGO" alt="LOGO"></a>
+
+</div>
+
+<ul id="navlink" class="navlinks">
+<li><a routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page">Home</a></li>
+<li><a routerLink="/technology" routerLinkActive="active" ariaCurrentWhenActive="page">Technolgy</a></li>
+<li><a routerLink="/politics" routerLinkActive="active" ariaCurrentWhenActive="page">Politics</a></li>
+<li><a routerLink="/music" routerLinkActive="active" ariaCurrentWhenActive="page" >Music</a></li>
+<li><a routerLink="/sports" routerLinkActive="active" ariaCurrentWhenActive="page">Sports</a></li>
+<button (click)="gotoContribute()"   class="subbtn">Contribute</button>
+</ul>
+    
+   
+<ul id="navlink" class="navlinks1">
+
+<button  (click)="gotoContribute()" id="subbtn1">Contribute</button>
+</ul>
+</nav>

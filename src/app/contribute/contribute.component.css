@@ -1,0 +1,143 @@
+html{
+    overflow-x: hidden;
+}
+
+.contribute-box{
+    display: flex;
+    place-items: center;
+}
+
+.left-box{
+    height: auto;
+    width: 100%;
+}
+
+.left-box img{
+    height: 40px;
+          display: flex;
+          margin: auto;
+          transform: translateY(10px);
+}
+.right-box{
+    background-color: aliceblue;
+    height: 100vh;
+    width: 100%;
+    padding-left: 3rem;
+}
+
+.right-box h1{
+    font-size: 3rem;
+    line-height: 64px;
+}
+
+#form{
+display:grid;
+place-content: center;
+}
+
+form input{
+height:46px;
+width: 30vw;
+font-size: 20px;
+    letter-spacing: 2px;
+margin-bottom:24px}
+
+form select{
+height:46px;
+width: 30vw;
+font-size: 20px;
+margin-bottom:24px}
+
+form label{
+color:#5a471d;
+line-height:40px}
+
+    
+  
+    
+.contact-btn{
+display: flex;
+margin: auto;
+border: 0;
+border-radius: 20px;
+background-color: #0d6efd;
+text-transform: capitalize;
+letter-spacing: 4px;
+line-height: 44px;
+font-size: 20px;
+text-align: start;
+padding: 0 1rem;
+color: #fff;
+cursor: pointer;}
+
+
+    
+.payment-title{
+display: flex;
+place-content: space-between;
+}
+
+
+
+.form-radio-group{
+display: flex;
+border: 0px;
+padding: 0px;
+margin: 0px;
+flex-direction: column;
+place-content: flex-start;
+}
+
+.form-radio-box{
+display: flex;
+place-items: center;
+min-height: 44px;
+cursor:pointer;
+}
+
+.payment-method-box{
+display: flex;
+width: 100%;
+margin: 0;
+place-content: space-between;
+place-items: center;
+}
+
+/*@media starts here*/
+@media(max-width:768px){
+    .contribute-box{
+        flex-direction: column;
+    }
+
+    form input{
+        width: auto!important;
+    }
+
+    #state{
+        width: auto !important;
+    }
+
+    .left-box img{
+        height: 20px;
+        padding-bottom: 1rem;    }
+
+    .right-box{
+font-size: 14px;
+        background-color: transparent;
+        transform: translateY(200px);
+    
+    }
+
+    .right-box h1{
+        margin-top: 0!important;
+        text-align: center;
+        font-size: 20px;
+    }
+    .right-box p{
+        margin-top: 0!important;
+        text-align: center;
+        transform: translateX(-10px);
+    }
+
+
+}

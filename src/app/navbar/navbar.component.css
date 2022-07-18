@@ -1,0 +1,161 @@
+.header{
+    grid-area: header;
+    background-color: crimson;
+    display: grid;
+    grid-template-columns: repeat( 7,auto);
+    grid-auto-flow: column;
+    place-items: center;
+    margin-bottom: 1rem;
+    }
+    
+        
+    #navlinks{
+    color: #fff;
+    text-decoration: none;
+    line-height: 30px;
+    padding: 1rem;
+    transition: 0.5s;
+    letter-spacing: 3px;
+    }
+    
+    #navlinks:hover{
+        background-color: #0d6efd;
+    
+    }
+    
+    
+    .subbtn{
+        border: 0;
+    border-radius: 20px;
+    background-color: #0d6efd;
+    text-transform: capitalize;
+    letter-spacing: 4px;
+    line-height: 25px;
+    color: #fff;
+    cursor: pointer;
+    grid-column-start: 7;
+    }
+    #subbtn1{
+        border: 0;
+    border-radius: 20px;
+    background-color: #0d6efd;
+    text-transform: capitalize;
+    letter-spacing: 4px;
+    line-height: 24px;
+    color: #fff;
+    cursor: pointer;
+    margin-bottom: 5px;
+    }
+    
+    .logo{
+    margin: auto;
+    }
+    
+    
+            
+    .logo img{
+    height: 30px;
+    cursor: pointer;
+    }
+ /*@media starts here*/
+
+
+
+
+
+    
+
+      
+    
+    @media(min-width:768px){
+    .navbar{
+    display: none;
+    }
+    
+    
+    }
+    
+    @media(max-width:768px){
+    .header{
+    display: none;
+    
+    }
+    
+    .navbar{
+    display: flex;
+    background-color: #dd1c1c;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 1rem;
+    }
+        
+        
+        
+            
+    .navlinks{
+    margin: 7px auto;
+    padding: 0;
+    }
+    
+    .navlinks li {
+    display: inline-block;
+    list-style-type: none;
+    }
+    
+    .navlinks a {
+    
+    margin: 0px 14px;
+    text-decoration: none;
+    color: #fff;
+    font-size: small;
+    } 
+    
+    .navlinks1{
+    margin: auto;
+    padding: 0;
+    }
+    
+    .navlinks1 li {
+    display: inline-block;
+    list-style-type: none;
+    }
+    
+    .navlinks1 a {
+    
+    margin: 0px 14px;
+    text-decoration: none;
+    color: #fff;
+    } 
+    
+    .subbtn{
+    display: none;
+    }
+    
+    #navlinks{
+    font-size: 24px;
+    }
+    
+    
+        
+                
+                    
+                
+            
+       
+    }
+    
+    @media(max-width:415px){
+ 
+    .navlinks1 a {
+    font-size: small;
+    margin: 0px 14px;
+    text-decoration: none;
+    color: #fff;
+    } 
+            
+    
+    .subbtn{
+    font-size: 26px;
+    }
+    
+}   

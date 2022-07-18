@@ -1,0 +1,43 @@
+.errbox{
+    transform: translateY(150px);
+    height: 100vh;
+}
+
+.errlogo{
+    display: grid;
+height: 540px;
+margin: 0 auto;
+}
+
+.errtext{
+text-align: center;
+font-size: 34px;
+font-style: italic;
+font-weight: 600;
+}
+
+
+@media(max-width:1400px){
+    .errlogo{
+        height:300px;
+    }
+}
+@media(max-width:768px){
+    .errlogo{
+        height:200px;
+    }
+}
+@media(max-width:500px){
+
+    .errbox{
+        transform: translateY(70px);
+    }
+.errlogo {
+height:140px !important;
+}
+
+.errtext{
+font-size: 28px;   
+color: #23538A;  
+}
+}

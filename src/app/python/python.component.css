@@ -1,0 +1,50 @@
+
+
+.article-container{
+    display: grid;
+    margin: 1rem auto;
+    width: 1000px;
+    padding: 0 7px;
+    }
+    
+    .ksweat-hero{
+    background: url("../../assets/img/pyth.jpeg");
+    
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 600px;
+    }
+
+    .ksweat-hero2{
+      background: url("../../assets/img/sewat.jpeg");
+    
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      width: 100%;
+      height: 600px;
+    }
+
+    .card-date{
+        line-height: 3;
+    font-size: 20px;
+    }
+    
+    @media(max-width:768px){
+    .article-container{
+    width: 100% !important;
+    }
+    
+  .article-container h1{
+    font-size: 20px;
+  }
+    }
+    
+    @media(max-width:375px){
+    
+    .ksweat-hero {
+    height:210px !important;
+    }
+    }

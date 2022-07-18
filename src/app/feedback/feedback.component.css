@@ -1,0 +1,102 @@
+.contact{
+    display: grid;
+    place-items: center;
+}
+
+.contact img{
+    height: 34px;
+}
+
+.contact p{
+line-height: 1.5;
+font-size:1.125rem;
+}
+
+
+form{
+    display: flex;
+    flex-direction: column;
+    padding: 10px 20px;
+   
+ 
+}
+
+
+form option{
+    color: blue;
+    font-size:16px;
+}
+
+form input{
+    height:46px;
+    width: 30vw;
+    font-size: 20px;
+        letter-spacing: 2px;
+        outline: none;
+    margin-bottom:24px}
+    
+    form select{
+    height:46px;
+    width: 50%;
+    font-size: 20px;
+    outline: none;
+
+    letter-spacing: 1px;
+    margin-bottom:24px}
+
+    form textarea{
+        
+        margin-bottom: 1rem;
+    }
+
+
+    form button{
+        background-color: red;
+        color: #fff;
+        outline: none;
+        border: none;
+        padding: 20px;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    .contact-img{
+       
+        background: url("../../assets/img/feedback-bg.jpg");
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        height: 600px;
+        width: 50%;
+        margin: auto;
+        margin-bottom: 2rem;
+
+    }
+    
+
+    @media(max-width:768px){
+.contact{
+    padding: 2rem;
+}
+.contact img{
+   height: 24px;
+}
+
+        .contact-img{
+           
+            width: 90% !important;
+            height: 250px;
+        }
+
+        form{
+            padding: 2rem;
+        }
+
+        form input{
+            width: 100%;
+        }
+
+        form select{
+            width: 100%;
+        }
+    }
