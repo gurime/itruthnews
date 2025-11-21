@@ -141,9 +141,3 @@ Distributed under the MIT License. See `LICENSE` for more information.
 **Project Lead:** [Your Name]  
 **Email:** [your.email@example.com]  
 **Project Link:** [https://github.com/your-username/itruthnews](https://github.com/your-username/itruthnews)
-
----
-
-<div align="center">
-  <sub>Built with ❤️ by the iTruthNews Team</sub>
-</div>
