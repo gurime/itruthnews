@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import supabase from "../supabase/supabase";
+import Link from "next/link";
 
 interface Article {
   id: number;
@@ -145,46 +146,49 @@ export default function FeaturedDashboard() {
   const regularArticles = articles.filter(article => !article.featured);
 
   return (
-    <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
-      {/* Featured Article Section */}
-      {featuredArticle && (
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-red-800">Featured Story</h2>
-          <div className="bg-white rounded-lg shadow-xl overflow-hidden hover:shadow-2xl transition-shadow">
-            <div className="md:flex">
-              {/* Featured Image */}
-              <div className="md:w-2/3">
-                <img 
-                  src={featuredArticle.image} 
-                  alt={featuredArticle.title}
-                  className="w-full h-125 object-cover"
-                />
-              </div>
+<div className="container mx-auto p-6 bg-gray-50 min-h-screen">
+{/* Featured Article Section */}
+{featuredArticle && (
+<div className="mb-12">
+<h2 className="text-3xl font-bold mb-6 text-red-800">Featured Story</h2>
+<div className="bg-white rounded-lg shadow-xl overflow-hidden hover:shadow-2xl transition-shadow">
+<div className="md:flex">
+{/* Featured Image */}
+<div className="md:w-2/3">
+<img 
+src={featuredArticle.image} 
+alt={featuredArticle.title}
+className="w-full h-auto md:h-150 object-cover hover:scale-105 transition-transform duration-300"
+/>
+</div>
               
-              {/* Featured Content */}
-              <div className="md:w-1/3 p-6 flex flex-col justify-between">
-                <div>
-                  <span className="inline-block bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full mb-3">
-                    {featuredArticle.category}
-                  </span>
-                  <h3 className="text-2xl font-bold mb-4 text-gray-800 hover:text-red-500 cursor-pointer transition-colors">
-                    {featuredArticle.title}
-                  </h3>
-                  <p className="text-gray-600 mb-4 leading-relaxed">
-                    {featuredArticle.excerpt}
-                  </p>
-                </div>
-                <div className="flex items-center justify-between text-sm text-gray-500 border-t pt-4">
-                  <span>📅 {formatDate(featuredArticle.created_at)}</span>
-                  <button className="text-red-500 font-semibold hover:text-red-600 transition-colors">
-                    Read More →
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+{/* Featured Content */}
+<div className="md:w-1/3 p-6 flex flex-col justify-between">
+<div>
+<span className="inline-block bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full mb-3">
+{featuredArticle.category}
+</span>
+<h3 className="text-2xl font-bold mb-4 text-gray-800 hover:text-red-500 cursor-pointer transition-colors">
+{featuredArticle.title}
+</h3>
+<p className="text-gray-600 mb-4 leading-relaxed">
+{featuredArticle.excerpt}
+</p>
+</div>
+
+<div className="flex items-center justify-between text-sm text-gray-500 border-t pt-4">
+<span>📅 {formatDate(featuredArticle.created_at)}</span>
+<button className="text-red-500 font-semibold hover:text-red-600 transition-colors">
+<Link href={`/Articles/${featuredArticle.id}`}>
+  Read More →
+</Link>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+)}
 
       {/* Regular Articles Grid */}
       {regularArticles.length > 0 && (
@@ -214,7 +218,9 @@ export default function FeaturedDashboard() {
                   <div className="flex justify-between items-center text-sm border-t pt-3">
                     <span className="text-gray-500">📅 {formatDate(article.created_at)}</span>
                     <button className="text-red-500 font-medium hover:text-red-600 transition-colors">
+                      <Link href={`/Articles/${article.id}`}>
                       Read →
+                      </Link>
                     </button>
                   </div>
                 </div>
