@@ -146,6 +146,7 @@ export default function FeaturedDashboard() {
   const regularArticles = articles.filter(article => !article.featured);
 
   return (
+    <>
 <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
 {/* Featured Article Section */}
 {featuredArticle && (
@@ -168,7 +169,7 @@ className="w-full h-auto md:h-150 object-cover hover:scale-105 transition-transf
 <span className="inline-block bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full mb-3">
 {featuredArticle.category}
 </span>
-<h3 className="text-2xl font-bold mb-4 text-gray-800 hover:text-red-500 cursor-pointer transition-colors">
+<h3 className="text-2xl font-bold mb-4 text-gray-800 hover:text-sky-500 cursor-pointer transition-colors">
 {featuredArticle.title}
 </h3>
 <p className="text-gray-600 mb-4 leading-relaxed">
@@ -178,7 +179,7 @@ className="w-full h-auto md:h-150 object-cover hover:scale-105 transition-transf
 
 <div className="flex items-center justify-between text-sm text-gray-500 border-t pt-4">
 <span>📅 {formatDate(featuredArticle.created_at)}</span>
-<button className="text-red-500 font-semibold hover:text-red-600 transition-colors">
+<button className="text-blue-500 font-semibold hover:text-red-600 transition-colors">
 <Link href={`/Articles/${featuredArticle.id}`}>
   Read More →
 </Link>
@@ -189,46 +190,47 @@ className="w-full h-auto md:h-150 object-cover hover:scale-105 transition-transf
 </div>
 </div>
 )}
+          <div className="pb-8 border-b border-gray-200 mb-8"></div>
 
-      {/* Regular Articles Grid */}
-      {regularArticles.length > 0 && (
-        <div>
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">Latest Stories</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {regularArticles.map((article) => (
-              <div 
-                key={article.id} 
-                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer"
-              >
-                <img 
-                  src={article.image} 
-                  alt={article.title} 
-                  className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
-                />
-                <div className="p-4">
-                  <span className="inline-block bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded mb-2">
-                    {article.category}
-                  </span>
-                  <h3 className="text-xl font-semibold mb-2 text-gray-800 hover:text-red-500 transition-colors">
-                    {article.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                    {article.excerpt}
-                  </p>
-                  <div className="flex justify-between items-center text-sm border-t pt-3">
-                    <span className="text-gray-500">📅 {formatDate(article.created_at)}</span>
-                    <button className="text-red-500 font-medium hover:text-red-600 transition-colors">
-                      <Link href={`/Articles/${article.id}`}>
-                      Read →
-                      </Link>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
+{/* Regular Articles Grid */}
+{regularArticles.length > 0 && (
+<div>
+<h2 className="text-3xl font-bold mb-6 text-gray-800">Latest Stories</h2>
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+{regularArticles.map((article) => (
+<div 
+key={article.id} 
+className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer">
+<img 
+src={article.image} 
+alt={article.title} 
+className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
+/>
+<div className="p-4">
+<span className="inline-block bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded mb-2">
+{article.category}
+</span>
+<h3 className="text-xl font-semibold mb-2 text-gray-800 hover:text-red-500 transition-colors">
+{article.title}
+</h3>
+<p className="text-gray-600 text-sm mb-4 line-clamp-2">
+{article.excerpt}
+</p>
+<div className="flex justify-between items-center text-sm border-t pt-3">
+<span className="text-gray-500">📅 {formatDate(article.created_at)}</span>
+<button className="text-blue-500 font-medium hover:text-red-600 transition-colors">
+<Link href={`/Articles/${article.id}`}>
+Read →
+</Link>
+</button>
+</div>
+</div>
+</div>
+))}
+</div>
+</div>
+)}
+</div>
+</>
+);
 }

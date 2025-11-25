@@ -15,20 +15,20 @@ export default function Navbar() {
 
 if (isLoading) {
 return (
-<nav className="w-full bg-red-500 text-white shadow-md">
+<nav className="w-full bg-sky-600 text-white shadow-md">
 <div className="container mx-auto p-4">
 <div className="hidden md:flex md:items-center md:justify-between md:gap-6">
-<div className="w-48 h-12 bg-red-400 animate-pulse rounded"></div>
-<div className="flex-1 max-w-md h-10 bg-red-400 animate-pulse rounded-full"></div>
+<div className="w-48 h-12 bg-sky-600 animate-pulse rounded"></div>
+<div className="flex-1 max-w-md h-10 bg-sky-600 animate-pulse rounded-full"></div>
 <div className="flex space-x-6">
 {[...Array(5)].map((_, i) => (
-<div key={i} className="w-20 h-6 bg-red-400 animate-pulse rounded"></div>
+<div key={i} className="w-20 h-6 bg-sky-600 animate-pulse rounded"></div>
 ))}
 </div>
 </div>
 <div className="md:hidden flex items-center justify-between">
-<div className="w-32 h-10 bg-red-400 animate-pulse rounded"></div>
-<div className="w-8 h-8 bg-red-400 animate-pulse rounded"></div>
+<div className="w-32 h-10 bg-sky-600 animate-pulse rounded"></div>
+<div className="w-8 h-8 bg-sky-600 animate-pulse rounded"></div>
 </div>
 </div>
 </nav>
@@ -36,11 +36,11 @@ return (
 }
 
 return (
-<nav className="w-full bg-red-500 text-white shadow-md">
+<nav className="w-full bg-sky-600 text-white shadow-md">
 <div className="container mx-auto p-4">
 {/* Desktop Layout */}
 <div className="hidden md:flex md:items-center md:justify-between md:gap-6">
-<Image src="/images/it.png" alt="Truth News Logo" width={200} height={200} />          
+  <Link href="/"><Image src="/images/it.png" alt="Truth News Logo" width={200} height={200} /></Link>          
 <div className="shrink-0">
 </div>
 
