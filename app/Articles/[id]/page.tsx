@@ -109,7 +109,7 @@ const tagsArray = Array.isArray(data.tags)
           {/* Category Badge */}
           {data.category && (
             <div className="mb-4">
-              <span className="inline-block bg-sky-600 text-white text-xs font-semibold px-3 py-1 rounded-full uppercase">
+              <span className="inline-block bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded-full uppercase">
                 {data.category}
               </span>
             </div>

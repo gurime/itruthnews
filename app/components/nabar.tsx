@@ -15,20 +15,20 @@ export default function Navbar() {
 
 if (isLoading) {
 return (
-<nav className="w-full bg-sky-600 text-white shadow-md">
+<nav className="w-full bg-sky-900 text-white shadow-md">
 <div className="container mx-auto p-4">
 <div className="hidden md:flex md:items-center md:justify-between md:gap-6">
-<div className="w-48 h-12 bg-sky-600 animate-pulse rounded"></div>
-<div className="flex-1 max-w-md h-10 bg-sky-600 animate-pulse rounded-full"></div>
+<div className="w-48 h-12 bg-gray-200 animate-pulse rounded"></div>
+<div className="flex-1 max-w-md h-10 bg-gray-200 animate-pulse rounded-full"></div>
 <div className="flex space-x-6">
 {[...Array(5)].map((_, i) => (
-<div key={i} className="w-20 h-6 bg-sky-600 animate-pulse rounded"></div>
+<div key={i} className="w-20 h-6 bg-gray-200 animate-pulse rounded"></div>
 ))}
 </div>
 </div>
 <div className="md:hidden flex items-center justify-between">
-<div className="w-32 h-10 bg-sky-600 animate-pulse rounded"></div>
-<div className="w-8 h-8 bg-sky-600 animate-pulse rounded"></div>
+<div className="w-32 h-10 bg-gray-200 animate-pulse rounded"></div>
+<div className="w-8 h-8 bg-gray-200 animate-pulse rounded"></div>
 </div>
 </div>
 </nav>
@@ -36,13 +36,14 @@ return (
 }
 
 return (
-<nav className="w-full bg-sky-600 text-white shadow-md">
+<nav className="w-full bg-sky-900 text-white shadow-md">
 <div className="container mx-auto p-4">
 {/* Desktop Layout */}
-<div className="hidden md:flex md:items-center md:justify-between md:gap-6">
-  <Link href="/"><Image src="/images/it.png" alt="Truth News Logo" width={200} height={200} /></Link>          
-<div className="shrink-0">
-</div>
+<div className="hidden md:flex md:items-center md:justify-between md:flex-wrap md:gap-6">
+<Link href="/">
+<Image src="/images/it.png" alt="Truth News Logo" width={200} height={200} />
+</Link>          
+<div className="shrink-0"></div>
 
 {/* Search Bar - Center */}
 <div className="flex-1 max-w-md">
@@ -63,11 +64,12 @@ className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white bg-blu
 
 {/* Navigation Links */}
 <div className="flex items-center space-x-6 text-sm font-medium shrink-0">
-<Link href="/politics" className="hover:underline whitespace-nowrap">Politics</Link>
-<Link href="/technology" className="hover:underline whitespace-nowrap">Technology</Link>
-<Link href="/sports" className="hover:underline whitespace-nowrap">Sports</Link>
-<Link href="/music" className="hover:underline whitespace-nowrap">Music</Link>
-<Link href="/entertainment" className="hover:underline whitespace-nowrap">Entertainment</Link>
+<Link href="/politics" className="hover:underline hover:decoration-red-500 decoration-2 whitespace-nowrap">Politics</Link> 
+<Link href="/finance" className="hover:underline hover:decoration-red-500 decoration-2 whitespace-nowrap">Finance</Link> 
+<Link href="/technology" className="hover:underline hover:decoration-red-500 decoration-2 whitespace-nowrap">Technology</Link>
+<Link href="/sports" className="hover:underline hover:decoration-red-500 decoration-2 whitespace-nowrap">Sports</Link>
+<Link href="/music" className="hover:underline hover:decoration-red-500 decoration-2 whitespace-nowrap">Music</Link>
+<Link href="/entertainment" className="hover:underline hover:decoration-red-500 decoration-2 whitespace-nowrap">Entertainment</Link>
 </div>
 </div>
 
