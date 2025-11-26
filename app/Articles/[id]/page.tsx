@@ -1,4 +1,4 @@
-import Navbar from '@/app/components/nabar';
+import Navbar from '@/app/components/Navbar';
 import supabase from '../../supabase/supabase';
 import { Clock, Share2, Bookmark, Facebook, Twitter, Linkedin, Mail, Calendar, User } from 'lucide-react';
 import { JSX } from "react";

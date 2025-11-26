@@ -1,10 +1,13 @@
 import FeaturedDashboard from "./components/FeaturedDashboard";
-import Navbar from "./components/nabar";
-
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 export default function Home() {
-  return (
-    <><Navbar/>
-<FeaturedDashboard/></>
+return (
+<>
+<Navbar/>
+<FeaturedDashboard/>
+<Footer/>
+</>
 
   );
 }
