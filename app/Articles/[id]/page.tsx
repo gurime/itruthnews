@@ -4,6 +4,7 @@ import { Clock, Share2, Bookmark, Facebook, Twitter, Linkedin, Mail, Calendar, U
 import { JSX } from "react";
 import Link from 'next/link';
 import ArticleComment from '@/app/components/ArticleComment';
+import Footer from '@/app/components/Footer';
 
 interface Article {
   id: string;
@@ -15,7 +16,7 @@ interface Article {
   author?: string | null;
   author_avatar?: string | null;
   excerpt?: string | null;
-tags?: string[] | string | null;
+  tags?: string[] | string | null;
 }
 
 interface RelatedArticle {
@@ -50,11 +51,12 @@ export default async function DetailsPage({ params }: { params: Promise<{ id: st
   const { id } = await params;
 
   // Fetch the article details from Supabase
-  const { data, error } = await supabase
-    .from('article')
-    .select('title, image, content, created_at, category, excerpt, author, author_avatar, tags')
-    .eq('id', id)
-    .single();
+const { data, error } = await supabase
+  .from('all_articles')
+  .select('title, image, content, created_at, category, excerpt, author, author_avatar, tags, source')
+  .eq('id', id)
+  .single();
+
 
   if (error) {
     return (
@@ -62,7 +64,7 @@ export default async function DetailsPage({ params }: { params: Promise<{ id: st
         <Navbar />
         <div className="container mx-auto p-6 text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Error loading article</h1>
-          <p className="text-gray-600 mb-6">We couldn't load this article. Please try again later.</p>
+          <p className="text-gray-600 mb-6">We couldn&apos;t load this article. Please try again later.</p>
           <Link href="/" className="text-blue-600 hover:underline">← Back to Home</Link>
         </div>
       </>
@@ -75,30 +77,31 @@ export default async function DetailsPage({ params }: { params: Promise<{ id: st
         <Navbar />
         <div className="container mx-auto p-6 text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Article not found</h1>
-          <p className="text-gray-600 mb-6">The article you're looking for doesn't exist.</p>
+          <p className="text-gray-600 mb-6">The article you&apos;re looking for doesn&apos;t exist.</p>
           <Link href="/" className="text-blue-600 hover:underline">← Back to Home</Link>
         </div>
       </>
     );
   }
 
-  // Fetch related articles (same category, different id)
-  const { data: relatedArticles } = await supabase
-    .from('article')
-    .select('id, title, image, category')
-    .eq('category', data.category)
-    .neq('id', id)
-    .limit(3);
-
+    // Fetch related articles from ALL tables
+// Fetch related articles from the same table (all_articles)
+const { data: relatedArticles } = await supabase
+  .from('all_articles')
+  .select('id, title, image, category')
+  .eq('category', data.category)
+  .neq('id', id)
+  .limit(3);
   // Calculate read time (average reading speed: 200 words per minute)
   const wordCount = data.content ? data.content.split(' ').length : 0;
   const readTime = Math.ceil(wordCount / 200);
+  
   // Process tags
-const tagsArray = Array.isArray(data.tags)
-  ? data.tags
-  : typeof data.tags === "string"
-    ? data.tags.split(',').map(t => t.trim())
-    : [];
+  const tagsArray = Array.isArray(data.tags)
+    ? data.tags
+    : typeof data.tags === "string"
+      ? data.tags.split(',').map(t => t.trim())
+      : [];
 
   return (
     <>
@@ -211,46 +214,55 @@ const tagsArray = Array.isArray(data.tags)
           )}
 
           {/* Article Content */}
-          <div className="prose prose-lg max-w-none mb-12">
-            {data.content &&
-              data.content.split('###').map((section: string, index: number) => {
-                const [heading, ...rest] = section.trim().split('\n');
-                const body = rest.join('\n');
-                
-                // Skip if section is empty
-                if (!heading && !body) return null;
-                
-                return (
-                  <div key={index} className="mb-8">
-                    {heading && (
-                      <h2 className="text-2xl font-bold text-gray-900 mb-4">{heading}</h2>
-                    )}
-                    {body && (
-                      <p className="text-gray-800 leading-relaxed whitespace-pre-line">{body}</p>
-                    )}
-                  </div>
-                );
-              })}
+          <div className="max-w-3xl mx-auto mb-12">
+            <div className="font-serif text-gray-900 leading-[1.75] text-[19px] space-y-6">
+              {data.content &&
+                data.content.split('\n\n').map((paragraph: string, index: number) => {
+                  // Remove ### markers and trim
+                  const cleanParagraph = paragraph.replace(/###\s*/g, '').trim();
+                  
+                  if (!cleanParagraph) return null;
+                  
+                  // Add drop cap to first paragraph
+                  if (index === 0) {
+                    const firstLetter = cleanParagraph.charAt(0);
+                    const restOfText = cleanParagraph.slice(1);
+                    return (
+                      <p key={index} className="text-justify">
+                        <span className="float-left text-7xl font-bold leading-[0.85] pr-2 pt-1 text-blue-900">
+                          {firstLetter}
+                        </span>
+                        {restOfText}
+                      </p>
+                    );
+                  }
+                  
+                  return (
+                    <p key={index} className="text-justify first-letter:text-gray-900">
+                      {cleanParagraph}
+                    </p>
+                  );
+                })}
+            </div>
           </div>
 
-{/* Tags Section */}
-         {data.tags && (
+          {/* Tags Section */}
+          {data.tags && (
             <div className="mb-8">
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Tags</h3>
- <div className="flex flex-wrap gap-3">
-  
-  {tagsArray.map((tag, i) => {
-    const cleanTag = tag.replace(/^#/, '').trim();
-    return (
-      <span
-        key={i}
-        className="inline-block bg-sky-100 text-sky-700 text-sm font-medium px-4 py-2 rounded-full hover:bg-sky-200 transition cursor-pointer"
-      >
-        #{cleanTag}
-      </span>
-    );
-  })}
-</div>
+              <div className="flex flex-wrap gap-3">
+                {tagsArray.map((tag, i) => {
+                  const cleanTag = tag.replace(/^#/, '').trim();
+                  return (
+                    <span
+                      key={i}
+                      className="inline-block bg-sky-100 text-sky-700 text-sm font-medium px-4 py-2 rounded-full hover:bg-sky-200 transition cursor-pointer"
+                    >
+                      #{cleanTag}
+                    </span>
+                  );
+                })}
+              </div>
             </div>
           )}
 
@@ -260,7 +272,7 @@ const tagsArray = Array.isArray(data.tags)
           {data.author && (
             <div className="bg-sky-50 rounded-xl p-6 mb-8">
               <div className="flex items-center gap-4">
-<div className="w-16 h-16 bg-sky-200 rounded-full flex items-center justify-center shrink-0">
+                <div className="w-16 h-16 bg-sky-200 rounded-full flex items-center justify-center shrink-0">
                   {data.author_avatar ? (
                     <img 
                       src={data.author_avatar} 
@@ -322,48 +334,7 @@ const tagsArray = Array.isArray(data.tags)
         {/* Comments Section */}
         <ArticleComment />
 
-        {/* Footer */}
-        <footer className="bg-gray-900 text-white py-12 mt-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <div>
-                <h3 className="text-xl font-bold mb-4">iTruth News</h3>
-                <p className="text-gray-400 text-sm">
-                  Delivering accurate, unbiased news coverage from around the world.
-                </p>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4">Sections</h4>
-                <ul className="space-y-2 text-sm text-gray-400">
-                  <li className="hover:text-white cursor-pointer">World</li>
-                  <li className="hover:text-white cursor-pointer">Politics</li>
-                  <li className="hover:text-white cursor-pointer">Business</li>
-                  <li className="hover:text-white cursor-pointer">Technology</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4">Company</h4>
-                <ul className="space-y-2 text-sm text-gray-400">
-                  <li className="hover:text-white cursor-pointer">About Us</li>
-                  <li className="hover:text-white cursor-pointer">Contact</li>
-                  <li className="hover:text-white cursor-pointer">Careers</li>
-                  <li className="hover:text-white cursor-pointer">Privacy Policy</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4">Follow Us</h4>
-                <div className="flex gap-3">
-                  <Facebook size={20} className="cursor-pointer hover:text-blue-400" />
-                  <Twitter size={20} className="cursor-pointer hover:text-sky-400" />
-                  <Linkedin size={20} className="cursor-pointer hover:text-blue-500" />
-                </div>
-              </div>
-            </div>
-            <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-              <p>© 2024 iTruth News. All rights reserved.</p>
-            </div>
-          </div>
-        </footer>
+        <Footer/>
       </div>
     </>
   );

@@ -1,60 +1,52 @@
-
 "use client";
-
 import { useEffect, useState } from "react";
 import supabase from "../supabase/supabase";
 import Link from "next/link";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 interface Article {
-  id: number;
-  title: string;
-  excerpt: string;
-  category: string;
-  created_at: string;
-  image: string;
-  featured?: boolean;
+id: number;
+title: string;
+excerpt: string;
+category: string;
+created_at: string;
+image: string;
+featured?: boolean;
 }
 
 
 
-export default function FeaturedDashboard() {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [error, setError] = useState<string | null>(null);
+export default function Dashboard() {
+const [isLoading, setIsLoading] = useState<boolean>(true);
+const [articles, setArticles] = useState<Article[]>([]);
+const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchArticles() {
-      try {
-        setIsLoading(true);
+useEffect(() => {
+async function fetchArticles() {
+try {
+setIsLoading(true);
         
-        // Fetch articles from Supabase
-        const { data, error } = await supabase
-          .from('article') // Replace with your table name
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(7); // Fetch 7 articles (1 featured + 6 regular)
-
-        if (error) throw error;
-
-        if (data) {
-          // Mark the first article as featured
-          const articlesWithFeatured = data.map((article, index) => ({
-            ...article,
-            featured: index === 0
-          }));
-          
-          setArticles(articlesWithFeatured);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch articles');
-        console.error('Error fetching articles:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchArticles();
-  }, []);
+// Fetch articles from Supabase
+const { data, error } = await supabase
+.from('politics')
+.select('*')
+.order('created_at', { ascending: false })
+.limit(12);
+if (error) throw error;
+if (data) {
+// Mark the first article as featured
+const articlesWithFeatured = data.map((article, index) => ({...article,featured: index === 0}));
+setArticles(articlesWithFeatured);
+}
+} catch (err) {
+setError(err instanceof Error ? err.message : 'Failed to fetch articles');
+} finally {
+setIsLoading(false);
+}
+}
+fetchArticles();
+}, []);
 
   // Format date helper
 const formatDate = (dateString: string) => {
@@ -147,6 +139,7 @@ const regularArticles = articles.filter(article => !article.featured);
 
 return (
 <>
+<Navbar/>
 <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
 {/* Featured Article Section */}
 {featuredArticle && (
@@ -154,13 +147,13 @@ return (
 <h2 className="text-3xl font-bold mb-6 text-red-800 font-[open-sans]">Featured Story</h2>
 <div className="bg-white rounded-lg shadow-xl overflow-hidden hover:shadow-2xl transition-shadow">
 <div className="md:flex">
+
 {/* Featured Image */}
 <div className="md:w-2/3">
 <img 
 src={featuredArticle.image} 
 alt={featuredArticle.title}
-className="w-full h-auto md:h-150 object-cover hover:scale-105 transition-transform duration-300"
-/>
+className="w-full h-auto md:h-150 object-cover hover:scale-105 transition-transform duration-300"/>
 </div>
               
 {/* Featured Content */}
@@ -197,21 +190,24 @@ className="w-full h-auto md:h-150 object-cover hover:scale-105 transition-transf
 {/* Regular Articles Grid */}
 {regularArticles.length > 0 && (
 <div>
-<h2 className="text-3xl font-bold mb-6 text-gray-800 font-[open-sans]">Latest Stories</h2>
+<h2 className="text-3xl font-bold mb-6 text-red-800 font-[open-sans]">Latest Headlines</h2>
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 {regularArticles.map((article) => (
 <div 
 key={article.id} 
 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer">
-<img 
+
+<img
 src={article.image} 
 alt={article.title} 
-className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
-/>
+className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"/>
+
 <div className="p-4">
+
 <span className="inline-block bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded mb-2">
 {article.category}
 </span>
+
 <h3 className="text-xl font-semibold mb-2 text-gray-800 hover:text-blue-500 transition-colors">
 <Link href={`/Articles/${article.id}`}>
 {article.title}
@@ -234,7 +230,10 @@ Read →
 </div>
 </div>
 )}
+<div className="pb-8 border-b border-gray-200 mb-8"></div>
+
 </div>
+<Footer/>
 </>
 );
 }
