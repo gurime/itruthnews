@@ -17,6 +17,7 @@ interface Article {
   author_avatar?: string | null;
   excerpt?: string | null;
   tags?: string[] | string | null;
+  source?: string | null;
 }
 
 interface RelatedArticle {
@@ -26,22 +27,72 @@ interface RelatedArticle {
   category?: string | null;
 }
 
+// Define all table names
+const ARTICLE_TABLES = ['article', 'sports', 'technology', 'politics', 'business', 'entertainment', 'health'];
+
+// Helper function to fetch article from multiple tables
+async function fetchArticleFromTables(id: string): Promise<Article | null> {
+  for (const table of ARTICLE_TABLES) {
+    try {
+      const { data, error } = await supabase
+        .from(table)
+        .select('id, title, image, content, created_at, category, excerpt, author, author_avatar, tags')
+        .eq('id', id)
+        .single();
+
+      if (!error && data) {
+        return { ...data, source: table };
+      }
+    } catch (err) {
+      // Continue to next table if error
+      continue;
+    }
+  }
+  return null;
+}
+
+// Helper function to fetch related articles from all tables
+async function fetchRelatedArticles(category: string | null, excludeId: string, limit: number = 3): Promise<RelatedArticle[]> {
+  if (!category) return [];
+  
+  const relatedArticles: RelatedArticle[] = [];
+
+  for (const table of ARTICLE_TABLES) {
+    try {
+      const { data, error } = await supabase
+        .from(table)
+        .select('id, title, image, category')
+        .eq('category', category)
+        .neq('id', excludeId)
+        .limit(limit);
+
+      if (!error && data) {
+        relatedArticles.push(...data);
+      }
+    } catch (err) {
+      // Continue to next table if error
+      continue;
+    }
+
+    // Stop if we have enough articles
+    if (relatedArticles.length >= limit) break;
+  }
+
+  return relatedArticles.slice(0, limit);
+}
+
 // Generate dynamic metadata for SEO
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<{ title: string }> {
   const { id } = await params;
 
   try {
-    const { data, error } = await supabase
-      .from('article')
-      .select('title')
-      .eq('id', id)
-      .single();
+    const article = await fetchArticleFromTables(id);
 
-    if (error || !data) {
+    if (!article) {
       return { title: 'iTruth News | Page Not Found' };
     }
 
-    return { title: `iTruth News | ${data.title}` };
+    return { title: `iTruth News | ${article.title}` };
   } catch (error) {
     return { title: 'iTruth News | Page Not Found' };
   }
@@ -50,26 +101,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function DetailsPage({ params }: { params: Promise<{ id: string }> }): Promise<JSX.Element> {
   const { id } = await params;
 
-  // Fetch the article details from Supabase
-const { data, error } = await supabase
-  .from('all_articles')
-  .select('title, image, content, created_at, category, excerpt, author, author_avatar, tags, source')
-  .eq('id', id)
-  .single();
-
-
-  if (error) {
-    return (
-      <>
-        <Navbar />
-        <div className="container mx-auto p-6 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Error loading article</h1>
-          <p className="text-gray-600 mb-6">We couldn&apos;t load this article. Please try again later.</p>
-          <Link href="/" className="text-blue-600 hover:underline">← Back to Home</Link>
-        </div>
-      </>
-    );
-  }
+  // Fetch the article from all tables
+  const data = await fetchArticleFromTables(id);
 
   if (!data) {
     return (
@@ -84,14 +117,9 @@ const { data, error } = await supabase
     );
   }
 
-    // Fetch related articles from ALL tables
-// Fetch related articles from the same table (all_articles)
-const { data: relatedArticles } = await supabase
-  .from('all_articles')
-  .select('id, title, image, category')
-  .eq('category', data.category)
-  .neq('id', id)
-  .limit(3);
+  // Fetch related articles from ALL tables
+  const relatedArticles = await fetchRelatedArticles(data.category ?? null, id, 3);
+
   // Calculate read time (average reading speed: 200 words per minute)
   const wordCount = data.content ? data.content.split(' ').length : 0;
   const readTime = Math.ceil(wordCount / 200);
