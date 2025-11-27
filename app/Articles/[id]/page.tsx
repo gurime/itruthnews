@@ -11,9 +11,12 @@ interface Article {
   title: string;
   image?: string | null;
   content?: string | null;
+  bodycontent?: string | null;
+  endcontent?: string | null;
   created_at?: string | null;
   category?: string | null;
   author?: string | null;
+  author_bio?: string | null;
   author_avatar?: string | null;
   excerpt?: string | null;
   tags?: string[] | string | null;
@@ -36,7 +39,7 @@ async function fetchArticleFromTables(id: string): Promise<Article | null> {
     try {
       const { data, error } = await supabase
         .from(table)
-        .select('id, title, image, content, created_at, category, excerpt, author, author_avatar, tags')
+        .select('id, title, image, content, bodycontent, endcontent, created_at, category, excerpt, author, author_bio, author_avatar, tags')
         .eq('id', id)
         .single();
 
@@ -44,7 +47,6 @@ async function fetchArticleFromTables(id: string): Promise<Article | null> {
         return { ...data, source: table };
       }
     } catch (err) {
-      // Continue to next table if error
       continue;
     }
   }
@@ -241,38 +243,68 @@ export default async function DetailsPage({ params }: { params: Promise<{ id: st
             </div>
           )}
 
-          {/* Article Content */}
-          <div className="max-w-3xl mx-auto mb-12">
-            <div className="font-serif text-gray-900 leading-[1.75] text-[19px] space-y-6">
-              {data.content &&
-                data.content.split('\n\n').map((paragraph: string, index: number) => {
-                  // Remove ### markers and trim
-                  const cleanParagraph = paragraph.replace(/###\s*/g, '').trim();
-                  
-                  if (!cleanParagraph) return null;
-                  
-                  // Add drop cap to first paragraph
-                  if (index === 0) {
-                    const firstLetter = cleanParagraph.charAt(0);
-                    const restOfText = cleanParagraph.slice(1);
-                    return (
-                      <p key={index} className="text-justify">
-                        <span className="float-left text-7xl font-bold leading-[0.85] pr-2 pt-1 text-blue-900">
-                          {firstLetter}
-                        </span>
-                        {restOfText}
-                      </p>
-                    );
-                  }
-                  
-                  return (
-                    <p key={index} className="text-justify first-letter:text-gray-900">
-                      {cleanParagraph}
-                    </p>
-                  );
-                })}
-            </div>
-          </div>
+      {/* Article Content */}
+<div className="max-w-3xl mx-auto mb-12">
+  <div className="font-serif text-gray-900 leading-[1.75] text-[19px] space-y-6">
+    {/* Body Content */}
+    {data.content &&
+      data.content.split('\n\n').map((paragraph: string, index: number) => {
+        const cleanParagraph = paragraph.replace(/###\s*/g, '').trim();
+        
+        if (!cleanParagraph) return null;
+        
+        // Add drop cap to first paragraph
+        if (index === 0) {
+          const firstLetter = cleanParagraph.charAt(0);
+          const restOfText = cleanParagraph.slice(1);
+          return (
+            <p key={`body-${index}`} className="text-justify">
+              <span className="float-left text-7xl font-bold leading-[0.85] pr-2 pt-1 text-blue-900">
+                {firstLetter}
+              </span>
+              {restOfText}
+            </p>
+          );
+        }
+        
+        return (
+          <p key={`body-${index}`} className="text-justify first-letter:text-gray-900">
+            {cleanParagraph}
+          </p>
+        );
+      })}
+
+    {/* Original Content (if bodycontent doesn't exist) */}
+    {data.bodycontent &&
+    data.bodycontent.split('\n\n').map((paragraph: string, index: number) => {
+        const cleanParagraph = paragraph.replace(/###\s*/g, '').trim();
+        
+        if (!cleanParagraph) return null;
+        
+      
+        
+        return (
+          <p key={`content-${index}`} className="text-justify first-letter:text-gray-900">
+            {cleanParagraph}
+          </p>
+        );
+      })}
+
+    {/* End Content */}
+    {data.endcontent &&
+      data.endcontent.split('\n\n').map((paragraph: string, index: number) => {
+        const cleanParagraph = paragraph.replace(/###\s*/g, '').trim();
+        
+        if (!cleanParagraph) return null;
+        
+        return (
+          <p key={`end-${index}`} className="text-justify first-letter:text-gray-900">
+            {cleanParagraph}
+          </p>
+        );
+      })}
+  </div>
+</div>
 
           {/* Tags Section */}
           {data.tags && (
@@ -315,7 +347,7 @@ export default async function DetailsPage({ params }: { params: Promise<{ id: st
                   <h3 className="font-bold text-lg text-gray-900">About the Author</h3>
                   <p className="text-gray-700 font-medium">{data.author}</p>
                   <p className="text-gray-600 text-sm mt-1">
-                    Senior correspondent covering political developments and national affairs.
+                    {data.author_bio || 'Author bio not available.'}.
                   </p>
                 </div>
               </div>
