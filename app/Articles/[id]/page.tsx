@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import Navbar from '@/app/components/Navbar';
 import supabase from '../../supabase/supabase';
 import { Clock, Share2, Bookmark, Facebook, Twitter, Linkedin, Mail, Calendar, User } from 'lucide-react';
@@ -5,6 +6,8 @@ import { JSX } from "react";
 import Link from 'next/link';
 import ArticleComment from '@/app/components/ArticleComment';
 import Footer from '@/app/components/Footer';
+import Image from 'next/image';
+import RelatedArticles from '@/app/components/RelatedArticles';
 
 interface Article {
   id: string;
@@ -142,7 +145,7 @@ export default async function DetailsPage({ params }: { params: Promise<{ id: st
           {/* Category Badge */}
           {data.category && (
             <div className="mb-4">
-              <span className="inline-block bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded-full uppercase">
+              <span className="inline-block bg-blue-900 text-white text-xs font-semibold px-3 py-1 rounded-full uppercase">
                 {data.category}
               </span>
             </div>
@@ -183,6 +186,7 @@ export default async function DetailsPage({ params }: { params: Promise<{ id: st
                 ← Back to Home
               </Link>
             </div>
+        
           </div>
 
           {/* Social Sharing Bar */}
@@ -225,13 +229,15 @@ export default async function DetailsPage({ params }: { params: Promise<{ id: st
 
           {/* Featured Image */}
           {data.image && (
-            <div className="mb-8 rounded-xl overflow-hidden shadow-lg">
-              <img 
-                src={data.image} 
-                alt={data.title}
-                className="w-full h-auto object-cover"
-              />
-            </div>
+           <div className="h-96 w-full relative  overflow-hidden shadow-md">
+  <Image
+    src={data.image}
+    alt={data.title}
+    fill
+    className="object-cover"
+  />
+</div>
+
           )}
 
           {/* Excerpt (if available) */}
@@ -334,11 +340,14 @@ export default async function DetailsPage({ params }: { params: Promise<{ id: st
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 bg-sky-200 rounded-full flex items-center justify-center shrink-0">
                   {data.author_avatar ? (
-                    <img 
-                      src={data.author_avatar} 
-                      alt={data.author}
-                      className="w-full h-full rounded-full object-cover"
-                    />
+                <Image
+  src={data.author_avatar}
+  alt={data.author}
+  width={40}
+  height={40}
+  className="rounded-full object-cover"
+/>
+
                   ) : (
                     <User size={32} className="text-sky-600" />
                   )}
@@ -356,39 +365,10 @@ export default async function DetailsPage({ params }: { params: Promise<{ id: st
 
           <div className="pb-8 border-b border-gray-200 mb-8"></div>
 
-          {/* Related Articles */}
-          {relatedArticles && relatedArticles.length > 0 && (
-            <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Related Articles</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedArticles.map((article: RelatedArticle) => (
-                  <Link 
-                    key={article.id}
-                    href={`/Articles/${article.id}`}
-                    className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition cursor-pointer block"
-                  >
-                    {article.image && (
-                      <img 
-                        src={article.image} 
-                        alt={article.title}
-                        className="w-full h-40 object-cover"
-                      />
-                    )}
-                    <div className="p-4">
-                      {article.category && (
-                        <span className="text-xs font-semibold text-sky-600 uppercase">
-                          {article.category}
-                        </span>
-                      )}
-                      <h3 className="font-bold text-gray-900 mt-2 line-clamp-2">
-                        {article.title}
-                      </h3>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
+         {/* Related Articles */}
+{relatedArticles && relatedArticles.length > 0 && (
+  <RelatedArticles articles={relatedArticles} />
+)}
         </article>
 
         {/* Comments Section */}
