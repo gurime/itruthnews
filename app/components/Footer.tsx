@@ -4,34 +4,14 @@ import Image from 'next/image';
 import { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { ChevronDown } from 'lucide-react';
-import supabase from '../supabase/supabase';
 
 export default function Footer() {
-const [email, setEmail] = useState('');
-const [subscribed, setSubscribed] = useState(false);
 const [openSection, setOpenSection] = useState<string | null>(null);
 const toggleSection = (section: string) => {
 setOpenSection(openSection === section ? null : section);
 };
 
-const handleSubscribe = async () => {
-if (!email) {
-toast.error('Please enter a valid email.');
-return;
-}
 
-const { error } = await supabase
-.from('newsletter_subscribers')
-.insert([{ email }]);
-if (error) {
-toast.error(`Subscription failed: ${error.message}`);
-return;
-}
-setSubscribed(true);
-toast.success('Subscribed!');
-setEmail('');
-setTimeout(() => setSubscribed(false), 3500);
-};
 
 return (
 <footer className=" text-white py-12 mt-12 dark:bg-blue-900">
@@ -100,38 +80,6 @@ toggleSection={toggleSection}
 <FooterLink href="/licensing" label="Licensing & Permissions" />
 <FooterLink href="/accessibility" label="Accessibility Statement" />
 </FooterCollapse>
-
-{/* NEWSLETTER */}
-<div>
-<h4 className="text-lg font-semibold mb-4">Newsletter</h4>
-<p className="text-blue-100 text-sm mb-4">
-Stay updated with our latest stories.
-</p>
-
-<div className="space-y-2">
-<label htmlFor="newsletter-email" className="text-white font-medium">
-Email Address
-</label>
-
-<input
-id="newsletter-email"
-type="email"
-value={email}
-onChange={(e) => setEmail(e.target.value)}
-onKeyDown={(e) => e.key === 'Enter' && handleSubscribe()}
-className="w-full px-4 py-2 rounded bg-blue-600/40 border border-blue-300/20
-focus:outline-none focus:ring-2 focus:ring-blue-300 text-white"
-/>
-
-<button
-onClick={handleSubscribe}
-disabled={subscribed}
-className={`w-full px-4 py-2 rounded font-semibold transition-all duration-200 cursor-pointer
-${subscribed? 'bg-green-500 text-white cursor-default': 'bg-white text-blue-700 hover:bg-blue-50'}`}>
-{subscribed ? '✓ Subscribed!' : 'Subscribe'}
-</button>
-</div>
-</div>
 </div>
 
 {/* COPYRIGHT */}

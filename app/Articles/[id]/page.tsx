@@ -234,7 +234,7 @@ export default async function DetailsPage({ params }: { params: Promise<{ id: st
     src={data.image}
     alt={data.title}
     fill
-    className="object-cover"
+    className="object-cover object-center"
   />
 </div>
 
