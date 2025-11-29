@@ -184,7 +184,7 @@ Support independent journalism. <strong className="text-blue-900">Join iTruth Ne
 <div className="relative w-full sm:w-auto">
 <button
 onClick={() => setShowNewsletter(!showNewsletter)}
-className="text-blue-900 font-medium hover:underline underline-offset-2 transition-all whitespace-nowrap">
+className="text-blue-900 font-medium hover:underline underline-offset-2 transition-all whitespace-nowrap cusor-pointer">
 {isSubscribed ? ' Newsletter ✓' : ' Newsletter'}
 </button>
                 
@@ -266,7 +266,7 @@ Log out
 </button>
 ) : (
 <button
-className="px-4 py-1.5 text-sm font-medium text-white bg-blue-900 border border-blue-900 rounded hover:bg-blue-800 transition-colors whitespace-nowrap shadow-sm"
+className="px-4 py-1.5 text-sm font-medium text-white bg-blue-900 border border-blue-900 rounded hover:bg-blue-800 transition-colors whitespace-nowrap shadow-sm cusor-pointer"
 onClick={() => router.push('/login')}
 >
 Login
@@ -367,7 +367,7 @@ className={`ml-1 transition-transform ${menuDropdownOpen ? "rotate-180" : ""}`}
 <Link href="/culture" className="block px-2 py-1 hover:bg-blue-600 rounded">Arts & Culture</Link>
 <Link href="/books" className="block px-2 py-1 hover:bg-blue-600 rounded">Books</Link>
 <Link href="/relationships" className="block px-2 py-1 hover:bg-blue-600 rounded">Relationships</Link>
-{new Date().getMonth() === 5 && (
+{new Date().getMonth() === 6 && (
 <Link href="/pride" className="block px-2 py-1 hover:bg-blue-600 rounded">Pride</Link>
 )}
 </div>

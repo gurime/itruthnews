@@ -90,6 +90,7 @@ async function fetchRelatedArticles(category: string | null, excludeId: string, 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<{ title: string }> {
   const { id } = await params;
 
+
   try {
     const article = await fetchArticleFromTables(id);
 
@@ -363,16 +364,17 @@ export default async function DetailsPage({ params }: { params: Promise<{ id: st
             </div>
           )}
 
-          <div className="pb-8 border-b border-gray-200 mb-8"></div>
+          <div className="pb-8 border-b border-gray-400 mb-8"></div>
 
          {/* Related Articles */}
 {relatedArticles && relatedArticles.length > 0 && (
   <RelatedArticles articles={relatedArticles} />
 )}
         </article>
+          <div className="pb-8 border-b border-gray-400 mb-8"></div>
 
         {/* Comments Section */}
-        <ArticleComment />
+      <ArticleComment articleId={id} />
 
         <Footer/>
       </div>

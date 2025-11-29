@@ -16,8 +16,9 @@ interface Article {
   featured?: boolean;
 }
 
-export default function Dashboard() {
+export default function Politics() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
   const [articles, setArticles] = useState<Article[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loadingArticleId, setLoadingArticleId] = useState<number | null>(null);
@@ -27,21 +28,34 @@ export default function Dashboard() {
       try {
         setIsLoading(true);
         
-        // Fetch articles from Supabase
+        // Fetch THE featured politics article
+        const { data: featuredData, error: featuredError } = await supabase
+          .from('politics')
+          .select('*')
+          .eq('featured', true)
+          .limit(1)
+          .single();
+
+        if (featuredError && featuredError.code !== 'PGRST116') {
+          // PGRST116 is "no rows returned" - that's okay
+          throw featuredError;
+        }
+
+        if (featuredData) {
+          setFeaturedArticle(featuredData);
+        }
+        
+        // Fetch regular politics articles (excluding featured)
         const { data, error } = await supabase
           .from('politics')
           .select('*')
+          .eq('featured', false)
           .order('created_at', { ascending: false })
-          .limit(12);
+          .limit(11);
         
         if (error) throw error;
         if (data) {
-          // Mark the first article as featured
-          const articlesWithFeatured = data.map((article, index) => ({
-            ...article,
-            featured: index === 0
-          }));
-          setArticles(articlesWithFeatured);
+          setArticles(data);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch articles');
@@ -113,33 +127,44 @@ export default function Dashboard() {
   }
 
   if (isLoading) {
-    return <FeaturedDashboardSkeleton />;
+    return (
+      <>
+        <Navbar />
+        <FeaturedDashboardSkeleton />
+        <Footer />
+      </>
+    );
   }
 
   if (error) {
     return (
-      <div className="container mx-auto p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <h3 className="text-red-800 font-semibold mb-2">Error Loading Articles</h3>
-          <p className="text-red-600">{error}</p>
+      <>
+        <Navbar />
+        <div className="container mx-auto p-6">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <h3 className="text-red-800 font-semibold mb-2">Error Loading Articles</h3>
+            <p className="text-red-600">{error}</p>
+          </div>
         </div>
-      </div>
+        <Footer />
+      </>
     );
   }
 
-  if (articles.length === 0) {
+  if (!featuredArticle && articles.length === 0) {
     return (
-      <div className="container mx-auto p-6">
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-12 text-center">
-          <h3 className="text-gray-800 font-semibold mb-2">No Articles Found</h3>
-          <p className="text-gray-600">Check back soon for new content!</p>
+      <>
+        <Navbar />
+        <div className="container mx-auto p-6">
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-12 text-center">
+            <h3 className="text-gray-800 font-semibold mb-2">No Articles Found</h3>
+            <p className="text-gray-600">Check back soon for new content!</p>
+          </div>
         </div>
-      </div>
+        <Footer />
+      </>
     );
   }
-
-  const featuredArticle = articles.find(article => article.featured);
-  const regularArticles = articles.filter(article => !article.featured);
 
   return (
     <>
@@ -152,8 +177,8 @@ export default function Dashboard() {
             <Link
               href={`/Articles/${featuredArticle.id}`}
               onClick={() => setLoadingArticleId(featuredArticle.id)}
-              className="block bg-white rounded-lg shadow-xl overflow-hidden hover:shadow-2xl transition-shadow relative"
-            >
+              className="block bg-white rounded-lg shadow-xl overflow-hidden hover:shadow-2xl transition-shadow relative">
+
               {/* Loading overlay for featured article */}
               {loadingArticleId === featuredArticle.id && (
                 <div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-10 rounded-lg">
@@ -167,7 +192,7 @@ export default function Dashboard() {
                   <Image 
                     src={featuredArticle.image} 
                     alt={featuredArticle.title}
-                     width={1000}
+                    width={1000}
                     height={48} 
                     className="w-full h-auto md:h-150 object-cover hover:scale-105 transition-transform duration-300"/>
                 </div>
@@ -178,9 +203,11 @@ export default function Dashboard() {
                     <span className="inline-block bg-blue-900 text-white text-xs font-semibold px-3 py-1 rounded-full mb-3">
                       {featuredArticle.category}
                     </span>
+
                     <h3 className="text-2xl font-bold mb-4 text-gray-800 hover:text-sky-700 cursor-pointer transition-colors">
                       {featuredArticle.title}
                     </h3>
+
                     <p className="text-gray-600 mb-4 leading-relaxed">
                       {featuredArticle.excerpt}
                     </p>
@@ -197,20 +224,23 @@ export default function Dashboard() {
             </Link>
           </div>
         )}
-        <div className="pb-8 border-b border-gray-400 mb-8"></div>
+
+        {featuredArticle && (
+          <div className="pb-8 border-b border-gray-400 mb-8"></div>
+        )}
 
         {/* Regular Articles Grid */}
-        {regularArticles.length > 0 && (
+        {articles.length > 0 && (
           <div>
-            <h2 className="text-3xl font-bold mb-6 text-red-800 font-[open-sans]">Latest Headlines</h2>
+            <h2 className="text-3xl font-bold mb-6 text-blue-900 font-[open-sans]">Latest Headlines</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {regularArticles.map((article) => (
+              {articles.map((article) => (
                 <Link
                   key={article.id}
                   href={`/Articles/${article.id}`}
                   onClick={() => setLoadingArticleId(article.id)}
-                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer block relative"
-                >
+                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer block relative">
+
                   {/* Loading overlay */}
                   {loadingArticleId === article.id && (
                     <div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-10 rounded-lg">
@@ -221,7 +251,7 @@ export default function Dashboard() {
                   <Image
                     src={article.image} 
                     alt={article.title} 
-                     width={1000}
+                    width={1000}
                     height={48} 
                     className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"/>
 
@@ -233,9 +263,11 @@ export default function Dashboard() {
                     <h3 className="text-xl font-semibold mb-2 text-gray-800 hover:text-blue-500 transition-colors">
                       {article.title}
                     </h3>
+
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                       {article.excerpt}
                     </p>
+
                     <div className="flex justify-between items-center text-sm border-t pt-3">
                       <span className="text-gray-500">📅 {formatDate(article.created_at)}</span>
                       <span className="text-red-500 font-medium hover:text-blue-600 transition-colors">
@@ -248,7 +280,6 @@ export default function Dashboard() {
             </div>
           </div>
         )}
-        <div className="pb-8 border-b border-gray-400 mb-8"></div>
       </div>
       <Footer/>
     </>
