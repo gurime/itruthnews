@@ -11,6 +11,10 @@ const toggleSection = (section: string) => {
 setOpenSection(openSection === section ? null : section);
 };
 
+  const scrollToTop = () => {
+    // Scroll instantly to the top
+window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
 
 return (
@@ -25,6 +29,8 @@ return (
 <div>
 <Link href="/">
 <Image
+onClick={scrollToTop}
+title='Back To Top'
 src="/images/it_back.png"
 alt="iTruth News Logo"
 width={150}
