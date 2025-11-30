@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { useEffect, useState } from "react";
 import supabase from "../supabase/supabase";
@@ -385,16 +386,31 @@ const handleDeleteComment = async (commentId: string) => {
       {/* Actions */}
           {editingId !== comment.id && (
             <div className="flex items-center gap-4 mt-3 text-sm">
-              <button
-                onClick={() => handleLikeComment(comment.id)}
-                disabled={isOwner}
-                className={`flex items-center gap-1 transition-colors ${isOwner ? "text-gray-400 cursor-not-allowed" : comment.user_has_liked ? "text-blue-900 font-semibold" : "text-gray-600 hover:text-blue-900"}`}
-              >
-                <Heart size={18} className={comment.user_has_liked ? "fill-red-600 text-red-600" : ""}/>
-                <span>{comment.likes}</span>
-              </button>
+         <button
+  onClick={() => handleLikeComment(comment.id)}
+  disabled={!user || isOwner}
+  className={`flex items-center gap-1 transition-colors ${
+    !user || isOwner
+      ? "text-gray-400 cursor-not-allowed"
+      : comment.user_has_liked
+      ? "text-blue-900 font-semibold"
+      : "text-gray-600 hover:text-blue-900"
+  }`}
+>
+  <Heart size={16} className={comment.user_has_liked ? "fill-current" : ""} />
+  <span>{comment.likes}</span>
+</button>
 
-              {!isReply && !isOwner && <button onClick={() => setReplyTo(comment.id)} className="text-gray-600 hover:text-blue-900 font-medium">Reply</button>}
+            {!isReply && !isOwner && user && (
+  <button
+    onClick={() => setReplyTo(comment.id)}
+    className="text-gray-600 hover:text-blue-900 font-medium"
+    disabled={replyTo === comment.id}
+  >
+    Reply
+  </button>
+)}
+
               {isOwner && (
                 <>
                   <button onClick={() => { setEditingId(comment.id); setEditContent(comment.content); }} className="text-gray-600 hover:text-blue-900 font-medium">Edit</button>

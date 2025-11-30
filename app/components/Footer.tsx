@@ -2,8 +2,8 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
 import { ChevronDown } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Footer() {
 const [openSection, setOpenSection] = useState<string | null>(null);
@@ -15,7 +15,6 @@ setOpenSection(openSection === section ? null : section);
 
 return (
 <footer className=" text-white py-12 mt-12 dark:bg-blue-900">
-<Toaster position="top-center" />
 
 <div className="container mx-auto px-4">
 
@@ -24,13 +23,15 @@ return (
 
 {/* ABOUT */}
 <div>
+<Link href="/">
 <Image
 src="/images/it_back.png"
 alt="iTruth News Logo"
 width={150}
 height={50}
-className="mb-4"
-/>
+className="mb-4"/>
+</Link>
+
 <p className="text-blue-100 text-sm">
 Delivering accurate coverage you can rely on. Stay informed with truly clear reporting.
 </p>
