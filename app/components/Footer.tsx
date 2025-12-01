@@ -31,7 +31,7 @@ return (
 <Image
 onClick={scrollToTop}
 title='Back To Top'
-src="/images/it_back.png"
+src="/images/it_news.png"
 alt="iTruth News Logo"
 width={150}
 height={50}

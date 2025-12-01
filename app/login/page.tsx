@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import supabase from "../supabase/supabase";
 import Image from "next/image";
 import Link from "next/link";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Login() {
 const router = useRouter();
@@ -39,8 +41,9 @@ password,
 });
 
 if (error) throw error;
-setMessage("Login successful! Redirecting...");
-setTimeout(() => router.push('/'), 1500);
+setMessage("");
+toast.success("Login successful!");
+setTimeout(() => router.push('/'), 600);
 } catch (error: unknown) {
 if (typeof error === "object" && error !== null && "message" in error) {
 setError((error as { message?: string }).message || "An error occurred during login");
@@ -77,7 +80,7 @@ password,
 });
 
 if (error) throw error;
-setMessage("Account created! Please check your email to verify your account.");
+toast.success("Account created! Please check your email to verify your account.");
 setEmail("");
 setPassword("");
 setConfirmPassword("");
@@ -92,16 +95,11 @@ setLoading(false);
 }
 };
 
-const handleSubmit = (e: React.FormEvent) => {
-if (isLogin) {
-handleLogin(e);
-} else {
-handleSignup(e);
-}
-};
+
   
 return (
 <div className="min-h-screen bg-linear-to-r from-blue-500 to-blue-900 flex items-center justify-center p-4">
+<Toaster position="top-center" />
 <div className="w-full max-w-md">
 {/* Logo and Header */}
 <div className="text-center mb-8">
@@ -167,7 +165,7 @@ Sign Up
 )}
 
 {/* Form */}
-<div className="space-y-4">
+<form onSubmit={handleLogin} className="space-y-4">
 {/* Email Input */}
 <div>
 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
@@ -180,6 +178,7 @@ type="email"
 value={email}
 onChange={(e) => setEmail(e.target.value)}
 required
+onFocus={() => setError("")}
 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900"
 placeholder="you@example.com"/>
 </div>
@@ -231,10 +230,14 @@ Forgot password?
 
 {/* Submit Button */}
 <button
-onClick={handleSubmit}
 disabled={loading}
-className="w-full bg-blue-900 text-white py-3 rounded-lg font-semibold hover:bg-blue-800 transition-colors shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
-
+type="submit"
+className="w-full bg-blue-900 text-white py-3 rounded-lg font-semibold 
+hover:bg-blue-800 hover:scale-[1.02] active:scale-[0.98]
+transition-all duration-200 ease-out
+shadow-md hover:shadow-lg 
+disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
+cursor-pointer">
 {loading ? (
 <span className="flex items-center justify-center">
 <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
@@ -247,7 +250,7 @@ className="w-full bg-blue-900 text-white py-3 rounded-lg font-semibold hover:bg-
 isLogin ? "Sign In" : "Create Account"
 )}
 </button>
-</div>
+</form>
 
 {/* Terms (Signup only) */}
 {!isLogin && (
@@ -267,7 +270,7 @@ Privacy Policy
 <div className="text-center mt-6">
 <Link 
 href="/" 
-className="text-sm text-white hover:text-blue-900 transition-colors cursor-pointer">
+className="text-sm text-white  transition-colors cursor-pointer">
 ← Back to iTruth News
 </Link>
 </div>
