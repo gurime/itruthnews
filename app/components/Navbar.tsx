@@ -364,7 +364,7 @@ className={`ml-1 transition-transform ${activeDropdown === 'opinion' ? "rotate-1
 <p  className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">
 Editorials
 </p>
-<Link href="/opinion/columns" className="block  py-1 hover:bg-blue-600 rounded">
+<Link href="/opinion/columnist" className="block  py-1 hover:bg-blue-600 rounded">
 Columnists
 </Link>
 <Link href="/opinion/" className="block  py-1 hover:bg-blue-600 rounded">
@@ -745,7 +745,7 @@ className={`transition-transform ${activeDropdown === 'mobile-opinion' ? "rotate
 <p  className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">
 Editorials
 </p>
-<Link href="/opinion/columns" className="block  py-1 hover:bg-blue-600 rounded">
+<Link href="/opinion/columnist" className="block  py-1 hover:bg-blue-600 rounded">
 Columnists
 </Link>
 <Link href="/opinion/" className="block  py-1 hover:bg-blue-600 rounded">

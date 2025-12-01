@@ -8,6 +8,7 @@ import ArticleComment from '@/app/components/ArticleComment';
 import Footer from '@/app/components/Footer';
 import Image from 'next/image';
 import RelatedArticles from '@/app/components/RelatedArticles';
+import { ARTICLE_TABLES } from '../article_tables';
 
 interface Article {
   id: string;
@@ -33,28 +34,7 @@ interface RelatedArticle {
   category?: string | null;
 }
 
-// Define all table names
-const ARTICLE_TABLES = ['article', 'sports', 'technology', 'politics', 'business', 'entertainment', 'health'];
 
-// Helper function to fetch article from multiple tables
-async function fetchArticleFromTables(id: string): Promise<Article | null> {
-  for (const table of ARTICLE_TABLES) {
-    try {
-      const { data, error } = await supabase
-        .from(table)
-        .select('id, title, image, content, bodycontent, endcontent, created_at, category, excerpt, author, author_bio, author_avatar, tags')
-        .eq('id', id)
-        .single();
-
-      if (!error && data) {
-        return { ...data, source: table };
-      }
-    } catch (err) {
-      continue;
-    }
-  }
-  return null;
-}
 
 // Helper function to fetch related articles from all tables
 async function fetchRelatedArticles(category: string | null, excludeId: string, limit: number = 3): Promise<RelatedArticle[]> {
@@ -380,4 +360,24 @@ export default async function DetailsPage({ params }: { params: Promise<{ id: st
       </div>
     </>
   );
+}
+async function fetchArticleFromTables(id: string): Promise<Article | null> {
+  for (const table of ARTICLE_TABLES) {
+    try {
+      const { data, error } = await supabase
+        .from(table)
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (!error && data) {
+        return data as Article;
+      }
+    } catch (err) {
+      // Continue to next table if error
+      continue;
+    }
+  }
+
+  return null;
 }

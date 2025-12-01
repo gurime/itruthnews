@@ -41,7 +41,6 @@ password,
 });
 
 if (error) throw error;
-setMessage("");
 toast.success("Login successful!");
 setTimeout(() => router.push('/'), 600);
 } catch (error: unknown) {
@@ -60,7 +59,7 @@ e.preventDefault();
 setLoading(true);
 setError("");
 setMessage("");
-
+toast.success("Creating your account...");
 if (password !== confirmPassword) {
 setError("Passwords do not match");
 setLoading(false);
@@ -105,7 +104,7 @@ return (
 <div className="text-center mb-8">
 <Link href="/" className="inline-block">
 <Image 
-src="/images/it_back.png" 
+src="/images/it_news.png" 
 alt="iTruth News Logo" 
 width={200} 
 height={80}
@@ -165,7 +164,8 @@ Sign Up
 )}
 
 {/* Form */}
-<form onSubmit={handleLogin} className="space-y-4">
+<form onSubmit={isLogin ? handleLogin : handleSignup} className="space-y-4">
+
 {/* Email Input */}
 <div>
 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
