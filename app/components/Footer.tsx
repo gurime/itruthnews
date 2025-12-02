@@ -27,7 +27,7 @@ return (
 
 {/* ABOUT */}
 <div>
-<Link href="/">
+
 <Image
 onClick={scrollToTop}
 title='Back To Top'
@@ -35,8 +35,8 @@ src="/images/it_news.png"
 alt="iTruth News Logo"
 width={150}
 height={50}
-className="mb-4"/>
-</Link>
+className="mb-4 cursor-pointer"/>
+
 
 <p className="text-blue-100 text-sm">
 Delivering accurate coverage you can rely on. Stay informed with truly clear reporting.
@@ -69,7 +69,7 @@ toggleSection={toggleSection}
 <FooterLink href="/help" label="Help Center" />
 <FooterLink href="/feedback" label="Send Feedback" />
 <FooterLink href="/corrections" label="Report a Correction" />
-<FooterLink href="/faq" label="FAQs" />
+<FooterLink href="/answers" label="Answers" />
 <FooterLink href="/submit-tip" label="Submit a Story Tip" />
 <FooterLink href="/community" label="Community Guidelines" />
 </FooterCollapse>

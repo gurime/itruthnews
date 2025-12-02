@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Navbar from '@/app/components/Navbar';
 import supabase from '../../supabase/supabase';
-import { Clock, Share2, Bookmark, Facebook, Twitter, Linkedin, Mail, Calendar, User } from 'lucide-react';
+import { Clock, Share2, Bookmark, Facebook, Twitter, Linkedin, Mail, Calendar, User, PenTool } from 'lucide-react';
 import { JSX } from "react";
 import Link from 'next/link';
 import ArticleComment from '@/app/components/ArticleComment';
@@ -21,7 +21,9 @@ interface Article {
   category?: string | null;
   author?: string | null;
   author_bio?: string | null;
+  author_role?: string | null;
   author_avatar?: string | null;
+  author_disclaimer?: string | null;
   excerpt?: string | null;
   tags?: string[] | string | null;
   source?: string | null;
@@ -145,6 +147,12 @@ export default async function DetailsPage({ params }: { params: Promise<{ id: st
                 <span className="font-medium text-gray-700">By {data.author}</span>
               </div>
             )}
+            {data.author_role && (
+              <div className="flex items-center gap-2">
+                <PenTool size={16} />
+                <span className="font-medium text-gray-700"> {data.author_role}</span>
+              </div>
+            )}
             {data.created_at && (
               <div className="flex items-center gap-2">
                 <Calendar size={16} />
@@ -168,6 +176,14 @@ export default async function DetailsPage({ params }: { params: Promise<{ id: st
               </Link>
             </div>
         
+          </div>
+
+          <div className='flex justify-center items-center bg-amber-950'>
+            {data.author_disclaimer && (
+              <p className="text-white text-center italic py-2 px-4">
+                {data.author_disclaimer}
+              </p>
+            )}
           </div>
 
           {/* Social Sharing Bar */}
@@ -223,7 +239,7 @@ export default async function DetailsPage({ params }: { params: Promise<{ id: st
 
           {/* Excerpt (if available) */}
           {data.excerpt && (
-            <div className="mb-8 p-6 bg-blue-50 border-l-4 border-blue-600 rounded-r-lg">
+            <div className="mb-8 p-6 bg-blue-50 border-l-4 border-blue-600 rounded-r-lg shadow-sm">
               <p className="text-lg text-gray-700 italic leading-relaxed">
                 {data.excerpt}
               </p>
@@ -296,8 +312,8 @@ export default async function DetailsPage({ params }: { params: Promise<{ id: st
           {/* Tags Section */}
           {data.tags && (
             <div className="mb-8">
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Tags</h3>
-              <div className="flex flex-wrap gap-3">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3 text-center">Tags</h3>
+              <div className="flex flex-wrap gap-3 items-center justify-center">
                 {tagsArray.map((tag, i) => {
                   const cleanTag = tag.replace(/^#/, '').trim();
                   return (
@@ -344,7 +360,6 @@ export default async function DetailsPage({ params }: { params: Promise<{ id: st
             </div>
           )}
 
-          <div className="pb-8 border-b border-gray-400 mb-8"></div>
 
          {/* Related Articles */}
 {relatedArticles && relatedArticles.length > 0 && (

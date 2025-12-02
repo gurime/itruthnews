@@ -19,8 +19,8 @@ const [loadingArticleId, setLoadingArticleId] = useState<string | null>(null);
 
 return (
 <div className="mb-12">
-<h2 className="text-2xl font-bold text-gray-900 mb-6">Related Articles</h2>
-<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+<h2 className="text-2xl font-semibold text-gray-900 mb-6">Related</h2>
+<div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-blue-50 border-l-4 border-blue-600 rounded-r-lg shadow-sm p-4">
 {articles.map((article) => (
 <Link 
 key={article.id}
