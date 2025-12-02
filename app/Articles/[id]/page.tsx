@@ -11,388 +11,413 @@ import RelatedArticles from '@/app/components/RelatedArticles';
 import { ARTICLE_TABLES } from '../article_tables';
 
 interface Article {
-  id: string;
-  title: string;
-  image?: string | null;
-  content?: string | null;
-  bodycontent?: string | null;
-  endcontent?: string | null;
-  created_at?: string | null;
-  category?: string | null;
-  author?: string | null;
-  author_bio?: string | null;
-  author_role?: string | null;
-  author_avatar?: string | null;
-  author_disclaimer?: string | null;
-  excerpt?: string | null;
-  tags?: string[] | string | null;
-  source?: string | null;
+id: string;
+title: string;
+image?: string | null;
+content?: string | null;
+bodycontent?: string | null;
+endcontent?: string | null;
+created_at?: string | null;
+category?: string | null;
+author?: string | null;
+author_bio?: string | null;
+author_role?: string | null;
+author_avatar?: string | null;
+author_disclaimer?: string | null;
+excerpt?: string | null;
+tags?: string[] | string | null;
+source?: string | null;
 }
 
 interface RelatedArticle {
-  id: string;
-  title: string;
-  image?: string | null;
-  category?: string | null;
+id: string;
+title: string;
+image?: string | null;
+category?: string | null;
 }
 
 
 
 // Helper function to fetch related articles from all tables
 async function fetchRelatedArticles(category: string | null, excludeId: string, limit: number = 3): Promise<RelatedArticle[]> {
-  if (!category) return [];
-  
-  const relatedArticles: RelatedArticle[] = [];
+if (!category) return [];
 
-  for (const table of ARTICLE_TABLES) {
-    try {
-      const { data, error } = await supabase
-        .from(table)
-        .select('id, title, image, category')
-        .eq('category', category)
-        .neq('id', excludeId)
-        .limit(limit);
+const relatedArticles: RelatedArticle[] = [];
 
-      if (!error && data) {
-        relatedArticles.push(...data);
-      }
-    } catch (err) {
-      // Continue to next table if error
-      continue;
-    }
+for (const table of ARTICLE_TABLES) {
+try {
+const { data, error } = await supabase
+.from(table)
+.select('id, title, image, category')
+.eq('category', category)
+.neq('id', excludeId)
+.limit(limit);
 
-    // Stop if we have enough articles
-    if (relatedArticles.length >= limit) break;
-  }
-
-  return relatedArticles.slice(0, limit);
+if (!error && data) {
+relatedArticles.push(...data);
 }
+} catch (err) {
+// Continue to next table if error
+continue;
+}
+
+// Stop if we have enough articles
+if (relatedArticles.length >= limit) break;
+}
+
+return relatedArticles.slice(0, limit);
+}
+
+async function fetchArticleFromTables(id: string): Promise<Article | null> {
+for (const table of ARTICLE_TABLES) {
+try {
+const { data, error } = await supabase
+.from(table)
+.select('*')
+.eq('id', id)
+.single();
+
+if (!error && data) {
+return data as Article;
+}
+} catch (err) {
+// Continue to next table if error
+continue;
+}
+}
+
+return null;
+}
+
 
 // Generate dynamic metadata for SEO
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<{ title: string }> {
-  const { id } = await params;
+const { id } = await params;
 
 
-  try {
-    const article = await fetchArticleFromTables(id);
+try {
+const article = await fetchArticleFromTables(id);
 
-    if (!article) {
-      return { title: 'iTruth News | Page Not Found' };
-    }
+if (!article) {
+return { title: 'iTruth News | Page Not Found' };
+}
 
-    return { title: `iTruth News | ${article.title}` };
-  } catch (error) {
-    return { title: 'iTruth News | Page Not Found' };
-  }
+return { title: `iTruth News | ${article.title}` };
+} catch (error) {
+return { title: 'iTruth News | Page Not Found' };
+}
 }
 
 export default async function DetailsPage({ params }: { params: Promise<{ id: string }> }): Promise<JSX.Element> {
-  const { id } = await params;
+const { id } = await params;
 
-  // Fetch the article from all tables
-  const data = await fetchArticleFromTables(id);
+// Fetch the article from all tables
+const data = await fetchArticleFromTables(id);
 
-  if (!data) {
-    return (
-      <>
-        <Navbar />
-        <div className="container mx-auto p-6 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Article not found</h1>
-          <p className="text-gray-600 mb-6">The article you&apos;re looking for doesn&apos;t exist.</p>
-          <Link href="/" className="text-blue-600 hover:underline">← Back to Home</Link>
-        </div>
-      </>
-    );
-  }
+if (!data) {
+return (
+<>
+<Navbar />
+<div className="container mx-auto p-6 text-center">
+<h1 className="text-2xl font-bold text-gray-900 mb-4">Article not found</h1>
+<p className="text-gray-600 mb-6">The article you&apos;re looking for doesn&apos;t exist.</p>
+<Link href="/" className="text-blue-600 hover:underline">← Back to Home</Link>
+</div>
+</>
+);
+}
 
-  // Fetch related articles from ALL tables
-  const relatedArticles = await fetchRelatedArticles(data.category ?? null, id, 3);
+// Fetch related articles from ALL tables
+const relatedArticles = await fetchRelatedArticles(data.category ?? null, id, 3);
 
-  // Calculate read time (average reading speed: 200 words per minute)
-  const wordCount = data.content ? data.content.split(' ').length : 0;
-  const readTime = Math.ceil(wordCount / 200);
-  
-  // Process tags
-  const tagsArray = Array.isArray(data.tags)
-    ? data.tags
-    : typeof data.tags === "string"
-      ? data.tags.split(',').map(t => t.trim())
-      : [];
 
-  return (
-    <>
-      <Navbar />
-      <div className="min-h-screen bg-gray-50">
-        {/* Main Content */}
-        <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Category Badge */}
-          {data.category && (
-            <div className="mb-4">
-              <span className="inline-block bg-blue-900 text-white text-xs font-semibold px-3 py-1 rounded-full uppercase">
-                {data.category}
-              </span>
-            </div>
-          )}
 
-          {/* Article Title */}
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-            {data.title}
-          </h1>
 
-          {/* Article Meta Information */}
-          <div className="flex flex-wrap items-center gap-4 mb-6 text-gray-600 text-sm">
-            {data.author && (
-              <div className="flex items-center gap-2">
-                <User size={16} />
-                <span className="font-medium text-gray-700">By {data.author}</span>
-              </div>
-            )}
-            {data.author_role && (
-              <div className="flex items-center gap-2">
-                <PenTool size={16} />
-                <span className="font-medium text-gray-700"> {data.author_role}</span>
-              </div>
-            )}
-            {data.created_at && (
-              <div className="flex items-center gap-2">
-                <Calendar size={16} />
-                <span>{new Date(data.created_at).toLocaleDateString('en-US', { 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}</span>
-              </div>
-            )}
-            {readTime > 0 && (
-              <div className="flex items-center gap-2">
-                <Clock size={16} />
-                <span>{readTime} min read</span>
-              </div>
-            )}
-            {/* Back to Home Link */}
-            <div className="ml-auto">
-              <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium transition">
-                ← Back to Home
-              </Link>
-            </div>
-        
-          </div>
+const fullContent = (data.content || '') + ' ' + 
+(data.bodycontent || '') + ' ' + 
+(data.endcontent || '');
 
-          <div className='flex justify-center items-center bg-amber-950'>
-            {data.author_disclaimer && (
-              <p className="text-white text-center italic py-2 px-4">
-                {data.author_disclaimer}
-              </p>
-            )}
-          </div>
+const words = fullContent.trim().split(/\s+/);
+const wordCount = fullContent.trim() === '' ? 0 : words.length;
 
-          {/* Social Sharing Bar */}
-          <div className="flex items-center justify-between border-y border-gray-200 py-4 mb-8 flex-wrap gap-4">
-            <div className="flex items-center gap-2 flex-wrap">
-              <Share2 size={18} className="text-gray-600" />
-              <span className="text-sm text-gray-600 font-medium">Share:</span>
-              <button 
-                className="p-2 hover:bg-gray-100 rounded-full transition"
-                aria-label="Share on Facebook"
-              >
-                <Facebook size={18} className="text-blue-600" />
-              </button>
-              <button 
-                className="p-2 hover:bg-gray-100 rounded-full transition"
-                aria-label="Share on Twitter"
-              >
-                <Twitter size={18} className="text-sky-500" />
-              </button>
-              <button 
-                className="p-2 hover:bg-gray-100 rounded-full transition"
-                aria-label="Share on LinkedIn"
-              >
-                <Linkedin size={18} className="text-blue-700" />
-              </button>
-              <button 
-                className="p-2 hover:bg-gray-100 rounded-full transition"
-                aria-label="Share via Email"
-              >
-                <Mail size={18} className="text-gray-600" />
-              </button>
-            </div>
-            <button 
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
-            >
-              <Bookmark size={18} />
-              <span className="text-sm font-medium">Save</span>
-            </button>
-          </div>
+const readTime = Math.ceil(wordCount / 200);
 
-          {/* Featured Image */}
-          {data.image && (
-           <div className="h-96 w-full relative  overflow-hidden shadow-md">
-  <Image
-    src={data.image}
-    alt={data.title}
-    fill
-    className="object-cover object-center"
-  />
+// Process tags
+const tagsArray = Array.isArray(data.tags)
+? data.tags
+: typeof data.tags === "string"
+? data.tags.split(',').map(t => t.trim())
+: [];
+
+return (
+<>
+<Navbar />
+<div className="min-h-screen bg-gray-50">
+{/* Main Content */}
+<article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+{/* Category Badge */}
+{data.category && (
+<div className="mb-4">
+<span className="inline-block bg-blue-900 text-white text-xs font-semibold px-3 py-1 rounded-full uppercase">
+{data.category}
+</span>
+</div>
+)}
+
+{/* Article Title */}
+<h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+{data.title}
+</h1>
+
+{/* Article Meta Information */}
+<div className="flex flex-wrap items-center gap-4 mb-6 text-gray-600 text-sm">
+{data.author && (
+<div className="flex items-center gap-2">
+<User size={16} />
+<span className="font-medium text-gray-700">By {data.author}</span>
+</div>
+)}
+{data.author_role && (
+<div className="flex items-center gap-2">
+<PenTool size={16} />
+<span className="font-medium text-gray-700"> {data.author_role}</span>
+</div>
+)}
+{data.created_at && (
+<div className="flex items-center gap-2">
+<Calendar size={16} />
+<span>{new Date(data.created_at).toLocaleDateString('en-US', { 
+year: 'numeric', 
+month: 'long', 
+day: 'numeric' 
+})}</span>
+</div>
+)}
+{readTime > 0 && (
+<div className="flex items-center gap-2">
+<Clock size={16} />
+<span>{readTime} min read</span>
+</div>
+)}
+{/* Back to Home Link */}
+<div className="ml-auto">
+<Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium transition">
+← Back to Home
+</Link>
 </div>
 
-          )}
+</div>
 
-          {/* Excerpt (if available) */}
-          {data.excerpt && (
-            <div className="mb-8 p-6 bg-blue-50 border-l-4 border-blue-600 rounded-r-lg shadow-sm">
-              <p className="text-lg text-gray-700 italic leading-relaxed">
-                {data.excerpt}
-              </p>
-            </div>
-          )}
+<div className='flex justify-center items-center bg-amber-950'>
+{data.author_disclaimer && (
+<p className="text-white text-center italic py-2 px-4">
+{data.author_disclaimer}
+</p>
+)}
+</div>
 
-      {/* Article Content */}
+{/* Social Sharing Bar */}
+<div className="flex items-center justify-between border-y border-gray-200 py-4 mb-8 flex-wrap gap-4">
+<div className="flex items-center gap-2 flex-wrap space-x-4">
+<Share2 size={18} className="text-gray-600" />
+<span className="text-sm text-gray-600 font-medium">Share:</span>
+<a href="#" className="text-blue-600 hover:text-blue-800">
+<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
+</a>
+<Link href="#" className="text-blue-600 hover:text-blue-800">
+<svg
+className="w-6 h-6"
+fill="currentColor"
+viewBox="0 0 24 24"
+>
+<path d="M18.146 2H21.5l-7.52 8.59L23.5 22h-7.09l-5.03-6.48L5.77 22H2.5l8.06-9.2L1.5 2h7.2l4.57 5.89L18.146 2z" />
+</svg>
+</Link>
+
+<Link href="#" className="text-blue-600 hover:text-blue-800">
+<svg
+className="w-6 h-6"
+fill="currentColor"
+viewBox="0 0 24 24"
+>
+<path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.25 8h4.5v14h-4.5V8zm7.5 0h4.31v1.95h.06c.6-1.14 2.07-2.34 4.26-2.34 4.55 0 5.39 2.96 5.39 6.81V22h-4.5v-6.78c0-1.62-.03-3.7-2.26-3.7-2.26 0-2.61 1.77-2.61 3.58V22h-4.5V8z"/>
+</svg>
+</Link>
+
+<Link href="#" className="text-blue-600 hover:text-blue-800">
+<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+</Link>
+<Link
+href="#"
+className="text-blue-600 hover:text-blue-800"
+>
+<svg
+className="w-6 h-6"
+fill="currentColor"
+viewBox="0 0 24 24"
+>
+<path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 2-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z" />
+</svg>
+</Link>
+
+</div>
+<button 
+className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+>
+<Bookmark size={18} />
+<span className="text-sm font-medium">Save</span>
+</button>
+</div>
+
+{/* Featured Image */}
+{data.image && (
+<div className="h-96 w-full relative  overflow-hidden shadow-md">
+<Image
+src={data.image}
+alt={data.title}
+fill
+className="object-cover object-center"
+/>
+</div>
+
+)}
+
+{/* Excerpt (if available) */}
+{data.excerpt && (
+<div className="mb-8 p-6 bg-blue-50 border-l-4 border-blue-600 rounded-r-lg shadow-sm">
+<p className="text-lg text-gray-700 italic leading-relaxed">
+{data.excerpt}
+</p>
+</div>
+)}
+
+{/* Article Content */}
 <div className="max-w-3xl mx-auto mb-12">
-  <div className="font-serif text-gray-900 leading-[1.75] text-[19px] space-y-6">
-    {/* Body Content */}
-    {data.content &&
-      data.content.split('\n\n').map((paragraph: string, index: number) => {
-        const cleanParagraph = paragraph.replace(/###\s*/g, '').trim();
-        
-        if (!cleanParagraph) return null;
-        
-        // Add drop cap to first paragraph
-        if (index === 0) {
-          const firstLetter = cleanParagraph.charAt(0);
-          const restOfText = cleanParagraph.slice(1);
-          return (
-            <p key={`body-${index}`} className="text-justify">
-              <span className="float-left text-7xl font-bold leading-[0.85] pr-2 pt-1 text-blue-900">
-                {firstLetter}
-              </span>
-              {restOfText}
-            </p>
-          );
-        }
-        
-        return (
-          <p key={`body-${index}`} className="text-justify first-letter:text-gray-900">
-            {cleanParagraph}
-          </p>
-        );
-      })}
+<div className="font-serif text-gray-900 leading-[1.75] text-[19px] space-y-6">
+{/* Body Content */}
+{data.content &&
+data.content.split('\n\n').map((paragraph: string, index: number) => {
+const cleanParagraph = paragraph.replace(/###\s*/g, '').trim();
 
-    {/* Original Content (if bodycontent doesn't exist) */}
-    {data.bodycontent &&
-    data.bodycontent.split('\n\n').map((paragraph: string, index: number) => {
-        const cleanParagraph = paragraph.replace(/###\s*/g, '').trim();
-        
-        if (!cleanParagraph) return null;
-        
-      
-        
-        return (
-          <p key={`content-${index}`} className="text-justify first-letter:text-gray-900">
-            {cleanParagraph}
-          </p>
-        );
-      })}
+if (!cleanParagraph) return null;
 
-    {/* End Content */}
-    {data.endcontent &&
-      data.endcontent.split('\n\n').map((paragraph: string, index: number) => {
-        const cleanParagraph = paragraph.replace(/###\s*/g, '').trim();
-        
-        if (!cleanParagraph) return null;
-        
-        return (
-          <p key={`end-${index}`} className="text-justify first-letter:text-gray-900">
-            {cleanParagraph}
-          </p>
-        );
-      })}
-  </div>
+// Add drop cap to first paragraph
+if (index === 0) {
+const firstLetter = cleanParagraph.charAt(0);
+const restOfText = cleanParagraph.slice(1);
+return (
+<p key={`body-${index}`} className="text-justify">
+<span className="float-left text-7xl font-bold leading-[0.85] pr-2 pt-1 text-blue-900">
+{firstLetter}
+</span>
+{restOfText}
+</p>
+);
+}
+
+return (
+<p key={`body-${index}`} className="text-justify first-letter:text-gray-900">
+{cleanParagraph}
+</p>
+);
+})}
+
+{/* Original Content (if bodycontent doesn't exist) */}
+{data.bodycontent &&
+data.bodycontent.split('\n\n').map((paragraph: string, index: number) => {
+const cleanParagraph = paragraph.replace(/###\s*/g, '').trim();
+
+if (!cleanParagraph) return null;
+
+
+
+return (
+<p key={`content-${index}`} className="text-justify first-letter:text-gray-900">
+{cleanParagraph}
+</p>
+);
+})}
+
+{/* End Content */}
+{data.endcontent &&
+data.endcontent.split('\n\n').map((paragraph: string, index: number) => {
+const cleanParagraph = paragraph.replace(/###\s*/g, '').trim();
+
+if (!cleanParagraph) return null;
+
+return (
+<p key={`end-${index}`} className="text-justify first-letter:text-gray-900">
+{cleanParagraph}
+</p>
+);
+})}
+</div>
 </div>
 
-          {/* Tags Section */}
-          {data.tags && (
-            <div className="mb-8">
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3 text-center">Tags</h3>
-              <div className="flex flex-wrap gap-3 items-center justify-center">
-                {tagsArray.map((tag, i) => {
-                  const cleanTag = tag.replace(/^#/, '').trim();
-                  return (
-                    <span
-                      key={i}
-                      className="inline-block bg-sky-100 text-sky-700 text-sm font-medium px-4 py-2 rounded-full hover:bg-sky-200 transition cursor-pointer"
-                    >
-                      #{cleanTag}
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+{/* Tags Section */}
+{data.tags && (
+<div className="mb-8">
+<h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3 text-center">Tags</h3>
+<div className="flex flex-wrap gap-3 items-center justify-center">
+{tagsArray.map((tag, i) => {
+const cleanTag = tag.replace(/^#/, '').trim();
+return (
+<span
+key={i}
+className="inline-block bg-sky-100 text-sky-700 text-sm font-medium px-4 py-2 rounded-full hover:bg-sky-200 transition cursor-pointer"
+>
+#{cleanTag}
+</span>
+);
+})}
+</div>
+</div>
+)}
 
-          <div className="pb-8 border-b border-gray-200 mb-8"></div>
+<div className="pb-8 border-b border-gray-200 mb-8"></div>
 
-          {/* Author Card */}
-          {data.author && (
-            <div className="bg-sky-50 rounded-xl p-6 mb-8">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-sky-200 rounded-full flex items-center justify-center shrink-0">
-                  {data.author_avatar ? (
-                <Image
-  src={data.author_avatar}
-  alt={data.author}
-  width={40}
-  height={40}
-  className="rounded-full object-cover"
+{/* Author Card */}
+{data.author && (
+<div className="bg-sky-50 rounded-xl p-6 mb-8">
+<div className="flex items-center gap-4">
+<div className="w-16 h-16 bg-sky-200 rounded-full flex items-center justify-center shrink-0">
+{data.author_avatar ? (
+<Image
+src={data.author_avatar}
+alt={data.author}
+width={40}
+height={40}
+className="rounded-full object-cover"
 />
 
-                  ) : (
-                    <User size={32} className="text-sky-600" />
-                  )}
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg text-gray-900">About the Author</h3>
-                  <p className="text-gray-700 font-medium">{data.author}</p>
-                  <p className="text-gray-600 text-sm mt-1">
-                    {data.author_bio || 'Author bio not available.'}.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-
-         {/* Related Articles */}
-{relatedArticles && relatedArticles.length > 0 && (
-  <RelatedArticles articles={relatedArticles} />
+) : (
+<User size={32} className="text-sky-600" />
 )}
-        </article>
-          <div className="pb-8 border-b border-gray-400 mb-8"></div>
+</div>
+<div>
+<h3 className="font-bold text-lg text-gray-900">About the Author</h3>
+<p className="text-gray-700 font-medium">{data.author}</p>
+<p className="text-gray-600 text-sm mt-1">
+{data.author_bio || 'Author bio not available.'}.
+</p>
+</div>
+</div>
+</div>
+)}
 
-        {/* Comments Section */}
-      <ArticleComment articleId={id} />
 
-        <Footer/>
-      </div>
-    </>
-  );
-}
-async function fetchArticleFromTables(id: string): Promise<Article | null> {
-  for (const table of ARTICLE_TABLES) {
-    try {
-      const { data, error } = await supabase
-        .from(table)
-        .select('*')
-        .eq('id', id)
-        .single();
+{/* Related Articles */}
+{relatedArticles && relatedArticles.length > 0 && (
+<RelatedArticles articles={relatedArticles} />
+)}
+</article>
+<div className="pb-8 border-b border-gray-400 mb-8"></div>
 
-      if (!error && data) {
-        return data as Article;
-      }
-    } catch (err) {
-      // Continue to next table if error
-      continue;
-    }
-  }
+{/* Comments Section */}
+<ArticleComment articleId={id} />
 
-  return null;
+<Footer/>
+</div>
+</>
+);
 }

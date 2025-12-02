@@ -18,7 +18,7 @@ window.scrollTo({ top: 0, behavior: 'smooth' });
 
 
 return (
-<footer className=" text-white py-12 mt-12 dark:bg-blue-900">
+<footer className=" text-white py-12 dark:bg-blue-900">
 
 <div className="container mx-auto px-4">
 
@@ -51,7 +51,6 @@ openSection={openSection}
 toggleSection={toggleSection}
 >
 <FooterLink href="/about" label="About Us" />
-<FooterLink href="/contact" label="Contact" />
 <FooterLink href="/advertise" label="Advertise" />
 <FooterLink href="/careers" label="Careers" />
 <FooterLink href="/press" label="Press & Media" />
@@ -67,9 +66,10 @@ openSection={openSection}
 toggleSection={toggleSection}
 >
 <FooterLink href="/help" label="Help Center" />
+<FooterLink href="/contact" label="Contact" />
 <FooterLink href="/feedback" label="Send Feedback" />
 <FooterLink href="/corrections" label="Report a Correction" />
-<FooterLink href="/answers" label="Answers" />
+<FooterLink href="/faq" label="FAQ" />
 <FooterLink href="/submit-tip" label="Submit a Story Tip" />
 <FooterLink href="/community" label="Community Guidelines" />
 </FooterCollapse>
@@ -85,6 +85,7 @@ toggleSection={toggleSection}
 <FooterLink href="/terms" label="Terms of Service" />
 <FooterLink href="/cookies" label="Cookie Policy" />
 <FooterLink href="/licensing" label="Licensing & Permissions" />
+<FooterLink href="/diversity" label="Diversity Policy"/>
 <FooterLink href="/accessibility" label="Accessibility Statement" />
 </FooterCollapse>
 </div>
