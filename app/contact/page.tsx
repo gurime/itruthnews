@@ -7,6 +7,7 @@ import toast, { Toaster } from "react-hot-toast";
 import type { User } from "@supabase/supabase-js";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
+import Link from "next/link";
 
 export default function Contact() {
 const [email, setEmail] = useState('');
@@ -100,8 +101,9 @@ setTextMessage('');
 setCategory('general');
 toast.success("Your message has been sent successfully! We'll get back to you within 24-48 hours.");
 
-} catch (error: any) {
-toast.error(error.message || 'Something went wrong. Please try again.');
+} catch (error: Error | unknown) {
+const errorMessage = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
+toast.error(errorMessage);
 } finally {
 setIsSubmitting(false);
 }
@@ -161,7 +163,7 @@ return (
 Contact Us
 </h1>
 <p className="text-xl text-blue-100">
-We'd love to hear from you. Get in touch with our team.
+We&lsquo;d love to hear from you. Get in touch with our team.
 </p>
 </div>
 </div>
@@ -210,7 +212,7 @@ Send Us a Message
 <p className="text-gray-600 mb-6">
 {user 
 ? "Fill out the form below and we'll get back to you as soon as possible."
-: "Anyone can contact us! Fill out the form below and we'll get back to you as soon as possible."}
+: "Only Registered users can fill out the form below!"}
 </p>
 
 {!isLoadingUser && user && (
@@ -309,27 +311,40 @@ className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus
 {/* Submit Button */}
 <button
 onClick={handleContact}
-disabled={isSubmitting}
+disabled={!user || isSubmitting}
 className={`w-full py-4 rounded-lg font-bold text-lg transition-all duration-200 flex items-center justify-center ${
-isSubmitting
-? 'bg-gray-400 cursor-not-allowed'
+!user || isSubmitting
+? 'bg-gray-400 cursor-not-allowed text-gray-700'
 : 'bg-blue-900 hover:bg-blue-800 text-white shadow-lg hover:shadow-xl'
-}`}>
+}`}
+>
 {isSubmitting ? (
 <>
-<svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+<Link href="#" className="text-blue-600 hover:text-blue-800">
+<svg
+className="w-6 h-6"
+fill="currentColor"
+viewBox="0 0 24 24"
+>
+<path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.25 8h4.5v14h-4.5V8zm7.5 0h4.31v1.95h.06c.6-1.14 2.07-2.34 4.26-2.34 4.55 0 5.39 2.96 5.39 6.81V22h-4.5v-6.78c0-1.62-.03-3.7-2.26-3.7-2.26 0-2.61 1.77-2.61 3.58V22h-4.5V8z"/>
 </svg>
+</Link>
 Sending...
 </>
 ) : (
 <>
 <Send className="w-5 h-5 mr-2" />
-Send Message
+{!user ? 'Sign In to Send Message' : 'Send Message'}
 </>
 )}
 </button>
+
+{/* Optional: Add a message below the button explaining why they need to sign in */}
+{!user && (
+<p className="text-sm text-gray-600 text-center mt-2">
+Please sign in to submit a contact form
+</p>
+)}
 </div>
 </div>
 </div>
@@ -402,15 +417,33 @@ Headquarters
 Follow Us
 </h3>
 <div className="flex space-x-4">
-<a href="#" className="text-blue-600 hover:text-blue-800">
-<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
-</a>
-<a href="#" className="text-blue-600 hover:text-blue-800">
+<Link href="#" className="text-blue-600 hover:text-blue-800">
+<svg
+className="w-6 h-6"
+fill="currentColor"
+viewBox="0 0 24 24"
+>
+<path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.25 8h4.5v14h-4.5V8zm7.5 0h4.31v1.95h.06c.6-1.14 2.07-2.34 4.26-2.34 4.55 0 5.39 2.96 5.39 6.81V22h-4.5v-6.78c0-1.62-.03-3.7-2.26-3.7-2.26 0-2.61 1.77-2.61 3.58V22h-4.5V8z"/>
+</svg>
+</Link>
+
+<Link href="#" className="text-blue-600 hover:text-blue-800">
 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
-</a>
-<a href="#" className="text-blue-600 hover:text-blue-800">
+</Link>
+
+<Link href="#" className="text-blue-600 hover:text-blue-800">
+<svg
+className="w-6 h-6"
+fill="currentColor"
+viewBox="0 0 24 24"
+>
+<path d="M18.146 2H21.5l-7.52 8.59L23.5 22h-7.09l-5.03-6.48L5.77 22H2.5l8.06-9.2L1.5 2h7.2l4.57 5.89L18.146 2z" />
+</svg>
+</Link>
+
+<Link href="#" className="text-blue-600 hover:text-blue-800">
 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-</a>
+</Link>
 </div>
 </div>
 
@@ -433,7 +466,7 @@ Frequently Asked Questions
 How do I submit a correction?
 </h3>
 <p className="text-gray-600">
-Please email corrections@itruthnews.com with the article URL, the error you've identified, 
+Please email corrections@itruthnews.com with the article URL, the error you&lsquo;ve identified, 
 and the correct information. We review all correction requests promptly.
 </p>
 </div>
@@ -443,7 +476,7 @@ Can I pitch a story idea?
 </h3>
 <p className="text-gray-600">
 Absolutely! Send your story ideas to tips@itruthnews.com. Please include relevant details, 
-sources, and why you think it's important for our readers.
+sources, and why you think it&lsquo;s important for our readers.
 </p>
 </div>
 <div className="bg-white p-6 rounded-lg shadow-sm">
@@ -451,7 +484,7 @@ sources, and why you think it's important for our readers.
 How do I report a technical issue?
 </h3>
 <p className="text-gray-600">
-For website or app issues, please use the contact form above and select "Technical Support" 
+For website or app issues, please use the contact form above and select &ldquo;Technical Support&ldquo; 
 as the category. Include details about your device, browser, and what you were trying to do.
 </p>
 </div>
