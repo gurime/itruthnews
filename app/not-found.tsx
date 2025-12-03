@@ -29,7 +29,7 @@ Oops... The link you clicked may be broken or the page may have been removed.
 <div className="pt-4">
 <button
 onClick={() => router.back()}
-className="group inline-flex items-center gap-2 px-8 py-3 text-lg font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-lg hover:shadow-red-500/50 transition-all duration-300 transform hover:scale-105 active:scale-95"
+className="group inline-flex items-center gap-2 px-8 py-3 text-lg font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-lg hover:shadow-red-500/50 transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer"
 >
 <span className="transition-transform group-hover:-translate-x-1">←</span>
 <span className="capitalize cursor-pointer">Go Back</span>

@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import Link from 'next/link';
 
 export default function Footer() {
 const [openSection, setOpenSection] = useState<string | null>(null);
@@ -25,7 +24,6 @@ return (
 {/* Grid */}
 <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
 
-{/* ABOUT */}
 <div>
 
 <Image

@@ -133,9 +133,7 @@ const relatedArticles = await fetchRelatedArticles(data.category ?? null, id, 3)
 
 
 
-const fullContent = (data.content || '') + ' ' + 
-(data.bodycontent || '') + ' ' + 
-(data.endcontent || '');
+const fullContent = (data.content || '') + ' ' + (data.bodycontent || '') + ' ' + (data.endcontent || '');
 
 const words = fullContent.trim().split(/\s+/);
 const wordCount = fullContent.trim() === '' ? 0 : words.length;
@@ -143,9 +141,7 @@ const wordCount = fullContent.trim() === '' ? 0 : words.length;
 const readTime = Math.ceil(wordCount / 200);
 
 // Process tags
-const tagsArray = Array.isArray(data.tags)
-? data.tags
-: typeof data.tags === "string"
+const tagsArray = Array.isArray(data.tags) ? data.tags : typeof data.tags === "string" 
 ? data.tags.split(',').map(t => t.trim())
 : [];
 

@@ -8,9 +8,7 @@ import Navbar from "../components/Navbar";
 import supabase from "../supabase/supabase";
 import toast, { Toaster } from "react-hot-toast";
 
-// --- START: New ScheduleCallModal Component ---
-// This is a simple modal. For a production app, you might use a dedicated library
-// like Headless UI or Radix UI for better accessibility.
+
 
 interface ScheduleCallModalProps {
 isOpen: boolean;
