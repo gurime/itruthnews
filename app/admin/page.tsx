@@ -8,6 +8,7 @@ import toast, { Toaster } from "react-hot-toast";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
+import { categories } from "./category_tables";
 
 interface Article {
 id: string;
@@ -59,19 +60,7 @@ const [image, setImage] = useState<File | null>(null);
 const [imageUrl, setImageUrl] = useState("");
 const [imagePreview, setImagePreview] = useState("");
 
-// Categories mapping
-const categories = [
-{ value: "politics", label: "Politics", table: "politics" },
-{ value: "economy", label: "Economy", table: "economy" },
-{ value: "crime", label: "Crime", table: "crime" },
-{ value: "climate", label: "Climate", table: "climate" },
-{ value: "world", label: "World News", table: "world" },
-{ value: "tech", label: "Technology", table: "tech" },
-{ value: "sports", label: "Sports", table: "sports" },
-{ value: "opinion", label: "Opinion", table: "columnists" },
-{ value: "lifestyle", label: "Lifestyle", table: "lifestyle" },
-{ value: "arts", label: "Arts & Culture", table: "arts" }
-];
+
 
 useEffect(() => {
 checkAuth();
@@ -282,7 +271,7 @@ return (
 <div className="text-center mb-8">
 <Lock className="w-16 h-16 text-blue-900 mx-auto mb-4" />
 <Link href="/">
-<h1 className="text-2xl font-bold">iTruth News CMS</h1>
+<h1 className="text-2xl font-bold" title="Home">iTruth News CMS</h1>
 <p className="text-blue-200 text-sm">Content Management System</p>
 </Link>
 </div>
@@ -344,7 +333,7 @@ return (
 <div className="flex items-center justify-between">
 <div>
 <Link href="/">
-<h1 className="text-2xl font-bold">iTruth News CMS</h1>
+<h1 className="text-2xl font-bold" title="Home">iTruth News CMS</h1>
 <p className="text-blue-200 text-sm">Content Management System</p>
 </Link>
 </div>

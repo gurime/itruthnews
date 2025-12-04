@@ -1,8 +1,8 @@
 const ARTICLE_TABLES = [
-  'article', 
+  'dashboard', 
   'politics', 
   'columnists',
-  // New categories based on Navbar links:
+  'guest-voices'
  
 
 ];

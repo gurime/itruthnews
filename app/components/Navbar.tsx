@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import supabase from "../supabase/supabase";
 import type { User } from "@supabase/supabase-js";
 import toast, { Toaster } from 'react-hot-toast';
+import { specialCoverage } from "../admin/category_tables";
 
 export default function Navbar() {
 const [menuOpen, setMenuOpen] = useState(false);
@@ -19,32 +20,7 @@ const [isSubscribed, setIsSubscribed] = useState(false);
 const [showNewsletter, setShowNewsletter] = useState(false);
 const router = useRouter();
 
-const specialCoverage = {
-  1: [ // February (0-indexed, so 1 = February)
-    { href: "/black-history", label: "Black History Month" },
-    { href: "/valentines-day", label: "Valentine's Day" },
-  ],
-  3: [ // April
-    { href: "/earth-day", label: "Earth Day" },
-  ],
-  5: [ // June
-    { href: "/pride", label: "Pride Month" },
-    { href: "/juneteenth", label: "Juneteenth" },
-    { href: "/fathers-day", label: "Father's Day" },
-  ],
-  9: [ // October
-    { href: "/hispanic-heritage", label: "Hispanic Heritage Month" },
-    { href: "/halloween", label: "Halloween" },
-  ],
-10: [ // November
-{ href: "/native-american-heritage", label: "Native American Heritage Month" },
-{ href: "/thanksgiving", label: "Thanksgiving" },
-],
-11: [ // December
-{ href: "/holidays", label: "Holiday Season" },
-{ href: "/new-years-eve", label: "New Year's Eve" },
-],
-};
+
 
 // Get current month's special coverage
 const currentMonth = new Date().getMonth() + 1; // Adjust to 1-indexed
@@ -403,7 +379,7 @@ Editorials
 <Link href="/opinion/columnist" className="block  py-1 hover:bg-blue-600 rounded">
 Columnists
 </Link>
-<Link href="/opinion/" className="block  py-1 hover:bg-blue-600 rounded">
+<Link href="/opinion/guest-voices" className="block  py-1 hover:bg-blue-600 rounded">
 Guest Voices
 </Link>
 <Link href="/opinion/editorials" className="block  py-1 hover:bg-blue-600 rounded">
@@ -473,7 +449,8 @@ className={`ml-1 transition-transform ${activeDropdown === 'lifestyle' ? "rotate
 <Link href="/fitness" className="block  py-1 hover:bg-blue-600 rounded">Fitness</Link>
 <Link href="/nutrition" className="block  py-1 hover:bg-blue-600 rounded">Nutrition</Link>
 <Link href="/mental-health" className="block  py-1 hover:bg-blue-600 rounded">Mental Health</Link>
-<Link href="/family" className="block  py-1 hover:bg-blue-600 rounded">Family</Link>
+<Link href="/yoga-Meditation" className="block  py-1 hover:bg-blue-600 rounded">Yoga & Meditation</Link>
+<Link href="/sleep" className="block  py-1 hover:bg-blue-600 rounded">Sleep</Link>
 
 {/* Health & Wellness */}
 <div className="mt-4 pt-4 border-t border-blue-700">
@@ -483,6 +460,10 @@ className={`ml-1 transition-transform ${activeDropdown === 'lifestyle' ? "rotate
 <Link href="/models" className="block  py-1 hover:bg-blue-600 rounded">Models</Link>
 <Link href="/runway" className="block  py-1 hover:bg-blue-600 rounded">Runway</Link>
 <Link href="/designers" className="block  py-1 hover:bg-blue-600 rounded">Designers</Link>
+<Link href="/makeup" className="block  py-1 hover:bg-blue-600 rounded">Makeup</Link>
+<Link href="/accessories" className="block  py-1 hover:bg-blue-600 rounded">Accessories</Link>
+<Link href="/skincare" className="block  py-1 hover:bg-blue-600 rounded">Skincare</Link>
+<Link href="/hair" className="block  py-1 hover:bg-blue-600 rounded">Hair</Link>
 <Link href="/weddings" className="block  py-1 hover:bg-blue-600 rounded">Weddings</Link>
 </div>
 
@@ -500,6 +481,15 @@ className={`ml-1 transition-transform ${activeDropdown === 'lifestyle' ? "rotate
 <Link href="/real-estate" className="block  py-1 hover:bg-blue-600 rounded">Real Estate</Link>
 <Link href="/destinations" className="block  py-1 hover:bg-blue-600 rounded">Destinations</Link>
 <Link href="/travel-tips" className="block  py-1 hover:bg-blue-600 rounded">Travel Tips</Link>
+</div>
+
+{/* Other */}
+<div className="mt-4 pt-4 border-t border-blue-700">
+<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Other</p>
+<Link href="/cars" className="block  py-1 hover:bg-blue-600 rounded">Cars</Link>
+<Link href="/luxury" className="block  py-1 hover:bg-blue-600 rounded">Luxury Living</Link>
+<Link href="/shopping" className="block  py-1 hover:bg-blue-600 rounded">Shopping</Link>
+<Link href="/hobbies" className="block  py-1 hover:bg-blue-600 rounded">Hobbies</Link>
 </div>
 
 
@@ -904,18 +894,30 @@ className={`ml-1 transition-transform ${activeDropdown === 'lifestyle' ? "rotate
 <div className="mt-4 pt-4 border-t border-blue-700">
 <p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Fashion</p>
 <Link href="/beauty" className="block  py-1 hover:bg-blue-600 rounded">Beauty</Link>
-<Link href="/style" className="block py-1 hover:bg-blue-600 rounded">Style</Link>
-<Link href="/models" className="block py-1 hover:bg-blue-600 rounded">Models</Link>
+<Link href="/style" className="block  py-1 hover:bg-blue-600 rounded">Style</Link>
+<Link href="/models" className="block  py-1 hover:bg-blue-600 rounded">Models</Link>
 <Link href="/runway" className="block  py-1 hover:bg-blue-600 rounded">Runway</Link>
 <Link href="/designers" className="block  py-1 hover:bg-blue-600 rounded">Designers</Link>
+<Link href="/makeup" className="block  py-1 hover:bg-blue-600 rounded">Makeup</Link>
+<Link href="/accessories" className="block  py-1 hover:bg-blue-600 rounded">Accessories</Link>
+<Link href="/skincare" className="block  py-1 hover:bg-blue-600 rounded">Skincare</Link>
+<Link href="/hair" className="block  py-1 hover:bg-blue-600 rounded">Hair</Link>
 <Link href="/weddings" className="block  py-1 hover:bg-blue-600 rounded">Weddings</Link>
 </div>
-{/* Fashion*/}
+{/* Travel*/}
 <div className=" pt-4 border-t border-blue-700">
 <p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Travel</p>
 <Link href="/real-estate" className="block  py-1 hover:bg-blue-600 rounded">Real Estate</Link>
 <Link href="/destinations" className="block  py-1 hover:bg-blue-600 rounded">Destinations</Link>
 <Link href="/travel-tips" className="block  py-1 hover:bg-blue-600 rounded">Travel Tips</Link>
+</div>
+{/* Other*/}
+<div className=" pt-4 border-t border-blue-700">
+<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Other</p>
+<Link href="/cars" className="block  py-1 hover:bg-blue-600 rounded">Cars</Link>
+<Link href="/luxury" className="block  py-1 hover:bg-blue-600 rounded">Luxury Living</Link>
+<Link href="/shopping" className="block  py-1 hover:bg-blue-600 rounded">Shopping</Link>
+<Link href="/hobbies" className="block  py-1 hover:bg-blue-600 rounded">Hobbies</Link>
 </div>
 
 
