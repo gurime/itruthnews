@@ -31,8 +31,12 @@ onClick={scrollToTop}
 title='Back To Top'
 src="/images/it_news.png"
 alt="iTruth News Logo"
+loading="eager"
+priority
 width={150}
 height={50}
+  style={{ width: "auto" ,height:"auto"}}
+
 className="mb-4 cursor-pointer"/>
 
 

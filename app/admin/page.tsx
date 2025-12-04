@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { FileText, Upload, ImageIcon, User, Tag, AlertCircle, CheckCircle, LogOut, Eye, Lock, Loader } from "lucide-react";
+import { FileText, Upload, ImageIcon, User, Tag, AlertCircle, CheckCircle, LogOut, Eye, Lock, Loader, LockIcon } from "lucide-react";
 import supabase from "../supabase/supabase";
 import toast, { Toaster } from "react-hot-toast";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
+import Image from "next/image";
+import Link from "next/link";
 
 interface Article {
 id: string;
@@ -119,8 +122,9 @@ setIsAuthenticated(true);
 setAuthor(data.user.email || "");
 toast.success("Login successful!");
 }
-} catch (error: any) {
-toast.error(error.message || "Login failed");
+} catch (error: unknown) {
+const errorMessage = error instanceof Error ? error.message : "Login failed";
+toast.error(errorMessage);
 }
 };
 
@@ -130,7 +134,7 @@ await supabase.auth.signOut();
 setUser(null);
 setIsAuthenticated(false);
 toast.success("Logged out successfully");
-} catch (error: any) {
+} catch (error: unknown) {
 toast.error("Logout failed");
 }
 };
@@ -139,7 +143,7 @@ const handleImageUpload = async (file: File) => {
 try {
 const fileExt = file.name.split('.').pop();
 const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
-const filePath = `articles/${fileName}`;
+const filePath = `${fileName}`;
 
 const { data, error } = await supabase.storage
 .from('images')
@@ -147,17 +151,22 @@ const { data, error } = await supabase.storage
 
 if (error) throw error;
 
-const { data: urlData } = supabase.storage
+// Use createSignedUrl instead of getPublicUrl for consistency
+const { data: urlData } = await supabase.storage
 .from('images')
-.getPublicUrl(filePath);
+.createSignedUrl(filePath, 60 * 60 * 24 * 365); // 1 year expiry
 
-return urlData.publicUrl;
-} catch (error: any) {
-toast.error(`Image upload failed: ${error.message}`);
+if (!urlData) {
+throw new Error('Failed to generate signed URL');
+}
+
+return urlData.signedUrl;
+} catch (error: unknown) {
+const errorMessage = error instanceof Error ? error.message : "Unknown error";
+toast.error(`Image upload failed: ${errorMessage}`);
 return null;
 }
 };
-
 const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 const file = e.target.files?.[0];
 if (file) {
@@ -230,8 +239,9 @@ toast.success(`Article published successfully to ${selectedCategory?.label}!`);
 
 // Reset form
 resetForm();
-} catch (error: any) {
-toast.error(`Publication failed: ${error.message}`);
+} catch (error: unknown) {
+const errorMessage = error instanceof Error ? error.message : "Publication failed";
+toast.error(`Publication failed: ${errorMessage}`);
 } finally {
 setIsSubmitting(false);
 }
@@ -271,8 +281,10 @@ return (
 <div className="bg-white rounded-lg shadow-2xl p-8 w-full max-w-md">
 <div className="text-center mb-8">
 <Lock className="w-16 h-16 text-blue-900 mx-auto mb-4" />
-<h1 className="text-3xl font-bold text-gray-900 mb-2">iTruth News CMS</h1>
-<p className="text-gray-600">Staff & Writers Login</p>
+<Link href="/">
+<h1 className="text-2xl font-bold">iTruth News CMS</h1>
+<p className="text-blue-200 text-sm">Content Management System</p>
+</Link>
 </div>
 
 <div className="space-y-4">
@@ -331,8 +343,10 @@ return (
 <div className="container mx-auto px-4 py-4">
 <div className="flex items-center justify-between">
 <div>
+<Link href="/">
 <h1 className="text-2xl font-bold">iTruth News CMS</h1>
 <p className="text-blue-200 text-sm">Content Management System</p>
+</Link>
 </div>
 <div className="flex items-center gap-4">
 <div className="text-right">
@@ -478,7 +492,8 @@ className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus
 {imagePreview && (
 <div className="mt-4">
 <p className="text-sm text-gray-600 mb-2">Preview:</p>
-<img src={imagePreview} alt="Preview" className="max-w-xs rounded-lg shadow-md" />
+<Image loading="eager"
+priority style={{width:"auto", height:"auto"}} height={100} width={500} src={imagePreview} alt="Preview" className="max-w-xs rounded-lg shadow-md" />
 </div>
 )}
 </div>
@@ -630,7 +645,7 @@ disabled={isSubmitting}
 className={`flex-1 py-4 rounded-lg font-bold text-lg transition-all duration-200 flex items-center justify-center ${
 isSubmitting
 ? 'bg-gray-400 cursor-not-allowed'
-: 'bg-blue-900 hover:bg-blue-800 text-white shadow-lg hover:shadow-xl'
+: 'bg-blue-900 hover:bg-blue-800 text-white shadow-lg hover:shadow-xl cursor-pointer'
 }`}>
 {isSubmitting ? (
 <>
@@ -647,7 +662,7 @@ Publish Article
 <button
 onClick={resetForm}
 disabled={isSubmitting}
-className="px-8 py-4 bg-gray-200 text-gray-700 rounded-lg font-bold hover:bg-gray-300 transition-colors">
+className="px-8 py-4 bg-gray-200 text-gray-700 rounded-lg font-bold hover:bg-gray-300 transition-colors cursor-pointer">
 Clear Form
 </button>
 </div>

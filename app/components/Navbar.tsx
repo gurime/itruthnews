@@ -290,7 +290,9 @@ onClick={() => router.push('/login')}>Sign in
 <div className="hidden md:block">
 <div className="flex items-center justify-center mb-10">
 <Link href="/">
-<Image src="/images/it_news.png" alt="Truth News Logo" width={200} height={200} />
+<Image src="/images/it_news.png" loading="eager"
+priority alt="Truth News Logo"   style={{ width: "auto" ,height:"auto"}}
+ width={200} height={200} />
 </Link>
 </div>
       
@@ -337,6 +339,40 @@ Climate
 <Link href="/markets" className="block  py-1 hover:bg-blue-600 rounded">Markets</Link>
 <Link href="/tech" className="block  py-1 hover:bg-blue-600 rounded">Tech</Link>
 <Link href="/media" className="block  py-1 hover:bg-blue-600 rounded">Media</Link>
+</div>
+
+</div>
+)}
+</div>
+
+{/* iTruth Business */}
+<div className="relative">
+<button
+type="button"
+className="hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
+onClick={() => toggleDropdown('itruth business')}
+aria-expanded={activeDropdown === 'itruth business'}>
+iTruth Business
+<ChevronDown
+height={20}
+className={`ml-1 transition-transform ${activeDropdown === 'itruth business' ? "rotate-180" : ""}`}/>
+</button>
+
+{activeDropdown === 'itruth business' && (
+<div className="absolute left-0 dark:bg-blue-900 text-white mt-2 py-6 w-96 rounded shadow-lg z-50 px-4">
+
+<div>
+
+<Link href="/markets/stocks" className="block py-1 hover:bg-blue-600 rounded">Stocks</Link>
+<Link href="/markets/us" className="block py-1 hover:bg-blue-600 rounded">U.S. Markets</Link>
+<Link href="/markets/pre" className="block py-1 hover:bg-blue-600 rounded">Pre-Markets</Link>
+<Link href="/markets/crypto" className="block py-1 hover:bg-blue-600 rounded">Cryptocurrency</Link>
+<Link href="/markets/futures" className="block py-1 hover:bg-blue-600 rounded">Futures & Commodities</Link>
+<Link href="/markets/bonds" className="block py-1 hover:bg-blue-600 rounded">Bonds</Link>
+<Link href="/markets/etfs" className="block py-1 hover:bg-blue-600 rounded">ETFs</Link>
+<Link href="/business-leaders" className="block py-1 hover:bg-blue-600 rounded">Business Leaders</Link>
+<Link href="/markets/mutual-funds" className="block py-1 hover:bg-blue-600 rounded">Mutual Funds</Link>
+
 </div>
 
 </div>
@@ -670,7 +706,11 @@ className={`ml-1 transition-transform ${activeDropdown === 'arts' ? "rotate-180"
 <div className="md:hidden">
 <div className="flex items-center justify-between">
 <div className="shrink-0">
-<Image src="/images/it_news.png" alt="Truth News Logo" width={200} height={200} />
+<Link href="/">
+<Image 
+loading="eager"
+priority src="/images/it_news.png" alt="Truth News Logo" width={200} height={200} />
+</Link>
 </div>
 <button 
 className="text-white focus:outline-none text-2xl cursor-pointer"
@@ -719,6 +759,39 @@ Climate
 <Link href="/tech" className="block  py-1 hover:bg-blue-600 rounded">Tech</Link>
 <Link href="/energy" className="block  py-1 hover:bg-blue-600 rounded">Energy</Link>
 <Link href="/media" className="block  py-1 hover:bg-blue-600 rounded">Media</Link>
+</div>
+
+
+</div>
+)}
+</div>
+
+<div className="mb-4">
+<button
+type="button"
+className="w-full font-bold text-left hover:underline cursor-pointer flex items-center justify-between "
+onClick={() => toggleDropdown('itruth-business')}>
+iTruth Business
+<ChevronDown
+height={20}
+className={`transition-transform ${activeDropdown === 'itruth-business' ? "rotate-180" : ""}`} 
+/>
+</button>
+
+{activeDropdown === 'itruth-business' && (
+<div className=" mt-2 space-y-2">
+
+
+<div>
+<Link href="/markets/stocks" className="block py-1 hover:bg-blue-600 rounded">Stocks</Link>
+<Link href="/markets/us" className="block py-1 hover:bg-blue-600 rounded">U.S. Markets</Link>
+<Link href="/markets/pre" className="block py-1 hover:bg-blue-600 rounded">Pre-Markets</Link>
+<Link href="/markets/crypto" className="block py-1 hover:bg-blue-600 rounded">Cryptocurrency</Link>
+<Link href="/markets/futures" className="block py-1 hover:bg-blue-600 rounded">Futures & Commodities</Link>
+<Link href="/markets/bonds" className="block py-1 hover:bg-blue-600 rounded">Bonds</Link>
+<Link href="/markets/etfs" className="block py-1 hover:bg-blue-600 rounded">ETFs</Link>
+<Link href="/business-leaders" className="block py-1 hover:bg-blue-600 rounded">Business Leaders</Link>
+<Link href="/markets/mutual-funds" className="block py-1 hover:bg-blue-600 rounded">Mutual Funds</Link>
 </div>
 
 

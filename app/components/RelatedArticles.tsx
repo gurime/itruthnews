@@ -41,6 +41,8 @@ src={article.image}
 alt={article.title}
 height={400}
 width={400}
+loading="eager"
+priority
 className="w-full h-40 object-cover"/>
 )}
 

@@ -38,35 +38,44 @@ category?: string | null;
 
 
 
-// Helper function to fetch related articles from all tables
-async function fetchRelatedArticles(category: string | null, excludeId: string, limit: number = 3): Promise<RelatedArticle[]> {
+// Helper function to fetch related articles from all tables concurrently
+async function fetchRelatedArticles(
+category: string | null,
+excludeId: string,
+limit: number = 3
+): Promise<RelatedArticle[]> {
 if (!category) return [];
 
-const relatedArticles: RelatedArticle[] = [];
-
-for (const table of ARTICLE_TABLES) {
+// Concurrent queries
+const fetchPromises = ARTICLE_TABLES.map(async (table) => {
 try {
 const { data, error } = await supabase
 .from(table)
-.select('id, title, image, category')
-.eq('category', category)
-.neq('id', excludeId)
+.select("id, title, image, category")
+.eq("category", category)
+.neq("id", excludeId)
 .limit(limit);
 
-if (!error && data) {
-relatedArticles.push(...data);
-}
-} catch (err) {
-// Continue to next table if error
-continue;
+if (error) {
+console.error(`Error fetching from table ${table}:`, error);
+return [];
 }
 
-// Stop if we have enough articles
-if (relatedArticles.length >= limit) break;
+return data || [];
+} catch (err) {
+console.error(`Network error on table ${table}`, err);
+return [];
 }
+});
+
+const results = await Promise.all(fetchPromises);
+
+// Combine table results into one flat list
+const relatedArticles = results.flat() as RelatedArticle[];
 
 return relatedArticles.slice(0, limit);
 }
+
 
 async function fetchArticleFromTables(id: string): Promise<Article | null> {
 for (const table of ARTICLE_TABLES) {
