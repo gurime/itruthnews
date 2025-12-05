@@ -28,9 +28,9 @@ async function fetchArticles() {
 try {
 setIsLoading(true);
         
-// Fetch THE featured politics article
+// Fetch THE featured guest_voices article
 const { data: featuredData, error: featuredError } = await supabase
-.from('guest-voices')
+.from('guest_voices')
 .select('*')
 .eq('featured', true)
 .limit(1)
@@ -45,9 +45,9 @@ if (featuredData) {
 setFeaturedArticle(featuredData);
 }
         
-// Fetch regular columnist articles (excluding featured)
+// Fetch regular guest_voices articles (excluding featured)
 const { data, error } = await supabase
-.from('guest-voices')
+.from('guest_voices')
 .select('*')
 .eq('featured', false)
 .order('created_at', { ascending: false })

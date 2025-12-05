@@ -1,13 +1,14 @@
 "use client";
 import { ChevronDown } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+
 import { useEffect, useState } from "react";
 import supabase from "../supabase/supabase";
 import type { User } from "@supabase/supabase-js";
 import toast, { Toaster } from 'react-hot-toast';
 import { specialCoverage } from "../admin/category_tables";
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
 const [menuOpen, setMenuOpen] = useState(false);
@@ -23,8 +24,10 @@ const router = useRouter();
 
 
 // Get current month's special coverage
-const currentMonth = new Date().getMonth() + 1; // Adjust to 1-indexed
+
+const currentMonth = new Date().getMonth(); 
 const currentSpecialCoverage = specialCoverage[currentMonth as keyof typeof specialCoverage] || [];
+
 useEffect(() => {
 setTimeout(() => setIsLoading(false), 1000);
 }, []);
@@ -464,7 +467,6 @@ className={`ml-1 transition-transform ${activeDropdown === 'lifestyle' ? "rotate
 <Link href="/accessories" className="block  py-1 hover:bg-blue-600 rounded">Accessories</Link>
 <Link href="/skincare" className="block  py-1 hover:bg-blue-600 rounded">Skincare</Link>
 <Link href="/hair" className="block  py-1 hover:bg-blue-600 rounded">Hair</Link>
-<Link href="/weddings" className="block  py-1 hover:bg-blue-600 rounded">Weddings</Link>
 </div>
 
 {/* food */}
@@ -473,14 +475,40 @@ className={`ml-1 transition-transform ${activeDropdown === 'lifestyle' ? "rotate
 <Link href="/recipes" className="block  py-1 hover:bg-blue-600 rounded">Recipes</Link>
 <Link href="/restaurants" className="block  py-1 hover:bg-blue-600 rounded">Restaurants</Link>
 <Link href="/cooking-tips" className="block  py-1 hover:bg-blue-600 rounded">Cooking Tips</Link>
+<Link href="/wine-spirits" className="block  py-1 hover:bg-blue-600 rounded">wine-spirits</Link>
+<Link href="/food-news" className="block  py-1 hover:bg-blue-600 rounded">Food-News</Link>
+<Link href="/chefs" className="block  py-1 hover:bg-blue-600 rounded">Chefs</Link>
+</div>
+{/* Family & Relationships */}
+<div className="mt-4 pt-4 border-t border-blue-700">
+<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Family & Relationships</p>
+<Link href="/family" className="block  py-1 hover:bg-blue-600 rounded">Family</Link>
+<Link href="/parenting" className="block  py-1 hover:bg-blue-600 rounded">Parenting</Link>
+<Link href="/relationships" className="block  py-1 hover:bg-blue-600 rounded">Relationships</Link>
+<Link href="/weddings" className="block  py-1 hover:bg-blue-600 rounded">Weddings</Link>
+<Link href="/pregnancy" className="block  py-1 hover:bg-blue-600 rounded">Pregnancy & Baby</Link>
+<Link href="/pets" className="block  py-1 hover:bg-blue-600 rounded">Pets</Link>
+</div>
+
+{/* Home & Garden */}
+<div className="mt-4 pt-4 border-t border-blue-700">
+<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Home & Garden</p>
+<Link href="/real-estate" className="block  py-1 hover:bg-blue-600 rounded">Real Estate</Link>
+<Link href="/home-design" className="block  py-1 hover:bg-blue-600 rounded">Home-Design</Link>
+<Link href="/interior-design" className="block  py-1 hover:bg-blue-600 rounded">Interior-Design</Link>
+<Link href="/gardening" className="block  py-1 hover:bg-blue-600 rounded">Gardening</Link>
+<Link href="/diy" className="block  py-1 hover:bg-blue-600 rounded">DIY & Home Improvement</Link>
+<Link href="/architecture" className="block  py-1 hover:bg-blue-600 rounded">Architecture</Link>
 </div>
 
 {/* Travel */}
 <div className="mt-4 pt-4 border-t border-blue-700">
 <p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Travel</p>
-<Link href="/real-estate" className="block  py-1 hover:bg-blue-600 rounded">Real Estate</Link>
 <Link href="/destinations" className="block  py-1 hover:bg-blue-600 rounded">Destinations</Link>
 <Link href="/travel-tips" className="block  py-1 hover:bg-blue-600 rounded">Travel Tips</Link>
+<Link href="/luxury-travel" className="block  py-1 hover:bg-blue-600 rounded">Luxury-Travel</Link>
+<Link href="/budget-travel" className="block  py-1 hover:bg-blue-600 rounded">Budget-Travel</Link>
+<Link href="/hotels" className="block  py-1 hover:bg-blue-600 rounded">Hotels & Resorts</Link>
 </div>
 
 {/* Other */}
@@ -885,12 +913,23 @@ className={`ml-1 transition-transform ${activeDropdown === 'lifestyle' ? "rotate
 <div className="mt-4 pt-4 border-t border-blue-700">
 <p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Well (Health & Wellness)</p>
 <Link href="/fitness" className="block  py-1 hover:bg-blue-600 rounded">Fitness</Link>
+<Link href="/nutrition" className="block  py-1 hover:bg-blue-600 rounded">Nutrition</Link>
+<Link href="/mental-health" className="block  py-1 hover:bg-blue-600 rounded">Mental Health</Link>
+<Link href="/yoga-Meditation" className="block  py-1 hover:bg-blue-600 rounded">Yoga & Meditation</Link>
+<Link href="/sleep" className="block  py-1 hover:bg-blue-600 rounded">Sleep</Link>
+</div>
+
+{/* food */}
+<div className="mt-4 pt-4 border-t border-blue-700">
 <p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Food</p>
 <Link href="/recipes" className="block  py-1 hover:bg-blue-600 rounded">Recipes</Link>
 <Link href="/restaurants" className="block  py-1 hover:bg-blue-600 rounded">Restaurants</Link>
 <Link href="/cooking-tips" className="block  py-1 hover:bg-blue-600 rounded">Cooking Tips</Link>
+<Link href="/wine-spirits" className="block  py-1 hover:bg-blue-600 rounded">wine-spirits</Link>
+<Link href="/food-news" className="block  py-1 hover:bg-blue-600 rounded">Food-News</Link>
+<Link href="/chefs" className="block  py-1 hover:bg-blue-600 rounded">Chefs</Link>
 </div>
-
+{/* fashion */}
 <div className="mt-4 pt-4 border-t border-blue-700">
 <p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Fashion</p>
 <Link href="/beauty" className="block  py-1 hover:bg-blue-600 rounded">Beauty</Link>
@@ -904,15 +943,27 @@ className={`ml-1 transition-transform ${activeDropdown === 'lifestyle' ? "rotate
 <Link href="/hair" className="block  py-1 hover:bg-blue-600 rounded">Hair</Link>
 <Link href="/weddings" className="block  py-1 hover:bg-blue-600 rounded">Weddings</Link>
 </div>
-{/* Travel*/}
-<div className=" pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Travel</p>
+{/* Home & Garden */}
+<div className="mt-4 pt-4 border-t border-blue-700">
+<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Home & Garden</p>
 <Link href="/real-estate" className="block  py-1 hover:bg-blue-600 rounded">Real Estate</Link>
+<Link href="/home-design" className="block  py-1 hover:bg-blue-600 rounded">Home-Design</Link>
+<Link href="/interior-design" className="block  py-1 hover:bg-blue-600 rounded">Interior-Design</Link>
+<Link href="/gardening" className="block  py-1 hover:bg-blue-600 rounded">Gardening</Link>
+<Link href="/diy" className="block  py-1 hover:bg-blue-600 rounded">DIY & Home Improvement</Link>
+<Link href="/architecture" className="block  py-1 hover:bg-blue-600 rounded">Architecture</Link>
+</div>
+{/* Travel */}
+<div className="mt-4 pt-4 border-t border-blue-700">
+<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Travel</p>
 <Link href="/destinations" className="block  py-1 hover:bg-blue-600 rounded">Destinations</Link>
 <Link href="/travel-tips" className="block  py-1 hover:bg-blue-600 rounded">Travel Tips</Link>
+<Link href="/luxury-travel" className="block  py-1 hover:bg-blue-600 rounded">Luxury-Travel</Link>
+<Link href="/budget-travel" className="block  py-1 hover:bg-blue-600 rounded">Budget-Travel</Link>
+<Link href="/hotels" className="block  py-1 hover:bg-blue-600 rounded">Hotels & Resorts</Link>
 </div>
-{/* Other*/}
-<div className=" pt-4 border-t border-blue-700">
+{/* Other */}
+<div className="mt-4 pt-4 border-t border-blue-700">
 <p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Other</p>
 <Link href="/cars" className="block  py-1 hover:bg-blue-600 rounded">Cars</Link>
 <Link href="/luxury" className="block  py-1 hover:bg-blue-600 rounded">Luxury Living</Link>

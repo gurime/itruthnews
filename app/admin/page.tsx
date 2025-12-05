@@ -2,13 +2,13 @@
 'use client';
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { FileText, Upload, ImageIcon, User, Tag, AlertCircle, CheckCircle, LogOut, Eye, Lock, Loader, LockIcon } from "lucide-react";
+import { FileText, Upload, ImageIcon, User,LogOut, Lock, Loader } from "lucide-react";
 import supabase from "../supabase/supabase";
 import toast, { Toaster } from "react-hot-toast";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
-import { categories } from "./category_tables";
+import { categories, opinionCategories } from "./category_tables";
 
 interface Article {
 id: string;
@@ -169,6 +169,8 @@ reader.readAsDataURL(file);
 }
 };
 
+
+
 const handleSubmit = async () => {
 setIsSubmitting(true);
 
@@ -197,7 +199,7 @@ const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
 const selectedCategory = categories.find(cat => cat.value === category);
 const tableName = selectedCategory?.table || category;
 
-// Prepare article data
+// Prepare article data - ONLY include fields that exist in your table
 const articleData = {
 title,
 excerpt,
@@ -206,7 +208,7 @@ author,
 author_bio: authorBio || null,
 author_role: authorRole || null,
 author_avatar: authorAvatar || null,
-author_disclaimer: category === 'opinion' ? authorDisclaimer : null,
+author_disclaimer: opinionCategories.includes(category) ? authorDisclaimer : null,
 featured,
 tags: tagsArray,
 content,
@@ -217,18 +219,25 @@ source: source || null,
 created_at: new Date().toISOString()
 };
 
-// Insert into appropriate table
-const { error } = await supabase
-.from(tableName)
-.insert([articleData]);
 
-if (error) throw error;
+
+// Insert into appropriate table - no select() call to avoid column issues
+const { data, error } = await supabase
+.from(tableName)
+.insert(articleData)
+.select(); // Add select() to return the inserted row
+
+if (error) {
+console.error('Supabase error:', error);
+throw error;
+}
 
 toast.success(`Article published successfully to ${selectedCategory?.label}!`);
 
 // Reset form
 resetForm();
 } catch (error: unknown) {
+console.error('Full error:', error);
 const errorMessage = error instanceof Error ? error.message : "Publication failed";
 toast.error(`Publication failed: ${errorMessage}`);
 } finally {
@@ -549,6 +558,7 @@ className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus
 />
 </div>
 
+
 <div className="mt-4">
 <label className="block text-sm font-semibold text-gray-700 mb-2">
 Author Avatar URL
@@ -562,7 +572,9 @@ className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus
 />
 </div>
 
-{category === 'opinion' && (
+{['columnists', 'guest_voices', 'editorials', 'letters', 'editorial_board', 
+'opinion_politics', 'opinion_world', 'opinion_culture', 'opinion_economy', 
+'opinion_technology', 'opinion_climate', 'trending_voices', 'weekend_reads'].includes(category) && (
 <div className="mt-4">
 <label className="block text-sm font-semibold text-gray-700 mb-2">
 Author Disclaimer
@@ -570,7 +582,7 @@ Author Disclaimer
 <textarea
 value={authorDisclaimer}
 onChange={(e) => setAuthorDisclaimer(e.target.value)}
-placeholder="Disclaimer for opinion pieces..."
+placeholder="The views expressed in this article are those of the author and do not reflect the views of iTruth News."
 rows={2}
 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-gray-900"
 />

@@ -2,7 +2,8 @@ const ARTICLE_TABLES = [
   'dashboard', 
   'politics', 
   'columnists',
-  'guest-voices'
+  'guest_voices',
+ 
  
 
 ];
