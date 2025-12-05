@@ -10,14 +10,14 @@ const categories = [
   { value: "asia", label: "Asia", table: "asia" },
   { value: "europe", label: "Europe", table: "europe" },
   { value: "africa", label: "Africa", table: "africa" },
-  { value: "middle-east", label: "Middle East", table: "middle_east" },
+  { value: "middle_east", label: "Middle East", table: "middle_east" },
   { value: "americas", label: "Americas", table: "americas" },
-  { value: "south-america", label: "South America", table: "south_america" },
+  { value: "south_america", label: "South America", table: "south_america" },
 
   // Business
   { value: "stocks", label: "Stocks", table: "stocks" },
-  { value: "us-markets", label: "U.S. Markets", table: "us_markets" },
-  { value: "pre-markets", label: "Pre-Markets", table: "pre_markets" },
+  { value: "us_markets", label: "U.S. Markets", table: "us_markets" },
+  { value: "pre_markets", label: "Pre-Markets", table: "pre_markets" },
   { value: "crypto", label: "Cryptocurrency", table: "crypto" },
   { value: "futures", label: "Futures & Commodities", table: "futures" },
   { value: "bonds", label: "Bonds", table: "bonds" },
@@ -84,10 +84,10 @@ const categories = [
   
   // Lifestyle - Travel
   { value: "destinations", label: "Destinations", table: "destinations" },
-  { value: "travel-tips", label: "Travel Tips", table: "travel_tips" },
-  { value: "luxury-travel", label: "Luxury Travel", table: "luxury_travel" },
-  { value: "budget-travel", label: "Budget Travel", table: "budget_travel" },
-  { value: "adventure-travel", label: "Adventure Travel", table: "adventure_travel" },
+  { value: "travel_tips", label: "Travel Tips", table: "travel_tips" },
+  { value: "luxury_travel", label: "Luxury Travel", table: "luxury_travel" },
+  { value: "budget_travel", label: "Budget Travel", table: "budget_travel" },
+  { value: "adventure_travel", label: "Adventure Travel", table: "adventure_travel" },
   { value: "hotels", label: "Hotels & Resorts", table: "hotels" },
   
   // Lifestyle - Other
@@ -100,18 +100,18 @@ const categories = [
   { value: "smartphones", label: "Smartphones", table: "smartphones" },
   { value: "laptops", label: "Laptops & Computers", table: "laptops" },
   { value: "wearables", label: "Wearables", table: "wearables" },
-  { value: "smart-home", label: "Smart Home", table: "smart_home" },
+  { value: "smart_home", label: "Smart Home", table: "smart_home" },
   { value: "audio", label: "Audio & Headphones", table: "audio" },
-  { value: "artificial-intelligence", label: "Artificial Intelligence", table: "ai" },
+  { value: "artificial_intelligence", label: "Artificial Intelligence", table: "ai" },
   { value: "startups", label: "Startups", table: "startups" },
   { value: "cybersecurity", label: "Cybersecurity", table: "cybersecurity" },
   { value: "internet", label: "Internet & Social Media", table: "internet" },
-  { value: "silicon-valley", label: "Silicon Valley", table: "silicon_valley" },
+  { value: "silicon_valley", label: "Silicon Valley", table: "silicon_valley" },
   { value: "reviews", label: "Product Reviews", table: "reviews" },
-  { value: "buying-guides", label: "Buying Guides", table: "buying_guides" },
-  { value: "how-to", label: "How-To & Tips", table: "how-to" },
+  { value: "buying_guides", label: "Buying Guides", table: "buying_guides" },
+  { value: "how_to", label: "How-To & Tips", table: "how-to" },
   { value: "gaming", label: "Gaming", table: "gaming" },
-  { value: "pc-gaming", label: "PC Gaming", table: "pc-gaming" },
+  { value: "pc_gaming", label: "PC Gaming", table: "pc-gaming" },
   { value: "consoles", label: "Consoles", table: "consoles" },
   { value: "esports", label: "Esports", table: "esports" },
 
@@ -123,23 +123,23 @@ const categories = [
   { value: "soccer", label: "Soccer", table: "soccer" },
   { value: "golf", label: "Golf", table: "golf" },
   { value: "tennis", label: "Tennis", table: "tennis" },
-  { value: "college-football", label: "College Football", table: "college_football" },
-  { value: "college-basketball", label: "College Basketball", table: "college_basketball" },
-  { value: "world-cup", label: "World Cup", table: "world_cup" },
+  { value: "college_football", label: "College Football", table: "college_football" },
+  { value: "college_basketball", label: "College Basketball", table: "college_basketball" },
+  { value: "world_cup", label: "World Cup", table: "world_cup" },
   { value: "olympics", label: "Olympics", table: "olympics" },
-  { value: "premier-league", label: "Premier League", table: "premier_league" },
+  { value: "premier_league", label: "Premier League", table: "premier_league" },
   { value: "boxing", label: "Boxing & MMA", table: "boxing" },
-  { value: "auto-racing", label: "Auto Racing", table: "auto_racing" },
-  { value: "track-and-field", label: "Track & Field", table: "track_and_field" },
+  { value: "auto_racing", label: "Auto Racing", table: "auto_racing" },
+  { value: "track_and_field", label: "Track & Field", table: "track_and_field" },
   { value: "ufc", label: "UFC", table: "ufc" },
   { value: "wwe", label: "WWE", table: "wwe" },
-  { value: "sports-columns", label: "Columns", table: "sports_columns" },
-  { value: "sports-podcasts", label: "Podcasts", table: "sports_podcasts" },
-  { value: "sports-photos", label: "Photos", table: "sports_photos" },
+  { value: "sports_columns", label: "Columns", table: "sports_columns" },
+  { value: "sports_podcasts", label: "Podcasts", table: "sports_podcasts" },
+  { value: "sports_photos", label: "Photos", table: "sports_photos" },
 
   // Arts & Culture
   { value: "theater", label: "Theater", table: "theater" },
-  { value: "art-design", label: "Art & Design", table: "arts_design" },
+  { value: "art_design", label: "Art & Design", table: "arts_design" },
   { value: "dance", label: "Dance", table: "dance" },
   { value: "books", label: "Books", table: "books" },
   { value: "music", label: "Music", table: "music" },
@@ -150,16 +150,16 @@ const categories = [
   { value: "streaming", label: "Streaming", table: "streaming" },
 
   // Pop Culture
-  { value: "pop-music", label: "Pop Music", table: "pop_music" },
+  { value: "pop_music", label: "Pop Music", table: "pop_music" },
   { value: "comedy", label: "Comedy", table: "comedy" },
-  { value: "arts-podcasts", label: "Podcasts", table: "arts_podcasts" },
-  { value: "best-of", label: "Best of Culture", table: "best_of" },
+  { value: "arts_podcasts", label: "Podcasts", table: "arts_podcasts" },
+  { value: "best_of", label: "Best of Culture", table: "best_of" },
 
   // Features
-  { value: "critics-picks", label: "Critics' Picks", table: "critic_picks" },
-  { value: "arts-reviews", label: "Reviews", table: "arts_reviews" },
-  { value: "what-to-watch", label: "What to Watch", table: "what_to_watch" },
-  { value: "what-to-read", label: "What to Read", table: "what_to_read" }
+  { value: "critics_picks", label: "Critics' Picks", table: "critic_picks" },
+  { value: "arts_reviews", label: "Reviews", table: "arts_reviews" },
+  { value: "what_to_watch", label: "What to Watch", table: "what_to_watch" },
+  { value: "what_to_read", label: "What to Read", table: "what_to_read" }
 ];
 
 // Special Coverage - Year-round events and seasonal content

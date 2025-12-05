@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 
 export default function Navbar() {
 const [menuOpen, setMenuOpen] = useState(false);
+const [activeAccordion, setActiveAccordion] = useState<string | null>(null);
 const [isLoading, setIsLoading] = useState(true);
 const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 const [user, setUser] = useState<User | null>(null);
@@ -46,14 +47,14 @@ useEffect(() => {
 const checkUser = async () => {
 const { data: { session } } = await supabase.auth.getSession();
 setUser(session?.user ?? null);
-      
+
 if (session?.user?.email) {
 const { data } = await supabase
 .from('newsletter_subscribers')
 .select('email, subscribed')
 .eq('email', session.user.email)
 .single();
-        
+
 if (data && data.subscribed) {
 setIsSubscribed(true);
 setEmail(session.user.email);
@@ -136,6 +137,12 @@ const toggleDropdown = (dropdown: string) => {
 setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
 };
 
+
+
+const toggleAccordion = (section: string) => {
+setActiveAccordion(activeAccordion === section ? null : section);
+};
+
 if (isLoading) {
 return (
 <nav className="w-full dark:bg-blue-900 text-white shadow-md">
@@ -157,12 +164,12 @@ return (
 <>
 <Toaster position="top-center" />
 <nav className="w-full dark:bg-blue-900 text-white shadow-md">
-<div className="container mx-auto p-4">
+<div className="container mx-auto">
 {/* Top Support Bar */}
 <div className="w-full bg-blue-600 text-white border-b-2 border-red-600  rounded-md">
 <div className="container mx-auto px-4 py-4">
 <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
-      
+
 {/* Left side - Main message */}
 <div className="text-center lg:text-left flex-1">
 <h2 className="text-lg font-bold mb-1">
@@ -175,7 +182,7 @@ We&apos;re reader-funded. Join thousands who power iTruth News.
 
 {/* Right side - Actions */}
 <div className="flex flex-col sm:flex-row items-center gap-3">
-        
+
 {/* Newsletter Button */}
 <div className="relative">
 <button
@@ -183,7 +190,7 @@ onClick={() => setShowNewsletter(!showNewsletter)}
 className="px-4 py-2 bg-blue-900 text-white rounded-full font-semibold hover:bg-blue-800 transition-colors shadow-sm whitespace-nowrap flex items-center gap-2 cursor-pointer">
 {isSubscribed ? '✓ Subscribed' : '📧 Newsletter'}
 </button>
-          
+
 {showNewsletter && (
 <div className="absolute top-full right-0 mt-2 bg-blue-900 text-white p-6 rounded-lg shadow-2xl z-50 w-80">
 <div className="flex justify-between items-center mb-3">
@@ -271,450 +278,1334 @@ onClick={() => router.push('/login')}>Sign in
 <Link href="/">
 <Image src="/images/it_news.png" loading="eager"
 priority alt="Truth News Logo"   style={{ width: "auto" ,height:"auto"}}
- width={200} height={200} />
+width={200} height={200} />
 </Link>
 </div>
-      
+
 {/* Navigation Links */}
 <div className="flex items-center justify-between space-x-8 text-sm font-medium">
 
 
 {/* News Dropdown */}
-<div className="relative">
+<div className="bg-blue-800 p-6 rounded-lg">
+<div className="relative inline-block">
 <button
 type="button"
-className="hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
+className="text-white hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
 onClick={() => toggleDropdown('news')}
 aria-expanded={activeDropdown === 'news'}>
 Latest News
 <ChevronDown
 height={20}
-className={`ml-1 transition-transform ${activeDropdown === 'news' ? "rotate-180" : ""}`}/>
+className={`ml-1 transition-transform duration-300 ${
+activeDropdown === 'news' ? "rotate-180" : ""
+}`}
+/>
 </button>
 
 {activeDropdown === 'news' && (
-<div className="absolute left-0 dark:bg-blue-900 text-white mt-2 py-6 w-96 rounded shadow-lg z-50 px-4">
-<p className="block  py-1 font-semibold">U.S. News</p>
-<Link href="/politics" className="block  py-1 hover:bg-blue-600 rounded">Politics</Link>
-<Link href="/economy" className="block  py-1 hover:bg-blue-600 rounded">Economy</Link>
-<Link href="/crime" className="block  py-1 hover:bg-blue-600 rounded">Crime</Link>
-<Link href="/climate" className="block  py-1 hover:bg-blue-600 rounded">
+<div className="absolute left-0 bg-blue-900 text-white mt-2 py-4 w-96 rounded shadow-lg z-50">
+
+{/* U.S. News Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 font-semibold flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('us-news')}
+>
+<span>U.S. News</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'us-news' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'us-news' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<Link href="/politics" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Politics
+</Link>
+<Link  href="/economy" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Economy
+</Link>
+<Link href="/crime" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Crime
+</Link>
+<Link  href="/climate" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Climate
 </Link>
-
-                    
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1  rounded text-sm font-semibold uppercase tracking-wide mb-2">World </p>
-<Link href="/asia" className="block  py-1 hover:bg-blue-600 rounded">Asia</Link>
-<Link href="/europe" className="block  py-1 hover:bg-blue-600 rounded">Europe</Link>
-<Link href="/africa" className="block  py-1 hover:bg-blue-600 rounded">Africa</Link>
-<Link href="/middle-east" className="block  py-1 hover:bg-blue-600 rounded">Middle East</Link>
-<Link href="/americas" className="block  py-1 hover:bg-blue-600 rounded">Americas</Link>
-<Link href="/south-america" className="block  py-1 hover:bg-blue-600 rounded">South America</Link>
 </div>
-
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block py-1  font-semibold uppercase tracking-wide mb-2">iTruth Business</p>
-<Link href="/markets" className="block  py-1 hover:bg-blue-600 rounded">Markets</Link>
-<Link href="/tech" className="block  py-1 hover:bg-blue-600 rounded">Tech</Link>
-<Link href="/media" className="block  py-1 hover:bg-blue-600 rounded">Media</Link>
 </div>
+</div>
+{/* World Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 font-semibold flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('world')}
+>
+<span>World</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'world' ? "rotate-180" : ""
+}`}
+/>
+</button>
 
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'world' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<Link href="/asia" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Asia
+</Link>
+<Link href="/europe" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Europe
+</Link>
+<Link href="/africa" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Africa
+</Link>
+<Link href="/middle-east" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Middle East
+</Link>
+<Link href="/americas" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Americas
+</Link>
+<Link href="/south-america" className="block py-2 px-2 hover:bg-blue-600 rounded">
+South America
+</Link>
+</div>
+</div>
+</div>
 </div>
 )}
 </div>
+</div>
 
-{/* iTruth Business */}
-<div className="relative">
+<div className="bg-blue-800 p-6 rounded-lg">
+<div className="relative inline-block">
 <button
 type="button"
-className="hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
+className="text-white hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
 onClick={() => toggleDropdown('itruth business')}
 aria-expanded={activeDropdown === 'itruth business'}>
 iTruth Business
 <ChevronDown
 height={20}
-className={`ml-1 transition-transform ${activeDropdown === 'itruth business' ? "rotate-180" : ""}`}/>
+className={`ml-1 transition-transform duration-300 ${
+activeDropdown === 'itruth business' ? "rotate-180" : ""
+}`}
+/>
 </button>
 
 {activeDropdown === 'itruth business' && (
-<div className="absolute left-0 dark:bg-blue-900 text-white mt-2 py-6 w-96 rounded shadow-lg z-50 px-4">
+<div className="absolute left-0 bg-blue-900 text-white mt-2 py-4 w-96 rounded shadow-lg z-50">
 
+{/* Markets Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 font-semibold flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('markets')}
+>
+<span>Markets</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'markets' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'markets' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/markets/stocks" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Stocks
+</a>
+<a href="/markets/us" className="block py-2 px-2 hover:bg-blue-600 rounded">
+U.S. Markets
+</a>
+<a href="/markets/pre" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Pre-Markets
+</a>
+<a href="/markets/crypto" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Cryptocurrency
+</a>
+<a href="/markets/futures" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Futures & Commodities
+</a>
+<a href="/markets/bonds" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Bonds
+</a>
+<a href="/markets/etfs" className="block py-2 px-2 hover:bg-blue-600 rounded">
+ETFs
+</a>
+<a href="/markets/mutual-funds" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Mutual Funds
+</a>
+</div>
+</div>
+</div>
+
+{/* Business Leaders Accordion */}
 <div>
+<button
+type="button"
+className="w-full px-4 py-3 font-semibold flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('business-leaders')}
+>
+<span>Business Leaders</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'business-leaders' ? "rotate-180" : ""
+}`}
+/>
+</button>
 
-<Link href="/markets/stocks" className="block py-1 hover:bg-blue-600 rounded">Stocks</Link>
-<Link href="/markets/us" className="block py-1 hover:bg-blue-600 rounded">U.S. Markets</Link>
-<Link href="/markets/pre" className="block py-1 hover:bg-blue-600 rounded">Pre-Markets</Link>
-<Link href="/markets/crypto" className="block py-1 hover:bg-blue-600 rounded">Cryptocurrency</Link>
-<Link href="/markets/futures" className="block py-1 hover:bg-blue-600 rounded">Futures & Commodities</Link>
-<Link href="/markets/bonds" className="block py-1 hover:bg-blue-600 rounded">Bonds</Link>
-<Link href="/markets/etfs" className="block py-1 hover:bg-blue-600 rounded">ETFs</Link>
-<Link href="/business-leaders" className="block py-1 hover:bg-blue-600 rounded">Business Leaders</Link>
-<Link href="/markets/mutual-funds" className="block py-1 hover:bg-blue-600 rounded">Mutual Funds</Link>
-
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'business-leaders' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/business-leaders" className="block py-2 px-2 hover:bg-blue-600 rounded">
+All Business Leaders
+</a>
+</div>
+</div>
 </div>
 
 </div>
 )}
 </div>
+</div>
 
 {/* Opinion Dropdown */}
-<div className="relative">
+<div className="bg-blue-800 p-6 rounded-lg">
+<div className="relative inline-block">
 <button
 type="button"
-className="hover:underline decoration-2 font-bold  cursor-pointer whitespace-nowrap flex items-center"
+className="text-white hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
 onClick={() => toggleDropdown('opinion')}
 aria-expanded={activeDropdown === 'opinion'}>
 Opinion
 <ChevronDown
 height={20}
-className={`ml-1 transition-transform ${activeDropdown === 'opinion' ? "rotate-180" : ""}`}
+className={`ml-1 transition-transform duration-300 ${
+activeDropdown === 'opinion' ? "rotate-180" : ""
+}`}
 />
 </button>
 
 {activeDropdown === 'opinion' && (
-<div className="absolute left-0 dark:bg-blue-900 text-white mt-2 py-6 w-64 rounded shadow-lg z-50 px-4">
+<div className="absolute left-0 bg-blue-900 text-white mt-2 py-4 w-64 rounded shadow-lg z-50">
 
-{/* Core Opinion Formats */}
-<p  className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">
-Editorials
-</p>
-<Link href="/opinion/columnist" className="block  py-1 hover:bg-blue-600 rounded">
-Columnists
-</Link>
-<Link href="/opinion/guest-voices" className="block  py-1 hover:bg-blue-600 rounded">
-Guest Voices
-</Link>
-<Link href="/opinion/editorials" className="block  py-1 hover:bg-blue-600 rounded">
-Editorials
-</Link>
-<Link href="/opinion/letters" className="block  py-1 hover:bg-blue-600 rounded">
-Letters to the Editor
-</Link>
-<Link href="/opinion/editorial-board" className="block  py-1 hover:bg-blue-600 rounded">
-The Editorial Board
-</Link>
-
-{/* Sections Section */}
-<div className="mt-4 border-t border-blue-700 pt-3">
-<p className="block  py-1  rounded text-sm font-semibold uppercase tracking-wide mb-2">Sections</p>
-
-<Link href="/opinion/sections/politics" className="block  py-1 hover:bg-blue-600 rounded">
-Politics
-</Link>
-<Link href="/opinion/sections/world" className="block  py-1 hover:bg-blue-600 rounded">
-World
-</Link>
-<Link href="/opinion/sections/culture" className="block  py-1 hover:bg-blue-600 rounded">
-Culture
-</Link>
-<Link href="/opinion/sections/economy" className="block  py-1 hover:bg-blue-600 rounded">
-Economy
-</Link>
-<Link href="/opinion/sections/technology" className="block  py-1 hover:bg-blue-600 rounded">
-Technology
-</Link>
-<Link href="/opinion/sections/climate" className="block  py-1 hover:bg-blue-600 rounded">
-Climate
-</Link>
-</div>
-
-{/* Editor’s Picks */}
-<div className="mt-4 border-t border-blue-700 pt-3">
-<p className="block  py-1  rounded text-sm font-semibold uppercase tracking-wide mb-2">Editor`s Picks</p>
-<Link href="/opinion/editors-picks" className="block  py-1 hover:bg-blue-600 rounded">
-Trending Voices
-</Link>
-<Link href="/opinion/weekend-reads" className="block  py-1 hover:bg-blue-600 rounded">
-Weekend Reads
-</Link>
-</div>
-</div>
-  )}
-</div>
-
-{/* Lifestyle Dropdown */}
-<div className="relative ">
+{/* Editorials Accordion */}
+<div className="border-b border-blue-700">
 <button
 type="button"
-className="hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('editorials')}
+>
+<span>Editorials</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'editorials' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'editorials' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/opinion/columnist" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Columnists
+</a>
+<a href="/opinion/guest-voices" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Guest Voices
+</a>
+<a href="/opinion/editorials" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Editorials
+</a>
+<a href="/opinion/letters" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Letters to the Editor
+</a>
+<a href="/opinion/editorial-board" className="block py-2 px-2 hover:bg-blue-600 rounded">
+The Editorial Board
+</a>
+</div>
+</div>
+</div>
+
+{/* Sections Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('sections')}
+>
+<span>Sections</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'sections' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'sections' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/opinion/sections/politics" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Politics
+</a>
+<a href="/opinion/sections/world" className="block py-2 px-2 hover:bg-blue-600 rounded">
+World
+</a>
+<a href="/opinion/sections/culture" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Culture
+</a>
+<a href="/opinion/sections/economy" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Economy
+</a>
+<a href="/opinion/sections/technology" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Technology
+</a>
+<a href="/opinion/sections/climate" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Climate
+</a>
+</div>
+</div>
+</div>
+
+{/* Editor's Picks Accordion */}
+<div>
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('editors-picks')}
+>
+<span>Editor's Picks</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'editors-picks' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'editors-picks' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/opinion/editors-picks" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Trending Voices
+</a>
+<a href="/opinion/weekend-reads" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Weekend Reads
+</a>
+</div>
+</div>
+</div>
+
+</div>
+)}
+</div>
+</div>
+
+
+{/* Lifestyle Dropdown */}
+<div className="bg-blue-800 p-6 rounded-lg">
+<div className="relative inline-block">
+<button
+type="button"
+className="text-white hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
 onClick={() => toggleDropdown('lifestyle')}
 aria-expanded={activeDropdown === 'lifestyle'}>
 Lifestyle
 <ChevronDown
 height={20}
-className={`ml-1 transition-transform ${activeDropdown === 'lifestyle' ? "rotate-180" : ""}`}/>
+className={`ml-1 transition-transform duration-300 ${
+activeDropdown === 'lifestyle' ? "rotate-180" : ""
+}`}
+/>
 </button>
+
 {activeDropdown === 'lifestyle' && (
-<div className="absolute left-0 dark:bg-blue-900 text-white mt-2 py-6 w-80 rounded shadow-lg z-50 px-4">
-{/* Living */}
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Well (Health & Wellness)</p>
-<Link href="/fitness" className="block  py-1 hover:bg-blue-600 rounded">Fitness</Link>
-<Link href="/nutrition" className="block  py-1 hover:bg-blue-600 rounded">Nutrition</Link>
-<Link href="/mental-health" className="block  py-1 hover:bg-blue-600 rounded">Mental Health</Link>
-<Link href="/yoga-Meditation" className="block  py-1 hover:bg-blue-600 rounded">Yoga & Meditation</Link>
-<Link href="/sleep" className="block  py-1 hover:bg-blue-600 rounded">Sleep</Link>
+<div className="absolute left-0 bg-blue-900 text-white mt-2 py-4 w-80 rounded shadow-lg z-50 max-h-[600px] overflow-y-auto">
 
-{/* Health & Wellness */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Fashion</p>
-<Link href="/beauty" className="block  py-1 hover:bg-blue-600 rounded">Beauty</Link>
-<Link href="/style" className="block  py-1 hover:bg-blue-600 rounded">Style</Link>
-<Link href="/models" className="block  py-1 hover:bg-blue-600 rounded">Models</Link>
-<Link href="/runway" className="block  py-1 hover:bg-blue-600 rounded">Runway</Link>
-<Link href="/designers" className="block  py-1 hover:bg-blue-600 rounded">Designers</Link>
-<Link href="/makeup" className="block  py-1 hover:bg-blue-600 rounded">Makeup</Link>
-<Link href="/accessories" className="block  py-1 hover:bg-blue-600 rounded">Accessories</Link>
-<Link href="/skincare" className="block  py-1 hover:bg-blue-600 rounded">Skincare</Link>
-<Link href="/hair" className="block  py-1 hover:bg-blue-600 rounded">Hair</Link>
+{/* Well (Health & Wellness) Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('wellness')}
+>
+<span>Health & Wellness</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'wellness' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'wellness' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/fitness" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Fitness
+</a>
+<a href="/nutrition" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Nutrition
+</a>
+<a href="/mental-health" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Mental Health
+</a>
+<a href="/yoga-Meditation" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Yoga & Meditation
+</a>
+<a href="/sleep" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Sleep
+</a>
+</div>
+</div>
 </div>
 
-{/* food */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Food</p>
-<Link href="/recipes" className="block  py-1 hover:bg-blue-600 rounded">Recipes</Link>
-<Link href="/restaurants" className="block  py-1 hover:bg-blue-600 rounded">Restaurants</Link>
-<Link href="/cooking-tips" className="block  py-1 hover:bg-blue-600 rounded">Cooking Tips</Link>
-<Link href="/wine-spirits" className="block  py-1 hover:bg-blue-600 rounded">wine-spirits</Link>
-<Link href="/food-news" className="block  py-1 hover:bg-blue-600 rounded">Food-News</Link>
-<Link href="/chefs" className="block  py-1 hover:bg-blue-600 rounded">Chefs</Link>
+{/* Fashion Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('fashion')}
+>
+<span>Fashion</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'fashion' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'fashion' 
+? "max-h-[500px] opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/beauty" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Beauty
+</a>
+<a href="/style" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Style
+</a>
+<a href="/models" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Models
+</a>
+<a href="/runway" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Runway
+</a>
+<a href="/designers" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Designers
+</a>
+<a href="/makeup" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Makeup
+</a>
+<a href="/accessories" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Accessories
+</a>
+<a href="/skincare" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Skincare
+</a>
+<a href="/hair" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Hair
+</a>
 </div>
-{/* Family & Relationships */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Family & Relationships</p>
-<Link href="/family" className="block  py-1 hover:bg-blue-600 rounded">Family</Link>
-<Link href="/parenting" className="block  py-1 hover:bg-blue-600 rounded">Parenting</Link>
-<Link href="/relationships" className="block  py-1 hover:bg-blue-600 rounded">Relationships</Link>
-<Link href="/weddings" className="block  py-1 hover:bg-blue-600 rounded">Weddings</Link>
-<Link href="/pregnancy" className="block  py-1 hover:bg-blue-600 rounded">Pregnancy & Baby</Link>
-<Link href="/pets" className="block  py-1 hover:bg-blue-600 rounded">Pets</Link>
+</div>
 </div>
 
-{/* Home & Garden */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Home & Garden</p>
-<Link href="/real-estate" className="block  py-1 hover:bg-blue-600 rounded">Real Estate</Link>
-<Link href="/home-design" className="block  py-1 hover:bg-blue-600 rounded">Home-Design</Link>
-<Link href="/interior-design" className="block  py-1 hover:bg-blue-600 rounded">Interior-Design</Link>
-<Link href="/gardening" className="block  py-1 hover:bg-blue-600 rounded">Gardening</Link>
-<Link href="/diy" className="block  py-1 hover:bg-blue-600 rounded">DIY & Home Improvement</Link>
-<Link href="/architecture" className="block  py-1 hover:bg-blue-600 rounded">Architecture</Link>
+{/* Food Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('food')}
+>
+<span>Food</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'food' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'food' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/recipes" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Recipes
+</a>
+<a href="/restaurants" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Restaurants
+</a>
+<a href="/cooking-tips" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Cooking Tips
+</a>
+<a href="/wine-spirits" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Wine & Spirits
+</a>
+<a href="/food-news" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Food News
+</a>
+<a href="/chefs" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Chefs
+</a>
+</div>
+</div>
 </div>
 
-{/* Travel */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Travel</p>
-<Link href="/destinations" className="block  py-1 hover:bg-blue-600 rounded">Destinations</Link>
-<Link href="/travel-tips" className="block  py-1 hover:bg-blue-600 rounded">Travel Tips</Link>
-<Link href="/luxury-travel" className="block  py-1 hover:bg-blue-600 rounded">Luxury-Travel</Link>
-<Link href="/budget-travel" className="block  py-1 hover:bg-blue-600 rounded">Budget-Travel</Link>
-<Link href="/hotels" className="block  py-1 hover:bg-blue-600 rounded">Hotels & Resorts</Link>
+{/* Family & Relationships Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('family')}
+>
+<span>Family & Relationships</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'family' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'family' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/family" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Family
+</a>
+<a href="/parenting" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Parenting
+</a>
+<a href="/relationships" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Relationships
+</a>
+<a href="/weddings" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Weddings
+</a>
+<a href="/pregnancy" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Pregnancy & Baby
+</a>
+<a href="/pets" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Pets
+</a>
+</div>
+</div>
 </div>
 
-{/* Other */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Other</p>
-<Link href="/cars" className="block  py-1 hover:bg-blue-600 rounded">Cars</Link>
-<Link href="/luxury" className="block  py-1 hover:bg-blue-600 rounded">Luxury Living</Link>
-<Link href="/shopping" className="block  py-1 hover:bg-blue-600 rounded">Shopping</Link>
-<Link href="/hobbies" className="block  py-1 hover:bg-blue-600 rounded">Hobbies</Link>
+{/* Home & Garden Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('home')}
+>
+<span>Home & Garden</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'home' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'home' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/real-estate" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Real Estate
+</a>
+<a href="/home-design" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Home Design
+</a>
+<a href="/interior-design" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Interior Design
+</a>
+<a href="/gardening" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Gardening
+</a>
+<a href="/diy" className="block py-2 px-2 hover:bg-blue-600 rounded">
+DIY & Home Improvement
+</a>
+<a href="/architecture" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Architecture
+</a>
+</div>
+</div>
 </div>
 
+{/* Travel Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('travel')}
+>
+<span>Travel</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'travel' ? "rotate-180" : ""
+}`}
+/>
+</button>
 
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'travel' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/destinations" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Destinations
+</a>
+<a href="/travel-tips" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Travel Tips
+</a>
+<a href="/luxury-travel" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Luxury Travel
+</a>
+<a href="/budget-travel" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Budget Travel
+</a>
+<a href="/hotels" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Hotels & Resorts
+</a>
+</div>
+</div>
+</div>
 
+{/* Other Accordion */}
+<div className={currentSpecialCoverage.length > 0 ? "border-b border-blue-700" : ""}>
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('other')}
+>
+<span>Other</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'other' ? "rotate-180" : ""
+}`}
+/>
+</button>
 
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'other' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/cars" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Cars
+</a>
+<a href="/luxury" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Luxury Living
+</a>
+<a href="/shopping" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Shopping
+</a>
+<a href="/hobbies" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Hobbies
+</a>
+</div>
+</div>
+</div>
 
-
-{/* Special Features */}
+{/* Special Coverage (Conditional) */}
 {currentSpecialCoverage.length > 0 && (
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">
-Special Coverage
-</p>
+<div>
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('special')}
+>
+<span>Special Coverage</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'special' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'special' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
 {currentSpecialCoverage.map((item) => (
-<Link 
+<a 
 key={item.href}
 href={item.href} 
-className="block  py-1 hover:bg-blue-600 rounded">
+className="block py-2 px-2 hover:bg-blue-600 rounded">
 {item.label}
-</Link>
+</a>
 ))}
 </div>
-)}
+</div>
 </div>
 )}
+
+</div>
+)}
+</div>
 </div>
 
 
 
 {/* Technology Dropdown */}
-<div className="relative">
+<div className="bg-blue-800 p-6 rounded-lg">
+<div className="relative inline-block">
 <button
 type="button"
-className="hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
+className="text-white hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
 onClick={() => toggleDropdown('technology')}
 aria-expanded={activeDropdown === 'technology'}>
 Technology
 <ChevronDown
 height={20}
-className={`ml-1 transition-transform ${activeDropdown === 'technology' ? "rotate-180" : ""}`}/>
+className={`ml-1 transition-transform duration-300 ${
+activeDropdown === 'technology' ? "rotate-180" : ""
+}`}
+/>
 </button>
+
 {activeDropdown === 'technology' && (
-<div className="absolute left-0 dark:bg-blue-900 text-white mt-2 py-6 w-80 rounded shadow-lg z-50 px-4">
-<div className="mb-4">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Personal Tech</p>
-<Link href="/tech/smartphones" className="block  py-1 hover:bg-blue-600 rounded">Smartphones</Link>
-<Link href="/tech/laptops" className="block  py-1 hover:bg-blue-600 rounded">Laptops & Computers</Link>
-<Link href="/tech/wearables" className="block  py-1 hover:bg-blue-600 rounded">Wearables</Link>
-<Link href="/tech/smart-home" className="block  py-1 hover:bg-blue-600 rounded">Smart Home</Link>
-<Link href="/tech/audio" className="block  py-1 hover:bg-blue-600 rounded">Audio & Headphones</Link>
+<div className="absolute left-0 bg-blue-900 text-white mt-2 py-4 w-80 rounded shadow-lg z-50">
+
+{/* Personal Tech Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('personal-tech')}
+>
+<span>Personal Tech</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'personal-tech' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'personal-tech' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/tech/smartphones" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Smartphones
+</a>
+<a href="/tech/laptops" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Laptops & Computers
+</a>
+<a href="/tech/wearables" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Wearables
+</a>
+<a href="/tech/smart-home" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Smart Home
+</a>
+<a href="/tech/audio" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Audio & Headphones
+</a>
 </div>
-                    
-<div className="mb-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Business & Innovation</p>
-<Link href="/tech/artificial-intelligence" className="block  py-1 hover:bg-blue-600 rounded">Artificial Intelligence</Link>
-<Link href="/tech/startups" className="block  py-1 hover:bg-blue-600 rounded">Startups</Link>
-<Link href="/tech/cybersecurity" className="block  py-1 hover:bg-blue-600 rounded">Cybersecurity</Link>
-<Link href="/tech/internet" className="block  py-1 hover:bg-blue-600 rounded">Internet & Social Media</Link>
-<Link href="/tech/silicon-valley" className="block  py-1 hover:bg-blue-600 rounded">Silicon Valley</Link>
+</div>
 </div>
 
-<div className="mb-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Reviews & Guides</p>
-<Link href="/tech/reviews" className="block  py-1 hover:bg-blue-600 rounded">Product Reviews</Link>
-<Link href="/tech/buying-guides" className="block  py-1 hover:bg-blue-600 rounded">Buying Guides</Link>
-<Link href="/tech/how-to" className="block  py-1 hover:bg-blue-600 rounded">How-To & Tips</Link>
+{/* Business & Innovation Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('business-innovation')}
+>
+<span>Business & Innovation</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'business-innovation' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'business-innovation' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/tech/artificial-intelligence" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Artificial Intelligence
+</a>
+<a href="/tech/startups" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Startups
+</a>
+<a href="/tech/cybersecurity" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Cybersecurity
+</a>
+<a href="/tech/internet" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Internet & Social Media
+</a>
+<a href="/tech/silicon-valley" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Silicon Valley
+</a>
+</div>
+</div>
 </div>
 
-<div className="pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Gaming</p>
-<Link href="/tech/gaming" className="block  py-1 hover:bg-blue-600 rounded">Video Games</Link>
-<Link href="/tech/gaming/pc" className="block  py-1 hover:bg-blue-600 rounded">PC Gaming</Link>
-<Link href="/tech/gaming/consoles" className="block  py-1 hover:bg-blue-600 rounded">Consoles</Link>
-<Link href="/tech/gaming/esports" className="block  py-1 hover:bg-blue-600 rounded">Esports</Link>
+{/* Reviews & Guides Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('reviews-guides')}
+>
+<span>Reviews & Guides</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'reviews-guides' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'reviews-guides' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/tech/reviews" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Product Reviews
+</a>
+<a href="/tech/buying-guides" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Buying Guides
+</a>
+<a href="/tech/how-to" className="block py-2 px-2 hover:bg-blue-600 rounded">
+How-To & Tips
+</a>
 </div>
+</div>
+</div>
+
+{/* Gaming Accordion */}
+<div>
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('gaming')}
+>
+<span>Gaming</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'gaming' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'gaming' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/tech/gaming" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Video Games
+</a>
+<a href="/tech/gaming/pc" className="block py-2 px-2 hover:bg-blue-600 rounded">
+PC Gaming
+</a>
+<a href="/tech/gaming/consoles" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Consoles
+</a>
+<a href="/tech/gaming/esports" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Esports
+</a>
+</div>
+</div>
+</div>
+
 </div>
 )}
 </div>
-              
+</div>
+
 
 
 {/* Sports Dropdown */}
-<div className="relative">
+<div className="bg-blue-800 p-6 rounded-lg">
+<div className="relative inline-block">
 <button
 type="button"
-className="hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
+className="text-white hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
 onClick={() => toggleDropdown('sports')}
 aria-expanded={activeDropdown === 'sports'}>
 Sports
 <ChevronDown
 height={20}
-className={`ml-1 transition-transform ${activeDropdown === 'sports' ? "rotate-180" : ""}`}/>
+className={`ml-1 transition-transform duration-300 ${
+activeDropdown === 'sports' ? "rotate-180" : ""
+}`}
+/>
 </button>
 
 {activeDropdown === 'sports' && (
-<div className="absolute left-0 dark:bg-blue-900 text-white mt-2 py-6 w-80 rounded shadow-lg z-50 px-4">
+<div className="absolute left-0 bg-blue-900 text-white mt-2 py-4 w-80 rounded shadow-lg z-50">
 
-{/* Professional Sports */}
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Professional</p>
-<Link href="/sports/football" className="block  py-1 hover:bg-blue-600 rounded">Pro Football</Link>
-<Link href="/sports/basketball" className="block  py-1 hover:bg-blue-600 rounded">Pro Basketball</Link>
-<Link href="/sports/baseball" className="block  py-1 hover:bg-blue-600 rounded">Baseball</Link>
-<Link href="/sports/hockey" className="block  py-1 hover:bg-blue-600 rounded">Hockey</Link>
-<Link href="/sports/soccer" className="block  py-1 hover:bg-blue-600 rounded">Soccer</Link>
-<Link href="/sports/golf" className="block  py-1 hover:bg-blue-600 rounded">Golf</Link>
-<Link href="/sports/tennis" className="block  py-1 hover:bg-blue-600 rounded">Tennis</Link>
+{/* Professional Sports Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('professional')}
+>
+<span>Professional</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'professional' ? "rotate-180" : ""
+}`}
+/>
+</button>
 
-{/* College Sports */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">College Sports</p>
-<Link href="/sports/college-football" className="block  py-1 hover:bg-blue-600 rounded">College Football</Link>
-<Link href="/sports/college-basketball" className="block  py-1 hover:bg-blue-600 rounded">College Basketball</Link>
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'professional' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/sports/football" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Pro Football
+</a>
+<a href="/sports/basketball" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Pro Basketball
+</a>
+<a href="/sports/baseball" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Baseball
+</a>
+<a href="/sports/hockey" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Hockey
+</a>
+<a href="/sports/soccer" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Soccer
+</a>
+<a href="/sports/golf" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Golf
+</a>
+<a href="/sports/tennis" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Tennis
+</a>
+</div>
+</div>
 </div>
 
-{/* International */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">International</p>
-<Link href="/sports/world-cup" className="block  py-1 hover:bg-blue-600 rounded">World Cup</Link>
-<Link href="/sports/olympics" className="block  py-1 hover:bg-blue-600 rounded">Olympics</Link>
-<Link href="/sports/premier-league" className="block  py-1 hover:bg-blue-600 rounded">Premier League</Link>
+{/* College Sports Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('college')}
+>
+<span>College Sports</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'college' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'college' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/sports/college-football" className="block py-2 px-2 hover:bg-blue-600 rounded">
+College Football
+</a>
+<a href="/sports/college-basketball" className="block py-2 px-2 hover:bg-blue-600 rounded">
+College Basketball
+</a>
+</div>
+</div>
 </div>
 
-{/* Other Sports */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Other Sports</p>
-<Link href="/sports/boxing" className="block  py-1 hover:bg-blue-600 rounded">Boxing & MMA</Link>
-<Link href="/sports/auto-racing" className="block  py-1 hover:bg-blue-600 rounded">Auto Racing</Link>
-<Link href="/sports/track-and-field" className="block  py-1 hover:bg-blue-600 rounded">Track & Field</Link>
-<Link href="/sports/ufc" className="block  py-1 hover:bg-blue-600 rounded">UFC</Link>
-<Link href="/sports/boxing" className="block  py-1 hover:bg-blue-600 rounded">Boxing</Link>
-<Link href="/sports/wwe" className="block  py-1 hover:bg-blue-600 rounded">WWE</Link>
+{/* International Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('international')}
+>
+<span>International</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'international' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'international' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/sports/world-cup" className="block py-2 px-2 hover:bg-blue-600 rounded">
+World Cup
+</a>
+<a href="/sports/olympics" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Olympics
+</a>
+<a href="/sports/premier-league" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Premier League
+</a>
+</div>
+</div>
 </div>
 
-{/* Features */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Features</p>
-<Link href="/sports/columns" className="block  py-1 hover:bg-blue-600 rounded">Columns</Link>
-<Link href="/sports/podcasts" className="block  py-1 hover:bg-blue-600 rounded">Podcasts</Link>
-<Link href="/sports/photos" className="block  py-1 hover:bg-blue-600 rounded">Photos</Link>
+{/* Other Sports Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('other-sports')}
+>
+<span>Other Sports</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'other-sports' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'other-sports' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/sports/boxing" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Boxing & MMA
+</a>
+<a href="/sports/auto-racing" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Auto Racing
+</a>
+<a href="/sports/track-and-field" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Track & Field
+</a>
+<a href="/sports/ufc" className="block py-2 px-2 hover:bg-blue-600 rounded">
+UFC
+</a>
+<a href="/sports/wrestling" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Boxing
+</a>
+<a href="/sports/wwe" className="block py-2 px-2 hover:bg-blue-600 rounded">
+WWE
+</a>
 </div>
+</div>
+</div>
+
+{/* Features Accordion */}
+<div>
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('features')}
+>
+<span>Features</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'features' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'features' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/sports/columns" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Columns
+</a>
+<a href="/sports/podcasts" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Podcasts
+</a>
+<a href="/sports/photos" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Photos
+</a>
+</div>
+</div>
+</div>
+
 </div>
 )}
+</div>
 </div>
 
 
 {/* Arts Dropdown */}
-<div className="relative">
-<button
+<div className="bg-blue-800 p-6 rounded-lg">
+<div className="relative inline-block">
+  <button
 type="button"
 className="hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
 onClick={() => toggleDropdown('arts')}
-aria-expanded={activeDropdown === 'arts'}>
+aria-expanded={activeDropdown === 'arts'}
+>
 Arts
 <ChevronDown
 height={20}
-className={`ml-1 transition-transform ${activeDropdown === 'arts' ? "rotate-180" : ""}`}
+className={`ml-1 transition-transform duration-300 ${
+activeDropdown === 'arts' ? "rotate-180" : ""
+}`}
 />
 </button>
 
 {activeDropdown === 'arts' && (
-<div className="absolute left-0 dark:bg-blue-900 text-white mt-2 py-6 w-80 rounded shadow-lg z-50 px-4">
+<div className="absolute left-0 bg-blue-900 text-white mt-2 py-4 w-80 rounded shadow-lg z-50">
 
-{/* Visual & Performing Arts */}
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Arts & Culture</p>
-<Link href="/arts/theater" className="block  py-1 hover:bg-blue-600 rounded">Theater</Link>
-<Link href="/arts/art-design" className="block  py-1 hover:bg-blue-600 rounded">Art & Design</Link>
-<Link href="/arts/dance" className="block  py-1 hover:bg-blue-600 rounded">Dance</Link>
-<Link href="/arts/books" className="block  py-1 hover:bg-blue-600 rounded">Books</Link>
-<Link href="/arts/music" className="block  py-1 hover:bg-blue-600 rounded">Music</Link>
+{/* Arts & Culture Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('arts-culture')}
+>
+<span>Arts & Culture</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'arts-culture' ? "rotate-180" : ""
+}`}
+/>
+</button>
 
-{/* Screen */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Screen</p>
-<Link href="/arts/movies" className="block  py-1 hover:bg-blue-600 rounded">Movies</Link>
-<Link href="/arts/television" className="block  py-1 hover:bg-blue-600 rounded">Television</Link>
-<Link href="/arts/streaming" className="block  py-1 hover:bg-blue-600 rounded">Streaming</Link>
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'arts-culture'
+? "max-h-96 opacity-100"
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<Link href="/arts/theater" className="block py-2 px-2 hover:bg-blue-600 rounded">Theater</Link>
+<Link href="/arts/art-design" className="block py-2 px-2 hover:bg-blue-600 rounded">Art & Design</Link>
+<Link href="/arts/dance" className="block py-2 px-2 hover:bg-blue-600 rounded">Dance</Link>
+<Link href="/arts/books" className="block py-2 px-2 hover:bg-blue-600 rounded">Books</Link>
+<Link href="/arts/music" className="block py-2 px-2 hover:bg-blue-600 rounded">Music</Link>
+</div>
+</div>
 </div>
 
-{/* Pop Culture */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Pop Culture</p>
-<Link href="/arts/pop-music" className="block  py-1 hover:bg-blue-600 rounded">Pop Music</Link>
-<Link href="/arts/comedy" className="block  py-1 hover:bg-blue-600 rounded">Comedy</Link>
-<Link href="/arts/podcasts" className="block  py-1 hover:bg-blue-600 rounded">Podcasts</Link>
-<Link href="/arts/best-of" className="block  py-1 hover:bg-blue-600 rounded">Best of Culture</Link>
+{/* Screen Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('screen')}
+>
+<span>Screen</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'screen' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'screen'
+? "max-h-96 opacity-100"
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<Link href="/arts/movies" className="block py-2 px-2 hover:bg-blue-600 rounded">Movies</Link>
+<Link href="/arts/television" className="block py-2 px-2 hover:bg-blue-600 rounded">Television</Link>
+<Link href="/arts/streaming" className="block py-2 px-2 hover:bg-blue-600 rounded">Streaming</Link>
+</div>
+</div>
 </div>
 
-{/* Features */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Features</p>
-<Link href="/arts/critics-picks" className="block  py-1 hover:bg-blue-600 rounded">Critics&apos; Picks</Link>
-<Link href="/arts/reviews" className="block  py-1 hover:bg-blue-600 rounded">Reviews</Link>
-<Link href="/arts/what-to-watch" className="block  py-1 hover:bg-blue-600 rounded">What to Watch</Link>
-<Link href="/arts/what-to-read" className="block  py-1 hover:bg-blue-600 rounded">What to Read</Link>
+{/* Pop Culture Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('pop-culture')}
+>
+<span>Pop Culture</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'pop-culture' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'pop-culture'
+? "max-h-96 opacity-100"
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<Link href="/arts/pop-music" className="block py-2 px-2 hover:bg-blue-600 rounded">Pop Music</Link>
+<Link href="/arts/comedy" className="block py-2 px-2 hover:bg-blue-600 rounded">Comedy</Link>
+<Link href="/arts/podcasts" className="block py-2 px-2 hover:bg-blue-600 rounded">Podcasts</Link>
+<Link href="/arts/best-of" className="block py-2 px-2 hover:bg-blue-600 rounded">Best of Culture</Link>
 </div>
+</div>
+</div>
+
+{/* Features Accordion */}
+<div>
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('arts-features')}
+>
+<span>Features</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'arts-features' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'arts-features'
+? "max-h-96 opacity-100"
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<Link href="/arts/critics-picks" className="block py-2 px-2 hover:bg-blue-600 rounded">Critics' Picks</Link>
+<Link href="/arts/reviews" className="block py-2 px-2 hover:bg-blue-600 rounded">Reviews</Link>
+<Link href="/arts/what-to-watch" className="block py-2 px-2 hover:bg-blue-600 rounded">What to Watch</Link>
+<Link href="/arts/what-to-read" className="block py-2 px-2 hover:bg-blue-600 rounded">What to Read</Link>
+</div>
+</div>
+</div>
+
 </div>
 )}
+</div>
 </div>
 </div>
 </div>
@@ -740,437 +1631,1327 @@ aria-label="Toggle menu">☰</button>
 <div className="mt-4 space-y-4">
 {/* Mobile Navigation - All Sections */}
 <div >
-  
+
 {/* News Section */}
-<div className="mb-4">
+<div className="bg-blue-800 pb-5 pt-5 mb-4 rounded-lg">
+<div className="relative inline-block">
 <button
 type="button"
-className="w-full font-bold text-left hover:underline cursor-pointer flex items-center justify-between "
-onClick={() => toggleDropdown('mobile-news')}>
+className="text-white hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
+onClick={() => toggleDropdown('news')}
+aria-expanded={activeDropdown === 'news'}>
 Latest News
 <ChevronDown
 height={20}
-className={`transition-transform ${activeDropdown === 'mobile-news' ? "rotate-180" : ""}`} 
+className={`ml-1 transition-transform duration-300 ${
+activeDropdown === 'news' ? "rotate-180" : ""
+}`}
 />
 </button>
-{activeDropdown === 'mobile-news' && (
-<div className=" mt-2 space-y-2">
-<p className="block  py-1 font-semibold">U.S. News</p>
-<Link href="/politics" className="block  py-1 hover:bg-blue-600 rounded">Politics</Link>
-<Link href="/economy" className="block  py-1 hover:bg-blue-600 rounded">Economy</Link>
-<Link href="/crime" className="block  py-1 hover:bg-blue-600 rounded">Crime</Link>
-<Link href="/climate" className="block  py-1 hover:bg-blue-600 rounded">
+
+{activeDropdown === 'news' && (
+<div className="absolute left-0 bg-blue-900 text-white mt-2 py-4 w-96 rounded shadow-lg z-50">
+
+{/* U.S. News Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 font-semibold flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('us-news')}
+>
+<span>U.S. News</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'us-news' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'us-news' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<Link href="/politics" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Politics
+</Link>
+<Link  href="/economy" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Economy
+</Link>
+<Link href="/crime" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Crime
+</Link>
+<Link  href="/climate" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Climate
 </Link>
-<div className="pt-2 border-t border-blue-700 mt-2">
-<p className="block  py-1 font-bold">World</p>
-<Link href="/asia" className="block  py-1 hover:bg-blue-600 rounded">Asia</Link>
-<Link href="/europe" className="block  py-1 hover:bg-blue-600 rounded">Europe</Link>
-<Link href="/africa" className="block  py-1 hover:bg-blue-600 rounded">Africa</Link>
-<Link href="/middle-east" className="block  py-1 hover:bg-blue-600 rounded">Middle East</Link>
-<Link href="/americas" className="block  py-1 hover:bg-blue-600 rounded">Americas</Link>
-<Link href="/south-america" className="block  py-1 hover:bg-blue-600 rounded">South America</Link>
 </div>
-<div className="pt-2 border-t border-blue-700 mt-2">
-<p className="block  py-1 font-semibold">iTruth Business</p>
-<Link href="/markets" className="block  py-1 hover:bg-blue-600 rounded">Markets</Link>
-<Link href="/tech" className="block  py-1 hover:bg-blue-600 rounded">Tech</Link>
-<Link href="/energy" className="block  py-1 hover:bg-blue-600 rounded">Energy</Link>
-<Link href="/media" className="block  py-1 hover:bg-blue-600 rounded">Media</Link>
 </div>
+</div>
+{/* World Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 font-semibold flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('world')}
+>
+<span>World</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'world' ? "rotate-180" : ""
+}`}
+/>
+</button>
 
-
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'world' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<Link href="/asia" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Asia
+</Link>
+<Link href="/europe" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Europe
+</Link>
+<Link href="/africa" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Africa
+</Link>
+<Link href="/middle-east" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Middle East
+</Link>
+<Link href="/americas" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Americas
+</Link>
+<Link href="/south-america" className="block py-2 px-2 hover:bg-blue-600 rounded">
+South America
+</Link>
+</div>
+</div>
+</div>
 </div>
 )}
 </div>
+</div>
 
-<div className="mb-4">
+
+
+<div className="bg-blue-800 pb-5 pt-5 mb-4  rounded-lg">
+<div className="relative inline-block">
 <button
 type="button"
-className="w-full font-bold text-left hover:underline cursor-pointer flex items-center justify-between "
-onClick={() => toggleDropdown('itruth-business')}>
+className="text-white hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
+onClick={() => toggleDropdown('itruth business')}
+aria-expanded={activeDropdown === 'itruth business'}>
 iTruth Business
 <ChevronDown
 height={20}
-className={`transition-transform ${activeDropdown === 'itruth-business' ? "rotate-180" : ""}`} 
+className={`ml-1 transition-transform duration-300 ${
+activeDropdown === 'itruth business' ? "rotate-180" : ""
+}`}
 />
 </button>
 
-{activeDropdown === 'itruth-business' && (
-<div className=" mt-2 space-y-2">
+{activeDropdown === 'itruth business' && (
+<div className="absolute left-0 bg-blue-900 text-white mt-2 py-4 w-96 rounded shadow-lg z-50">
 
+{/* Markets Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 font-semibold flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('markets')}
+>
+<span>Markets</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'markets' ? "rotate-180" : ""
+}`}
+/>
+</button>
 
-<div>
-<Link href="/markets/stocks" className="block py-1 hover:bg-blue-600 rounded">Stocks</Link>
-<Link href="/markets/us" className="block py-1 hover:bg-blue-600 rounded">U.S. Markets</Link>
-<Link href="/markets/pre" className="block py-1 hover:bg-blue-600 rounded">Pre-Markets</Link>
-<Link href="/markets/crypto" className="block py-1 hover:bg-blue-600 rounded">Cryptocurrency</Link>
-<Link href="/markets/futures" className="block py-1 hover:bg-blue-600 rounded">Futures & Commodities</Link>
-<Link href="/markets/bonds" className="block py-1 hover:bg-blue-600 rounded">Bonds</Link>
-<Link href="/markets/etfs" className="block py-1 hover:bg-blue-600 rounded">ETFs</Link>
-<Link href="/business-leaders" className="block py-1 hover:bg-blue-600 rounded">Business Leaders</Link>
-<Link href="/markets/mutual-funds" className="block py-1 hover:bg-blue-600 rounded">Mutual Funds</Link>
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'markets' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/markets/stocks" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Stocks
+</a>
+<a href="/markets/us" className="block py-2 px-2 hover:bg-blue-600 rounded">
+U.S. Markets
+</a>
+<a href="/markets/pre" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Pre-Markets
+</a>
+<a href="/markets/crypto" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Cryptocurrency
+</a>
+<a href="/markets/futures" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Futures & Commodities
+</a>
+<a href="/markets/bonds" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Bonds
+</a>
+<a href="/markets/etfs" className="block py-2 px-2 hover:bg-blue-600 rounded">
+ETFs
+</a>
+<a href="/markets/mutual-funds" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Mutual Funds
+</a>
+</div>
+</div>
 </div>
 
+{/* Business Leaders Accordion */}
+<div>
+<button
+type="button"
+className="w-full px-4 py-3 font-semibold flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('business-leaders')}
+>
+<span>Business Leaders</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'business-leaders' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'business-leaders' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/business-leaders" className="block py-2 px-2 hover:bg-blue-600 rounded">
+All Business Leaders
+</a>
+</div>
+</div>
+</div>
 
 </div>
 )}
 </div>
-
-{/* Opinion Section */}
-<div className="mb-4">
+</div>
+{/* Opinion Dropdown */}
+<div className="bg-blue-800 pt-4 pb-4 mb-4 rounded-lg">
+<div className="relative inline-block">
 <button
-type="button" 
-className="w-full font-bold text-left hover:underline cursor-pointer flex items-center justify-between"
-onClick={() => toggleDropdown('mobile-opinion')}>
+type="button"
+className="text-white hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
+onClick={() => toggleDropdown('opinion')}
+aria-expanded={activeDropdown === 'opinion'}>
 Opinion
 <ChevronDown
 height={20}
-className={`transition-transform ${activeDropdown === 'mobile-opinion' ? "rotate-180" : ""}`}/>
+className={`ml-1 transition-transform duration-300 ${
+activeDropdown === 'opinion' ? "rotate-180" : ""
+}`}
+/>
 </button>
-{activeDropdown === 'mobile-opinion' && (
-<div className=" mt-2 space-y-2">
 
+{activeDropdown === 'opinion' && (
+<div className="absolute left-0 bg-blue-900 text-white mt-2 py-4 w-64 rounded shadow-lg z-50">
 
-{/* Core Opinion Formats */}
-<p  className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">
-Editorials
-</p>
-<Link href="/opinion/columnist" className="block  py-1 hover:bg-blue-600 rounded">
+{/* Editorials Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('editorials')}
+>
+<span>Editorials</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'editorials' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'editorials' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/opinion/columnist" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Columnists
-</Link>
-<Link href="/opinion/" className="block  py-1 hover:bg-blue-600 rounded">
+</a>
+<a href="/opinion/guest-voices" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Guest Voices
-</Link>
-<Link href="/opinion/editorials" className="block  py-1 hover:bg-blue-600 rounded">
+</a>
+<a href="/opinion/editorials" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Editorials
-</Link>
-<Link href="/opinion/letters" className="block  py-1 hover:bg-blue-600 rounded">
+</a>
+<a href="/opinion/letters" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Letters to the Editor
-</Link>
-<Link href="/opinion/editorial-board" className="block  py-1 hover:bg-blue-600 rounded">
+</a>
+<a href="/opinion/editorial-board" className="block py-2 px-2 hover:bg-blue-600 rounded">
 The Editorial Board
-</Link>
+</a>
+</div>
+</div>
+</div>
 
+{/* Sections Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('sections')}
+>
+<span>Sections</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'sections' ? "rotate-180" : ""
+}`}
+/>
+</button>
 
-{/* Sections Section */}
-<div className="mt-4 border-t border-blue-700 pt-3">
-<p className="block  py-1  rounded text-sm font-semibold uppercase tracking-wide mb-2">Sections</p>
-
-
-<Link href="/opinion/sections/politics" className="block  py-1 hover:bg-blue-600 rounded">
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'sections' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/opinion/sections/politics" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Politics
-</Link>
-<Link href="/opinion/sections/world" className="block  py-1 hover:bg-blue-600 rounded">
+</a>
+<a href="/opinion/sections/world" className="block py-2 px-2 hover:bg-blue-600 rounded">
 World
-</Link>
-<Link href="/opinion/sections/culture" className="block  py-1 hover:bg-blue-600 rounded">
+</a>
+<a href="/opinion/sections/culture" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Culture
-</Link>
-<Link href="/opinion/sections/economy" className="block  py-1 hover:bg-blue-600 rounded">
+</a>
+<a href="/opinion/sections/economy" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Economy
-</Link>
-<Link href="/opinion/sections/technology" className="block  py-1 hover:bg-blue-600 rounded">
+</a>
+<a href="/opinion/sections/technology" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Technology
-</Link>
-<Link href="/opinion/sections/climate" className="block  py-1 hover:bg-blue-600 rounded">
+</a>
+<a href="/opinion/sections/climate" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Climate
-</Link>
+</a>
+</div>
+</div>
 </div>
 
-{/* Editor’s Picks */}
-<div className=" border-t border-blue-700 pt-3">
-<p className="block  py-1  rounded text-sm font-semibold uppercase tracking-wide mb-2">Editor`s Picks</p>
-<Link href="/opinion/editors-picks" className="block  py-1 hover:bg-blue-600 rounded">
+{/* Editor's Picks Accordion */}
+<div>
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('editors-picks')}
+>
+<span>Editor's Picks</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'editors-picks' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'editors-picks' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/opinion/editors-picks" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Trending Voices
-</Link>
-<Link href="/opinion/weekend-reads" className="block  py-1 hover:bg-blue-600 rounded">
+</a>
+<a href="/opinion/weekend-reads" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Weekend Reads
-</Link>
+</a>
 </div>
+</div>
+</div>
+
 </div>
 )}
 </div>
+</div>
+
 
 {/* Lifestyle Dropdown */}
-<div className=" mb-4 ">
+<div className="bg-blue-800 pb-4 pt-4 mb-4 rounded-lg">
+<div className="relative inline-block">
 <button
 type="button"
-className="w-full font-bold text-left hover:underline cursor-pointer flex items-center justify-between"
+className="text-white hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
 onClick={() => toggleDropdown('lifestyle')}
 aria-expanded={activeDropdown === 'lifestyle'}>
 Lifestyle
 <ChevronDown
 height={20}
-className={`ml-1 transition-transform ${activeDropdown === 'lifestyle' ? "rotate-180" : ""}`}/>
+className={`ml-1 transition-transform duration-300 ${
+activeDropdown === 'lifestyle' ? "rotate-180" : ""
+}`}
+/>
 </button>
+
 {activeDropdown === 'lifestyle' && (
-<div className=" mt-2 space-y-2">
+<div className="absolute left-0 bg-blue-900 text-white mt-2 py-4 w-80 rounded shadow-lg z-50 max-h-[600px] overflow-y-auto">
 
-
-
-{/* Health */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Well (Health & Wellness)</p>
-<Link href="/fitness" className="block  py-1 hover:bg-blue-600 rounded">Fitness</Link>
-<Link href="/nutrition" className="block  py-1 hover:bg-blue-600 rounded">Nutrition</Link>
-<Link href="/mental-health" className="block  py-1 hover:bg-blue-600 rounded">Mental Health</Link>
-<Link href="/yoga-Meditation" className="block  py-1 hover:bg-blue-600 rounded">Yoga & Meditation</Link>
-<Link href="/sleep" className="block  py-1 hover:bg-blue-600 rounded">Sleep</Link>
-</div>
-
-{/* food */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Food</p>
-<Link href="/recipes" className="block  py-1 hover:bg-blue-600 rounded">Recipes</Link>
-<Link href="/restaurants" className="block  py-1 hover:bg-blue-600 rounded">Restaurants</Link>
-<Link href="/cooking-tips" className="block  py-1 hover:bg-blue-600 rounded">Cooking Tips</Link>
-<Link href="/wine-spirits" className="block  py-1 hover:bg-blue-600 rounded">wine-spirits</Link>
-<Link href="/food-news" className="block  py-1 hover:bg-blue-600 rounded">Food-News</Link>
-<Link href="/chefs" className="block  py-1 hover:bg-blue-600 rounded">Chefs</Link>
-</div>
-{/* fashion */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Fashion</p>
-<Link href="/beauty" className="block  py-1 hover:bg-blue-600 rounded">Beauty</Link>
-<Link href="/style" className="block  py-1 hover:bg-blue-600 rounded">Style</Link>
-<Link href="/models" className="block  py-1 hover:bg-blue-600 rounded">Models</Link>
-<Link href="/runway" className="block  py-1 hover:bg-blue-600 rounded">Runway</Link>
-<Link href="/designers" className="block  py-1 hover:bg-blue-600 rounded">Designers</Link>
-<Link href="/makeup" className="block  py-1 hover:bg-blue-600 rounded">Makeup</Link>
-<Link href="/accessories" className="block  py-1 hover:bg-blue-600 rounded">Accessories</Link>
-<Link href="/skincare" className="block  py-1 hover:bg-blue-600 rounded">Skincare</Link>
-<Link href="/hair" className="block  py-1 hover:bg-blue-600 rounded">Hair</Link>
-<Link href="/weddings" className="block  py-1 hover:bg-blue-600 rounded">Weddings</Link>
-</div>
-{/* Home & Garden */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Home & Garden</p>
-<Link href="/real-estate" className="block  py-1 hover:bg-blue-600 rounded">Real Estate</Link>
-<Link href="/home-design" className="block  py-1 hover:bg-blue-600 rounded">Home-Design</Link>
-<Link href="/interior-design" className="block  py-1 hover:bg-blue-600 rounded">Interior-Design</Link>
-<Link href="/gardening" className="block  py-1 hover:bg-blue-600 rounded">Gardening</Link>
-<Link href="/diy" className="block  py-1 hover:bg-blue-600 rounded">DIY & Home Improvement</Link>
-<Link href="/architecture" className="block  py-1 hover:bg-blue-600 rounded">Architecture</Link>
-</div>
-{/* Travel */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Travel</p>
-<Link href="/destinations" className="block  py-1 hover:bg-blue-600 rounded">Destinations</Link>
-<Link href="/travel-tips" className="block  py-1 hover:bg-blue-600 rounded">Travel Tips</Link>
-<Link href="/luxury-travel" className="block  py-1 hover:bg-blue-600 rounded">Luxury-Travel</Link>
-<Link href="/budget-travel" className="block  py-1 hover:bg-blue-600 rounded">Budget-Travel</Link>
-<Link href="/hotels" className="block  py-1 hover:bg-blue-600 rounded">Hotels & Resorts</Link>
-</div>
-{/* Other */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Other</p>
-<Link href="/cars" className="block  py-1 hover:bg-blue-600 rounded">Cars</Link>
-<Link href="/luxury" className="block  py-1 hover:bg-blue-600 rounded">Luxury Living</Link>
-<Link href="/shopping" className="block  py-1 hover:bg-blue-600 rounded">Shopping</Link>
-<Link href="/hobbies" className="block  py-1 hover:bg-blue-600 rounded">Hobbies</Link>
-</div>
-
-
-
-{/* Special Features */}
-{currentSpecialCoverage.length > 0 && (
-<div className=" pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">
-Special Coverage
-</p>
-{currentSpecialCoverage.map((item) => (
-<Link 
-key={item.href}
-href={item.href} 
-className="block  py-1 hover:bg-blue-600 rounded">
-{item.label}
-</Link>
-))}
-</div>
-)}
-</div>
-)}
-</div>
-
-{/* Technology Section */}
-<div className="mb-4">
+{/* Well (Health & Wellness) Accordion */}
+<div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full font-bold text-left hover:underline cursor-pointer flex items-center justify-between"
-onClick={() => toggleDropdown('mobile-technology')}>
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('wellness')}
+>
+<span>Health & Wellness</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'wellness' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'wellness' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/fitness" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Fitness
+</a>
+<a href="/nutrition" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Nutrition
+</a>
+<a href="/mental-health" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Mental Health
+</a>
+<a href="/yoga-Meditation" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Yoga & Meditation
+</a>
+<a href="/sleep" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Sleep
+</a>
+</div>
+</div>
+</div>
+
+{/* Fashion Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('fashion')}
+>
+<span>Fashion</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'fashion' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'fashion' 
+? "max-h-[500px] opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/beauty" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Beauty
+</a>
+<a href="/style" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Style
+</a>
+<a href="/models" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Models
+</a>
+<a href="/runway" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Runway
+</a>
+<a href="/designers" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Designers
+</a>
+<a href="/makeup" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Makeup
+</a>
+<a href="/accessories" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Accessories
+</a>
+<a href="/skincare" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Skincare
+</a>
+<a href="/hair" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Hair
+</a>
+</div>
+</div>
+</div>
+
+{/* Food Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('food')}
+>
+<span>Food</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'food' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'food' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/recipes" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Recipes
+</a>
+<a href="/restaurants" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Restaurants
+</a>
+<a href="/cooking-tips" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Cooking Tips
+</a>
+<a href="/wine-spirits" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Wine & Spirits
+</a>
+<a href="/food-news" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Food News
+</a>
+<a href="/chefs" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Chefs
+</a>
+</div>
+</div>
+</div>
+
+{/* Family & Relationships Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('family')}
+>
+<span>Family & Relationships</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'family' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'family' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/family" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Family
+</a>
+<a href="/parenting" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Parenting
+</a>
+<a href="/relationships" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Relationships
+</a>
+<a href="/weddings" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Weddings
+</a>
+<a href="/pregnancy" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Pregnancy & Baby
+</a>
+<a href="/pets" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Pets
+</a>
+</div>
+</div>
+</div>
+
+{/* Home & Garden Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('home')}
+>
+<span>Home & Garden</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'home' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'home' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/real-estate" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Real Estate
+</a>
+<a href="/home-design" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Home Design
+</a>
+<a href="/interior-design" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Interior Design
+</a>
+<a href="/gardening" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Gardening
+</a>
+<a href="/diy" className="block py-2 px-2 hover:bg-blue-600 rounded">
+DIY & Home Improvement
+</a>
+<a href="/architecture" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Architecture
+</a>
+</div>
+</div>
+</div>
+
+{/* Travel Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('travel')}
+>
+<span>Travel</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'travel' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'travel' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/destinations" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Destinations
+</a>
+<a href="/travel-tips" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Travel Tips
+</a>
+<a href="/luxury-travel" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Luxury Travel
+</a>
+<a href="/budget-travel" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Budget Travel
+</a>
+<a href="/hotels" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Hotels & Resorts
+</a>
+</div>
+</div>
+</div>
+
+{/* Other Accordion */}
+<div className={currentSpecialCoverage.length > 0 ? "border-b border-blue-700" : ""}>
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('other')}
+>
+<span>Other</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'other' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'other' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/cars" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Cars
+</a>
+<a href="/luxury" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Luxury Living
+</a>
+<a href="/shopping" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Shopping
+</a>
+<a href="/hobbies" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Hobbies
+</a>
+</div>
+</div>
+</div>
+
+{/* Special Coverage (Conditional) */}
+{currentSpecialCoverage.length > 0 && (
+<div>
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('special')}
+>
+<span>Special Coverage</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'special' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'special' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+{currentSpecialCoverage.map((item) => (
+<a 
+key={item.href}
+href={item.href} 
+className="block py-2 px-2 hover:bg-blue-600 rounded">
+{item.label}
+</a>
+))}
+</div>
+</div>
+</div>
+)}
+
+</div>
+)}
+</div>
+</div>
+
+{/* Technology Dropdown */}
+<div className="bg-blue-800 pb-4 mb-4 pt-4 rounded-lg">
+<div className="relative inline-block">
+<button
+type="button"
+className="text-white hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
+onClick={() => toggleDropdown('technology')}
+aria-expanded={activeDropdown === 'technology'}>
 Technology
 <ChevronDown
 height={20}
-className={`transition-transform ${activeDropdown === 'mobile-technology' ? "rotate-180" : ""}`}
+className={`ml-1 transition-transform duration-300 ${
+activeDropdown === 'technology' ? "rotate-180" : ""
+}`}
 />
 </button>
-{activeDropdown === 'mobile-technology' && (
-<div className=" mt-2 space-y-2">
-<div className="mb-4">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Personal Tech</p>
-<Link href="/tech/smartphones" className="block  py-1 hover:bg-blue-600 rounded">Smartphones</Link>
-<Link href="/tech/laptops" className="block  py-1 hover:bg-blue-600 rounded">Laptops & Computers</Link>
-<Link href="/tech/wearables" className="block  py-1 hover:bg-blue-600 rounded">Wearables</Link>
-<Link href="/tech/smart-home" className="block  py-1 hover:bg-blue-600 rounded">Smart Home</Link>
-<Link href="/tech/audio" className="block  py-1 hover:bg-blue-600 rounded">Audio & Headphones</Link>
+
+{activeDropdown === 'technology' && (
+<div className="absolute left-0 bg-blue-900 text-white mt-2 py-4 w-80 rounded shadow-lg z-50">
+
+{/* Personal Tech Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('personal-tech')}
+>
+<span>Personal Tech</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'personal-tech' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'personal-tech' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/tech/smartphones" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Smartphones
+</a>
+<a href="/tech/laptops" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Laptops & Computers
+</a>
+<a href="/tech/wearables" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Wearables
+</a>
+<a href="/tech/smart-home" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Smart Home
+</a>
+<a href="/tech/audio" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Audio & Headphones
+</a>
 </div>
-                    
-<div className="mb-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Business & Innovation</p>
-<Link href="/tech/artificial-intelligence" className="block  py-1 hover:bg-blue-600 rounded">Artificial Intelligence</Link>
-<Link href="/tech/startups" className="block  py-1 hover:bg-blue-600 rounded">Startups</Link>
-<Link href="/tech/cybersecurity" className="block  py-1 hover:bg-blue-600 rounded">Cybersecurity</Link>
-<Link href="/tech/internet" className="block  py-1 hover:bg-blue-600 rounded">Internet & Social Media</Link>
-<Link href="/tech/silicon-valley" className="block  py-1 hover:bg-blue-600 rounded">Silicon Valley</Link>
+</div>
 </div>
 
-<div className="mb-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Reviews & Guides</p>
-<Link href="/tech/reviews" className="block  py-1 hover:bg-blue-600 rounded">Product Reviews</Link>
-<Link href="/tech/buying-guides" className="block  py-1 hover:bg-blue-600 rounded">Buying Guides</Link>
-<Link href="/tech/how-to" className="block  py-1 hover:bg-blue-600 rounded">How-To & Tips</Link>
+{/* Business & Innovation Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('business-innovation')}
+>
+<span>Business & Innovation</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'business-innovation' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'business-innovation' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/tech/artificial-intelligence" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Artificial Intelligence
+</a>
+<a href="/tech/startups" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Startups
+</a>
+<a href="/tech/cybersecurity" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Cybersecurity
+</a>
+<a href="/tech/internet" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Internet & Social Media
+</a>
+<a href="/tech/silicon-valley" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Silicon Valley
+</a>
+</div>
+</div>
 </div>
 
-<div className="pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Gaming</p>
-<Link href="/tech/gaming" className="block  py-1 hover:bg-blue-600 rounded">Video Games</Link>
-<Link href="/tech/gaming/pc" className="block  py-1 hover:bg-blue-600 rounded">PC Gaming</Link>
-<Link href="/tech/gaming/consoles" className="block  py-1 hover:bg-blue-600 rounded">Consoles</Link>
-<Link href="/tech/gaming/esports" className="block  py-1 hover:bg-blue-600 rounded">Esports</Link>
+{/* Reviews & Guides Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('reviews-guides')}
+>
+<span>Reviews & Guides</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'reviews-guides' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'reviews-guides' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/tech/reviews" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Product Reviews
+</a>
+<a href="/tech/buying-guides" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Buying Guides
+</a>
+<a href="/tech/how-to" className="block py-2 px-2 hover:bg-blue-600 rounded">
+How-To & Tips
+</a>
 </div>
+</div>
+</div>
+
+{/* Gaming Accordion */}
+<div>
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('gaming')}
+>
+<span>Gaming</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'gaming' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'gaming' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/tech/gaming" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Video Games
+</a>
+<a href="/tech/gaming/pc" className="block py-2 px-2 hover:bg-blue-600 rounded">
+PC Gaming
+</a>
+<a href="/tech/gaming/consoles" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Consoles
+</a>
+<a href="/tech/gaming/esports" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Esports
+</a>
+</div>
+</div>
+</div>
+
 </div>
 )}
 </div>
+</div>
 
 {/* Sports Dropdown */}
-<div className="mb-4">
+<div className="bg-blue-800 pb-4 pt-4 mb-4 rounded-lg">
+<div className="relative inline-block">
 <button
 type="button"
-className="w-full font-bold text-left hover:underline cursor-pointer flex items-center justify-between"
+className="text-white hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
 onClick={() => toggleDropdown('sports')}
 aria-expanded={activeDropdown === 'sports'}>
 Sports
 <ChevronDown
 height={20}
-className={`ml-1 transition-transform ${activeDropdown === 'sports' ? "rotate-180" : ""}`}
+className={`ml-1 transition-transform duration-300 ${
+activeDropdown === 'sports' ? "rotate-180" : ""
+}`}
 />
 </button>
 
 {activeDropdown === 'sports' && (
-<div className=" mt-2 space-y-2">
+<div className="absolute left-0 bg-blue-900 text-white mt-2 py-4 w-80 rounded shadow-lg z-50">
 
-{/* Major Leagues */}
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Professional</p>
-<Link href="/sports/football" className="block  py-1 hover:bg-blue-600 rounded">Pro Football</Link>
-<Link href="/sports/basketball" className="block  py-1 hover:bg-blue-600 rounded">Pro Basketball</Link>
-<Link href="/sports/baseball" className="block  py-1 hover:bg-blue-600 rounded">Baseball</Link>
-<Link href="/sports/hockey" className="block  py-1 hover:bg-blue-600 rounded">Hockey</Link>
-<Link href="/sports/soccer" className="block  py-1 hover:bg-blue-600 rounded">Soccer</Link>
-<Link href="/sports/golf" className="block  py-1 hover:bg-blue-600 rounded">Golf</Link>
-<Link href="/sports/tennis" className="block  py-1 hover:bg-blue-600 rounded">Tennis</Link>
-
-{/* College Sports */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 font-bold">College Sports</p>
-<Link href="/sports/ncaa-football" className="block  py-1 hover:bg-blue-600 rounded">NCAA Football</Link>
-<Link href="/sports/ncaa-basketball" className="block  py-1 hover:bg-blue-600 rounded">NCAA Basketball</Link>
-</div>
-
-{/* International */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 font-bold">International</p>
-<Link href="/sports/world-cup" className="block  py-1 hover:bg-blue-600 rounded">World Cup</Link>
-<Link href="/sports/olympics" className="block  py-1 hover:bg-blue-600 rounded">Olympics</Link>
-<Link href="/sports/premier-league" className="block  py-1 hover:bg-blue-600 rounded">Premier League</Link>
-</div>
-
-
-
-
-{/* More Sports */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 font-bold">Other Sports</p>
-<Link href="/sports/boxing" className="block  py-1 hover:bg-blue-600 rounded">Boxing & MMA</Link>
-<Link href="/sports/auto-racing" className="block  py-1 hover:bg-blue-600 rounded">Auto Racing</Link>
-<Link href="/sports/track-and-field" className="block  py-1 hover:bg-blue-600 rounded">Track & Field</Link>
-<Link href="/sports/ufc" className="block  py-1 hover:bg-blue-600 rounded">UFC</Link>
-<Link href="/sports/boxing" className="block  py-1 hover:bg-blue-600 rounded">Boxing</Link>
-<Link href="/sports/wwe" className="block  py-1 hover:bg-blue-600 rounded">WWE</Link>
-</div>
-
-{/* Features */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Features</p>
-<Link href="/sports/columns" className="block  py-1 hover:bg-blue-600 rounded">Columns</Link>
-<Link href="/sports/podcasts" className="block  py-1 hover:bg-blue-600 rounded">Podcasts</Link>
-<Link href="/sports/photos" className="block  py-1 hover:bg-blue-600 rounded">Photos</Link>
-</div>
-
-</div>
-)}
-</div>
-
-
-{/* Arts Section */}
-<div >
+{/* Professional Sports Accordion */}
+<div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full font-bold text-left hover:underline cursor-pointer flex items-center justify-between"
-onClick={() => toggleDropdown('entertainment')}
-aria-expanded={activeDropdown === 'entertainment'}>
-Arts
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('professional')}
+>
+<span>Professional</span>
 <ChevronDown
-height={20}
-className={`ml-1 transition-transform ${activeDropdown === 'entertainment' ? "rotate-180" : ""}`}
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'professional' ? "rotate-180" : ""
+}`}
 />
 </button>
 
-{activeDropdown === 'entertainment' && (
-<div className=" mt-2 space-y-2">
-  <div className="pt-2">
-
-{/* Visual & Performing Arts */}
-<p className="block  py-1 rounded text-sm font-semibold uppercase tracking-wide mb-2">Arts & Culture</p>
-<Link href="/arts/theater" className="block  py-1 hover:bg-blue-600 rounded">Theater</Link>
-<Link href="/arts/art-design" className="block  py-1 hover:bg-blue-600 rounded">Art & Design</Link>
-<Link href="/arts/dance" className="block  py-1 hover:bg-blue-600 rounded">Dance</Link>
-<Link href="/arts/books" className="block  py-1 hover:bg-blue-600 rounded">Books</Link>
-<Link href="/arts/music" className="block  py-1 hover:bg-blue-600 rounded">Music</Link>
-
-{/* Genres */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 font-bold">Screen</p>
-<Link href="/arts/movies" className="block  py-1 hover:bg-blue-600 rounded">Movies</Link>
-<Link href="/arts/television" className="block  py-1 hover:bg-blue-600 rounded">Television</Link>
-<Link href="/arts/streaming" className="block  py-1 hover:bg-blue-600 rounded">Streaming</Link>
-</div>
-
-{/* Creators */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 font-bold">Pop Culture</p>
-<Link href="/arts/pop-music" className="block  py-1 hover:bg-blue-600 rounded">Pop Music</Link>
-<Link href="/arts/comedy" className="block  py-1 hover:bg-blue-600 rounded">Comedy</Link>
-<Link href="/arts/podcasts" className="block  py-1 hover:bg-blue-600 rounded">Podcasts</Link>
-<Link href="/arts/best-of" className="block  py-1 hover:bg-blue-600 rounded">Best of Culture</Link>
-</div>
-
-{/*Features */}
-<div className="mt-4 pt-4 border-t border-blue-700">
-<p className="block  py-1 font-bold">Features</p>
-<Link href="/arts/critics-picks" className="block  py-1 hover:bg-blue-600 rounded">Critics&apos; Picks</Link>
-<Link href="/arts/reviews" className="block  py-1 hover:bg-blue-600 rounded">Reviews</Link>
-<Link href="/arts/what-to-watch" className="block  py-1 hover:bg-blue-600 rounded">What to Watch</Link>
-<Link href="/arts/what-to-read" className="block  py-1 hover:bg-blue-600 rounded">What to Read</Link>
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'professional' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/sports/football" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Pro Football
+</a>
+<a href="/sports/basketball" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Pro Basketball
+</a>
+<a href="/sports/baseball" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Baseball
+</a>
+<a href="/sports/hockey" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Hockey
+</a>
+<a href="/sports/soccer" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Soccer
+</a>
+<a href="/sports/golf" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Golf
+</a>
+<a href="/sports/tennis" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Tennis
+</a>
 </div>
 </div>
+</div>
+
+{/* College Sports Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('college')}
+>
+<span>College Sports</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'college' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'college' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/sports/college-football" className="block py-2 px-2 hover:bg-blue-600 rounded">
+College Football
+</a>
+<a href="/sports/college-basketball" className="block py-2 px-2 hover:bg-blue-600 rounded">
+College Basketball
+</a>
+</div>
+</div>
+</div>
+
+{/* International Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('international')}
+>
+<span>International</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'international' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'international' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/sports/world-cup" className="block py-2 px-2 hover:bg-blue-600 rounded">
+World Cup
+</a>
+<a href="/sports/olympics" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Olympics
+</a>
+<a href="/sports/premier-league" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Premier League
+</a>
+</div>
+</div>
+</div>
+
+{/* Other Sports Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('other-sports')}
+>
+<span>Other Sports</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'other-sports' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'other-sports' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/sports/boxing" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Boxing & MMA
+</a>
+<a href="/sports/auto-racing" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Auto Racing
+</a>
+<a href="/sports/track-and-field" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Track & Field
+</a>
+<a href="/sports/ufc" className="block py-2 px-2 hover:bg-blue-600 rounded">
+UFC
+</a>
+<a href="/sports/wrestling" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Boxing
+</a>
+<a href="/sports/wwe" className="block py-2 px-2 hover:bg-blue-600 rounded">
+WWE
+</a>
+</div>
+</div>
+</div>
+
+{/* Features Accordion */}
+<div>
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('features')}
+>
+<span>Features</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'features' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'features' 
+? "max-h-96 opacity-100" 
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<a href="/sports/columns" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Columns
+</a>
+<a href="/sports/podcasts" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Podcasts
+</a>
+<a href="/sports/photos" className="block py-2 px-2 hover:bg-blue-600 rounded">
+Photos
+</a>
+</div>
+</div>
+</div>
+
 </div>
 )}
 </div>
+</div>
 
+{/* Arts Dropdown */}
+<div className="bg-blue-800 pb-4 mb-4 pt-4 rounded-lg">
+<div className="relative inline-block">
+  <button
+type="button"
+className="hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
+onClick={() => toggleDropdown('arts')}
+aria-expanded={activeDropdown === 'arts'}
+>
+Arts
+<ChevronDown
+height={20}
+className={`ml-1 transition-transform duration-300 ${
+activeDropdown === 'arts' ? "rotate-180" : ""
+}`}
+/>
+</button>
 
+{activeDropdown === 'arts' && (
+<div className="absolute left-0 bg-blue-900 text-white mt-2 py-4 w-80 rounded shadow-lg z-50">
+
+{/* Arts & Culture Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('arts-culture')}
+>
+<span>Arts & Culture</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'arts-culture' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'arts-culture'
+? "max-h-96 opacity-100"
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<Link href="/arts/theater" className="block py-2 px-2 hover:bg-blue-600 rounded">Theater</Link>
+<Link href="/arts/art-design" className="block py-2 px-2 hover:bg-blue-600 rounded">Art & Design</Link>
+<Link href="/arts/dance" className="block py-2 px-2 hover:bg-blue-600 rounded">Dance</Link>
+<Link href="/arts/books" className="block py-2 px-2 hover:bg-blue-600 rounded">Books</Link>
+<Link href="/arts/music" className="block py-2 px-2 hover:bg-blue-600 rounded">Music</Link>
 </div>
 </div>
+</div>
+
+{/* Screen Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('screen')}
+>
+<span>Screen</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'screen' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'screen'
+? "max-h-96 opacity-100"
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<Link href="/arts/movies" className="block py-2 px-2 hover:bg-blue-600 rounded">Movies</Link>
+<Link href="/arts/television" className="block py-2 px-2 hover:bg-blue-600 rounded">Television</Link>
+<Link href="/arts/streaming" className="block py-2 px-2 hover:bg-blue-600 rounded">Streaming</Link>
+</div>
+</div>
+</div>
+
+{/* Pop Culture Accordion */}
+<div className="border-b border-blue-700">
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('pop-culture')}
+>
+<span>Pop Culture</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'pop-culture' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'pop-culture'
+? "max-h-96 opacity-100"
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<Link href="/arts/pop-music" className="block py-2 px-2 hover:bg-blue-600 rounded">Pop Music</Link>
+<Link href="/arts/comedy" className="block py-2 px-2 hover:bg-blue-600 rounded">Comedy</Link>
+<Link href="/arts/podcasts" className="block py-2 px-2 hover:bg-blue-600 rounded">Podcasts</Link>
+<Link href="/arts/best-of" className="block py-2 px-2 hover:bg-blue-600 rounded">Best of Culture</Link>
+</div>
+</div>
+</div>
+
+{/* Features Accordion */}
+<div>
+<button
+type="button"
+className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+onClick={() => toggleAccordion('arts-features')}
+>
+<span>Features</span>
+<ChevronDown
+height={18}
+className={`transition-transform duration-300 ${
+activeAccordion === 'arts-features' ? "rotate-180" : ""
+}`}
+/>
+</button>
+
+<div
+className={`overflow-hidden transition-all duration-300 ease-in-out ${
+activeAccordion === 'arts-features'
+? "max-h-96 opacity-100"
+: "max-h-0 opacity-0"
+}`}
+>
+<div className="px-4 pb-3 space-y-1">
+<Link href="/arts/critics-picks" className="block py-2 px-2 hover:bg-blue-600 rounded">Critics' Picks</Link>
+<Link href="/arts/reviews" className="block py-2 px-2 hover:bg-blue-600 rounded">Reviews</Link>
+<Link href="/arts/what-to-watch" className="block py-2 px-2 hover:bg-blue-600 rounded">What to Watch</Link>
+<Link href="/arts/what-to-read" className="block py-2 px-2 hover:bg-blue-600 rounded">What to Read</Link>
+</div>
+</div>
+</div>
+
+</div>
+)}
+</div>
+</div>
+</div>
+</div>
+
 )}
 </div>
 </div>

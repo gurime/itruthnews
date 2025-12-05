@@ -184,11 +184,10 @@ text: "Our editors and journalists are available to discuss our coverage and ans
 return (
 <>
 <Navbar/>
-<div className="bg-gray-100 py-8"></div>
 
 <div className="min-h-screen bg-gray-50">
 {/* Header */}
-<div className="bg-linear-to-br from-blue-900 via-blue-800 to-blue-900 text-white">
+<div className="dark:bg-blue-900 text-white">
 <div className="container mx-auto px-4 py-16">
 <div className="max-w-4xl mx-auto text-center">
 <Shield className="w-16 h-16 mx-auto mb-6" />
