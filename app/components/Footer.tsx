@@ -56,7 +56,6 @@ toggleSection={toggleSection}
 <FooterLink href="/advertise" label="Advertise" />
 <FooterLink href="/careers" label="Careers" />
 <FooterLink href="/press" label="Press & Media" />
-<FooterLink href="/contributors" label="Become a Contributor" />
 <FooterLink href="/editorial" label="Editorial Guidelines" />
 </FooterCollapse>
 

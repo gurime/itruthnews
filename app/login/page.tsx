@@ -56,8 +56,12 @@ if (error) throw error;
 toast.success("Login successful!");
 router.refresh(); // Ensure server components update
 router.push("/");
-} catch (error: any) {
-setError(error.message || "An error occurred during login");
+} catch (error: unknown) {
+if (typeof error === "object" && error !== null && "message" in error) {
+setError((error as { message?: string }).message || "An error occurred while sending reset email");
+} else {
+setError("An error occurred while sending reset email");
+}
 } finally {
 setLoading(false);
 }
@@ -106,8 +110,12 @@ setConfirmPassword("");
 
 // Optional: Switch them to login view
 setIsLogin(true);
-} catch (error: any) {
-setError(error.message || "An error occurred during signup");
+} catch (error: unknown) {
+if (typeof error === "object" && error !== null && "message" in error) {
+setError((error as { message?: string }).message || "An error occurred while sending reset email");
+} else {
+setError("An error occurred while sending reset email");
+}
 } finally {
 setLoading(false);
 }
@@ -131,9 +139,10 @@ src="/images/it_news.png"
 alt="iTruth News Logo"
 width={200}
 height={80}
+style={{width:'auto',height:'auto'}}
 className="mx-auto mb-4"
-priority // Add priority for LCP
-/>
+loading="eager"
+priority/>
 </Link>
 
 <h1 className="text-3xl font-bold text-white mb-2">

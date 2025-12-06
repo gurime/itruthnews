@@ -44,32 +44,49 @@ console.error(error);
 };
 
 useEffect(() => {
-const checkUser = async () => {
+let mounted = true;
+
+const init = async () => {
+// Get initial session
 const { data: { session } } = await supabase.auth.getSession();
+if (!mounted) return;
+
 setUser(session?.user ?? null);
 
+// Check subscription status if logged in
 if (session?.user?.email) {
-const { data } = await supabase
-.from('newsletter_subscribers')
-.select('email, subscribed')
-.eq('email', session.user.email)
+const { data: subData } = await supabase
+.from("newsletter_subscribers")
+.select("email, subscribed")
+.eq("email", session.user.email)
 .single();
 
-if (data && data.subscribed) {
+if (subData?.subscribed) {
 setIsSubscribed(true);
 setEmail(session.user.email);
 }
 }
+
 setIsLoading(false);
 };
-checkUser();
 
-const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+init();
+
+// Auth listener
+const {
+data: { subscription }
+} = supabase.auth.onAuthStateChange((_event, session) => {
+if (!mounted) return;
+
 setUser(session?.user ?? null);
 });
 
-return () => subscription.unsubscribe();
+return () => {
+mounted = false;
+subscription?.unsubscribe();
+};
 }, []);
+
 
 const handleSubscribe = async () => {
 if (!email || !email.includes('@')) {
@@ -77,11 +94,16 @@ toast('Please enter a valid email.');
 return;
 }
 
-const { data: existing } = await supabase
+const { data: existing, error: fetchError } = await supabase
 .from('newsletter_subscribers')
 .select('email, subscribed')
 .eq('email', email)
-.single();
+.maybeSingle(); // <= key change
+
+if (fetchError) {
+toast(`Lookup failed: ${fetchError.message}`);
+return;
+}
 
 if (existing && existing.subscribed) {
 toast('This email is already subscribed!');
@@ -93,24 +115,28 @@ const { error } = await supabase
 .from('newsletter_subscribers')
 .update({ subscribed: true, unsubscribed_at: null })
 .eq('email', email);
+
 if (error) {
 toast(`Subscription failed: ${error.message}`);
 return;
 }
-} else {
+} else if (!existing) {
 const { error } = await supabase
 .from('newsletter_subscribers')
 .insert([{ email }]);
+
 if (error) {
 toast(`Subscription failed: ${error.message}`);
 return;
 }
 }
+
 setIsSubscribed(true);
 setSubscribed(true);
 toast('Successfully subscribed to newsletter!');
 setTimeout(() => setSubscribed(false), 3500);
 };
+
 
 const handleUnsubscribe = async () => {
 if (!email) return;
@@ -618,7 +644,7 @@ type="button"
 className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('editors-picks')}
 >
-<span>Editor's Picks</span>
+<span>Editor&apos;s Picks</span>
 <ChevronDown
 height={18}
 className={`transition-transform duration-300 ${
@@ -1457,7 +1483,7 @@ Photos
 {/* Arts Dropdown */}
 <div className="bg-blue-800 p-6 rounded-lg">
 <div className="relative inline-block">
-  <button
+<button
 type="button"
 className="hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
 onClick={() => toggleDropdown('arts')}
@@ -1595,7 +1621,7 @@ activeAccordion === 'arts-features'
 }`}
 >
 <div className="px-4 pb-3 space-y-1">
-<Link href="/arts/critics-picks" className="block py-2 px-2 hover:bg-blue-600 rounded">Critics' Picks</Link>
+<Link href="/arts/critics-picks" className="block py-2 px-2 hover:bg-blue-600 rounded">Critics&apos; Picks</Link>
 <Link href="/arts/reviews" className="block py-2 px-2 hover:bg-blue-600 rounded">Reviews</Link>
 <Link href="/arts/what-to-watch" className="block py-2 px-2 hover:bg-blue-600 rounded">What to Watch</Link>
 <Link href="/arts/what-to-read" className="block py-2 px-2 hover:bg-blue-600 rounded">What to Read</Link>
@@ -1965,7 +1991,7 @@ type="button"
 className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('editors-picks')}
 >
-<span>Editor's Picks</span>
+<span>Editor&apos;s Picks</span>
 <ChevronDown
 height={18}
 className={`transition-transform duration-300 ${
@@ -2799,7 +2825,7 @@ Photos
 {/* Arts Dropdown */}
 <div className="bg-blue-800 pb-4 mb-4 pt-4 rounded-lg">
 <div className="relative inline-block">
-  <button
+<button
 type="button"
 className="hover:underline decoration-2 font-bold cursor-pointer whitespace-nowrap flex items-center"
 onClick={() => toggleDropdown('arts')}
@@ -2937,7 +2963,7 @@ activeAccordion === 'arts-features'
 }`}
 >
 <div className="px-4 pb-3 space-y-1">
-<Link href="/arts/critics-picks" className="block py-2 px-2 hover:bg-blue-600 rounded">Critics' Picks</Link>
+<Link href="/arts/critics-picks" className="block py-2 px-2 hover:bg-blue-600 rounded">Critics&apos; Picks</Link>
 <Link href="/arts/reviews" className="block py-2 px-2 hover:bg-blue-600 rounded">Reviews</Link>
 <Link href="/arts/what-to-watch" className="block py-2 px-2 hover:bg-blue-600 rounded">What to Watch</Link>
 <Link href="/arts/what-to-read" className="block py-2 px-2 hover:bg-blue-600 rounded">What to Read</Link>

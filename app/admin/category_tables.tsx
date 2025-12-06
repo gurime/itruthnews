@@ -43,8 +43,8 @@ const categories = [
   // Lifestyle - Health & Wellness
   { value: "fitness", label: "Fitness", table: "fitness" },
   { value: "nutrition", label: "Nutrition", table: "nutrition" },
-  { value: "mental-health", label: "Mental Health", table: "mental_health" },
-  { value: "yoga-meditation", label: "Yoga & Meditation", table: "yoga_meditation" },
+  { value: "mental_health", label: "Mental Health", table: "mental_health" },
+  { value: "yoga_meditation", label: "Yoga & Meditation", table: "yoga_meditation" },
   { value: "sleep", label: "Sleep", table: "sleep" },
   
   // Lifestyle - Fashion & Beauty
@@ -69,15 +69,15 @@ const categories = [
   // Lifestyle - Food & Dining
   { value: "recipes", label: "Recipes", table: "recipes" },
   { value: "restaurants", label: "Restaurants", table: "restaurants" },
-  { value: "cooking-tips", label: "Cooking Tips", table: "cooking_tips" },
-  { value: "wine-spirits", label: "Wine & Spirits", table: "wine_spirits" },
-  { value: "food-news", label: "Food News", table: "food_news" },
+  { value: "cooking_tips", label: "Cooking Tips", table: "cooking_tips" },
+  { value: "wine_spirits", label: "Wine & Spirits", table: "wine_spirits" },
+  { value: "food_news", label: "Food News", table: "food_news" },
   { value: "chefs", label: "Chefs", table: "chefs" },
   
   // Lifestyle - Home & Garden
-  { value: "real-estate", label: "Real Estate", table: "real_estate" },
-  { value: "home-design", label: "Home Design", table: "home_design" },
-  { value: "interior-design", label: "Interior Design", table: "interior_design" },
+  { value: "real_estate", label: "Real Estate", table: "real_estate" },
+  { value: "home_design", label: "Home Design", table: "home_design" },
+  { value: "interior_design", label: "Interior Design", table: "interior_design" },
   { value: "gardening", label: "Gardening", table: "gardening" },
   { value: "diy", label: "DIY & Home Improvement", table: "diy" },
   { value: "architecture", label: "Architecture", table: "architecture" },
