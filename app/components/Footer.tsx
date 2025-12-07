@@ -72,7 +72,6 @@ toggleSection={toggleSection}
 <FooterLink href="/corrections" label="Report a Correction" />
 <FooterLink href="/faq" label="FAQ" />
 <FooterLink href="/submit-tip" label="Submit a Story Tip" />
-<FooterLink href="/community" label="Community Guidelines" />
 </FooterCollapse>
 
 {/* Legal */}

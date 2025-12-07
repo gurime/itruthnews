@@ -313,7 +313,7 @@ width={200} height={200} />
 
 
 {/* News Dropdown */}
-<div className="bg-blue-800 p-6 rounded-lg">
+<div className=" p-6 ">
 <div className="relative inline-block">
 <button
 type="button"
@@ -355,7 +355,7 @@ activeAccordion === 'us-news'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <Link href="/politics" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Politics
 </Link>
@@ -394,7 +394,7 @@ activeAccordion === 'world'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <Link href="/asia" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Asia
 </Link>
@@ -421,7 +421,7 @@ South America
 </div>
 </div>
 
-<div className="bg-blue-800 p-6 rounded-lg">
+<div>
 <div className="relative inline-block">
 <button
 type="button"
@@ -463,31 +463,31 @@ activeAccordion === 'markets'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/markets/stocks" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className="px-2 pb-3 space-y-1">
+<Link href="/markets/stocks" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Stocks
-</a>
-<a href="/markets/us" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/markets/us" className="block py-2 px-2 hover:bg-blue-600 rounded">
 U.S. Markets
-</a>
-<a href="/markets/pre" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/markets/pre" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Pre-Markets
-</a>
-<a href="/markets/crypto" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/markets/crypto" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Cryptocurrency
-</a>
-<a href="/markets/futures" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/markets/futures" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Futures & Commodities
-</a>
-<a href="/markets/bonds" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/markets/bonds" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Bonds
-</a>
-<a href="/markets/etfs" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/markets/etfs" className="block py-2 px-2 hover:bg-blue-600 rounded">
 ETFs
-</a>
-<a href="/markets/mutual-funds" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/markets/mutual-funds" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Mutual Funds
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -515,7 +515,7 @@ activeAccordion === 'business-leaders'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <a href="/business-leaders" className="block py-2 px-2 hover:bg-blue-600 rounded">
 All Business Leaders
 </a>
@@ -529,7 +529,7 @@ All Business Leaders
 </div>
 
 {/* Opinion Dropdown */}
-<div className="bg-blue-800 p-6 rounded-lg">
+<div >
 <div className="relative inline-block">
 <button
 type="button"
@@ -571,22 +571,22 @@ activeAccordion === 'editorials'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/opinion/columnist" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className="px-2 pb-3 space-y-1">
+<Link href="/opinion/columnist" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Columnists
-</a>
-<a href="/opinion/guest-voices" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/guest-voices" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Guest Voices
-</a>
-<a href="/opinion/editorials" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/editorials" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Editorials
-</a>
-<a href="/opinion/letters" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/letters" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Letters to the Editor
-</a>
-<a href="/opinion/editorial-board" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/editorial-board" className="block py-2 px-2 hover:bg-blue-600 rounded">
 The Editorial Board
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -614,22 +614,22 @@ activeAccordion === 'sections'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/opinion/sections/politics" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className="px-2 pb-3 space-y-1">
+<Link href="/opinion/sections/politics" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Politics
-</a>
-<a href="/opinion/sections/world" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/sections/world" className="block py-2 px-2 hover:bg-blue-600 rounded">
 World
-</a>
-<a href="/opinion/sections/culture" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/sections/culture" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Culture
-</a>
-<a href="/opinion/sections/economy" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/sections/economy" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Economy
-</a>
-<a href="/opinion/sections/technology" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/sections/technology" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Technology
-</a>
+</Link>
 <a href="/opinion/sections/climate" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Climate
 </a>
@@ -660,13 +660,13 @@ activeAccordion === 'editors-picks'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/opinion/editors-picks" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className="px-2 pb-3 space-y-1">
+<Link href="/opinion/editors-picks" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Trending Voices
-</a>
-<a href="/opinion/weekend-reads" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/weekend-reads" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Weekend Reads
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -678,7 +678,7 @@ Weekend Reads
 
 
 {/* Lifestyle Dropdown */}
-<div className="bg-blue-800 p-6 rounded-lg">
+<div >
 <div className="relative inline-block">
 <button
 type="button"
@@ -720,19 +720,19 @@ activeAccordion === 'wellness'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/fitness" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className="px-2 pb-3 space-y-1">
+<Link href="/fitness" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Fitness
-</a>
-<a href="/nutrition" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/nutrition" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Nutrition
-</a>
-<a href="/mental-health" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/mental-health" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Mental Health
-</a>
-<a href="/yoga-Meditation" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/yoga-Meditation" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Yoga & Meditation
-</a>
+</Link>
 <a href="/sleep" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Sleep
 </a>
@@ -763,34 +763,34 @@ activeAccordion === 'fashion'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/beauty" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className="px-2 pb-3 space-y-1">
+<Link href="/beauty" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Beauty
-</a>
-<a href="/style" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/style" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Style
-</a>
-<a href="/models" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/models" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Models
-</a>
-<a href="/runway" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/runway" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Runway
-</a>
-<a href="/designers" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/designers" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Designers
-</a>
-<a href="/makeup" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/makeup" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Makeup
-</a>
-<a href="/accessories" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/accessories" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Accessories
-</a>
-<a href="/skincare" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/skincare" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Skincare
-</a>
-<a href="/hair" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/hair" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Hair
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -818,7 +818,7 @@ activeAccordion === 'food'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <a href="/recipes" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Recipes
 </a>
@@ -864,7 +864,7 @@ activeAccordion === 'family'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <a href="/family" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Family
 </a>
@@ -910,7 +910,7 @@ activeAccordion === 'home'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <a href="/real-estate" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Real Estate
 </a>
@@ -956,7 +956,7 @@ activeAccordion === 'travel'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <a href="/destinations" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Destinations
 </a>
@@ -999,7 +999,7 @@ activeAccordion === 'other'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <a href="/cars" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Cars
 </a>
@@ -1040,7 +1040,7 @@ activeAccordion === 'special'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 {currentSpecialCoverage.map((item) => (
 <a 
 key={item.href}
@@ -1062,7 +1062,7 @@ className="block py-2 px-2 hover:bg-blue-600 rounded">
 
 
 {/* Technology Dropdown */}
-<div className="bg-blue-800 p-6 rounded-lg">
+<div>
 <div className="relative inline-block">
 <button
 type="button"
@@ -1104,7 +1104,7 @@ activeAccordion === 'personal-tech'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <a href="/tech/smartphones" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Smartphones
 </a>
@@ -1147,7 +1147,7 @@ activeAccordion === 'business-innovation'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <a href="/tech/artificial-intelligence" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Artificial Intelligence
 </a>
@@ -1190,7 +1190,7 @@ activeAccordion === 'reviews-guides'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <a href="/tech/reviews" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Product Reviews
 </a>
@@ -1227,7 +1227,7 @@ activeAccordion === 'gaming'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <a href="/tech/gaming" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Video Games
 </a>
@@ -1252,7 +1252,7 @@ Esports
 
 
 {/* Sports Dropdown */}
-<div className="bg-blue-800 p-6 rounded-lg">
+<div >
 <div className="relative inline-block">
 <button
 type="button"
@@ -1294,7 +1294,7 @@ activeAccordion === 'professional'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <a href="/sports/football" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Pro Football
 </a>
@@ -1343,7 +1343,7 @@ activeAccordion === 'college'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <a href="/sports/college-football" className="block py-2 px-2 hover:bg-blue-600 rounded">
 College Football
 </a>
@@ -1377,7 +1377,7 @@ activeAccordion === 'international'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <a href="/sports/world-cup" className="block py-2 px-2 hover:bg-blue-600 rounded">
 World Cup
 </a>
@@ -1414,7 +1414,7 @@ activeAccordion === 'other-sports'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <a href="/sports/boxing" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Boxing & MMA
 </a>
@@ -1460,7 +1460,7 @@ activeAccordion === 'features'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <a href="/sports/columns" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Columns
 </a>
@@ -1481,7 +1481,7 @@ Photos
 
 
 {/* Arts Dropdown */}
-<div className="bg-blue-800 p-6 rounded-lg">
+<div >
 <div className="relative inline-block">
 <button
 type="button"
@@ -1524,7 +1524,7 @@ activeAccordion === 'arts-culture'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <Link href="/arts/theater" className="block py-2 px-2 hover:bg-blue-600 rounded">Theater</Link>
 <Link href="/arts/art-design" className="block py-2 px-2 hover:bg-blue-600 rounded">Art & Design</Link>
 <Link href="/arts/dance" className="block py-2 px-2 hover:bg-blue-600 rounded">Dance</Link>
@@ -1557,7 +1557,7 @@ activeAccordion === 'screen'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <Link href="/arts/movies" className="block py-2 px-2 hover:bg-blue-600 rounded">Movies</Link>
 <Link href="/arts/television" className="block py-2 px-2 hover:bg-blue-600 rounded">Television</Link>
 <Link href="/arts/streaming" className="block py-2 px-2 hover:bg-blue-600 rounded">Streaming</Link>
@@ -1588,7 +1588,7 @@ activeAccordion === 'pop-culture'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <Link href="/arts/pop-music" className="block py-2 px-2 hover:bg-blue-600 rounded">Pop Music</Link>
 <Link href="/arts/comedy" className="block py-2 px-2 hover:bg-blue-600 rounded">Comedy</Link>
 <Link href="/arts/podcasts" className="block py-2 px-2 hover:bg-blue-600 rounded">Podcasts</Link>
@@ -1620,7 +1620,7 @@ activeAccordion === 'arts-features'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="px-2 pb-3 space-y-1">
 <Link href="/arts/critics-picks" className="block py-2 px-2 hover:bg-blue-600 rounded">Critics&apos; Picks</Link>
 <Link href="/arts/reviews" className="block py-2 px-2 hover:bg-blue-600 rounded">Reviews</Link>
 <Link href="/arts/what-to-watch" className="block py-2 px-2 hover:bg-blue-600 rounded">What to Watch</Link>
@@ -1639,9 +1639,9 @@ activeAccordion === 'arts-features'
 
 {/* Mobile Layout */}
 <div className="md:hidden">
-<div className="flex items-center justify-between">
+<div className="flex items-center justify-between p-6">
 <div className="shrink-0">
-<Link href="/">
+<Link href="/" >
 <Image 
 loading="eager"
 priority src="/images/it_news.png" alt="Truth News Logo" width={200} height={200} />
@@ -1682,7 +1682,7 @@ activeDropdown === 'news' ? "rotate-180" : ""
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 font-semibold flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full  py-3 font-semibold flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('us-news')}
 >
 <span>U.S. News</span>
@@ -1701,7 +1701,7 @@ activeAccordion === 'us-news'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="pb-3 space-y-1">
 <Link href="/politics" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Politics
 </Link>
@@ -1721,7 +1721,7 @@ Climate
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 font-semibold flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full  py-3 font-semibold flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('world')}
 >
 <span>World</span>
@@ -1740,7 +1740,7 @@ activeAccordion === 'world'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className="pb-3 space-y-1">
 <Link href="/asia" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Asia
 </Link>
@@ -1792,7 +1792,7 @@ activeDropdown === 'itruth business' ? "rotate-180" : ""
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 font-semibold flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full  py-3 font-semibold flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('markets')}
 >
 <span>Markets</span>
@@ -1811,31 +1811,31 @@ activeAccordion === 'markets'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/markets/stocks" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/markets/stocks" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Stocks
-</a>
-<a href="/markets/us" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/markets/us" className="block py-2 px-2 hover:bg-blue-600 rounded">
 U.S. Markets
-</a>
-<a href="/markets/pre" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/markets/pre" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Pre-Markets
-</a>
-<a href="/markets/crypto" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/markets/crypto" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Cryptocurrency
-</a>
-<a href="/markets/futures" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/markets/futures" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Futures & Commodities
-</a>
-<a href="/markets/bonds" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/markets/bonds" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Bonds
-</a>
-<a href="/markets/etfs" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/markets/etfs" className="block py-2 px-2 hover:bg-blue-600 rounded">
 ETFs
-</a>
-<a href="/markets/mutual-funds" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/markets/mutual-funds" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Mutual Funds
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -1844,7 +1844,7 @@ Mutual Funds
 <div>
 <button
 type="button"
-className="w-full px-4 py-3 font-semibold flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full  py-3 font-semibold flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('business-leaders')}
 >
 <span>Business Leaders</span>
@@ -1863,10 +1863,10 @@ activeAccordion === 'business-leaders'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/business-leaders" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/business-leaders" className="block py-2 px-2 hover:bg-blue-600 rounded">
 All Business Leaders
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -1899,7 +1899,7 @@ activeDropdown === 'opinion' ? "rotate-180" : ""
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full  py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('editorials')}
 >
 <span>Editorials</span>
@@ -1918,22 +1918,22 @@ activeAccordion === 'editorials'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/opinion/columnist" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/opinion/columnist" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Columnists
-</a>
-<a href="/opinion/guest-voices" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/guest-voices" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Guest Voices
-</a>
-<a href="/opinion/editorials" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/editorials" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Editorials
-</a>
-<a href="/opinion/letters" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/letters" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Letters to the Editor
-</a>
-<a href="/opinion/editorial-board" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/editorial-board" className="block py-2 px-2 hover:bg-blue-600 rounded">
 The Editorial Board
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -1942,7 +1942,7 @@ The Editorial Board
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full  py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('sections')}
 >
 <span>Sections</span>
@@ -1961,25 +1961,25 @@ activeAccordion === 'sections'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/opinion/sections/politics" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/opinion/sections/politics" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Politics
-</a>
-<a href="/opinion/sections/world" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/sections/world" className="block py-2 px-2 hover:bg-blue-600 rounded">
 World
-</a>
-<a href="/opinion/sections/culture" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/sections/culture" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Culture
-</a>
-<a href="/opinion/sections/economy" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/sections/economy" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Economy
-</a>
-<a href="/opinion/sections/technology" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/sections/technology" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Technology
-</a>
-<a href="/opinion/sections/climate" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/sections/climate" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Climate
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -1988,7 +1988,7 @@ Climate
 <div>
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full  py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('editors-picks')}
 >
 <span>Editor&apos;s Picks</span>
@@ -2007,13 +2007,13 @@ activeAccordion === 'editors-picks'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/opinion/editors-picks" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/opinion/editors-picks" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Trending Voices
-</a>
-<a href="/opinion/weekend-reads" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/opinion/weekend-reads" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Weekend Reads
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -2048,7 +2048,7 @@ activeDropdown === 'lifestyle' ? "rotate-180" : ""
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('wellness')}
 >
 <span>Health & Wellness</span>
@@ -2067,22 +2067,22 @@ activeAccordion === 'wellness'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/fitness" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/fitness" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Fitness
-</a>
-<a href="/nutrition" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/nutrition" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Nutrition
-</a>
-<a href="/mental-health" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/mental-health" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Mental Health
-</a>
-<a href="/yoga-Meditation" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/yoga-Meditation" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Yoga & Meditation
-</a>
-<a href="/sleep" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/sleep" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Sleep
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -2091,7 +2091,7 @@ Sleep
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('fashion')}
 >
 <span>Fashion</span>
@@ -2110,34 +2110,34 @@ activeAccordion === 'fashion'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/beauty" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/beauty" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Beauty
-</a>
-<a href="/style" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/style" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Style
-</a>
-<a href="/models" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/models" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Models
-</a>
-<a href="/runway" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/runway" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Runway
-</a>
-<a href="/designers" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/designers" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Designers
-</a>
-<a href="/makeup" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/makeup" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Makeup
-</a>
-<a href="/accessories" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/accessories" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Accessories
-</a>
-<a href="/skincare" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/skincare" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Skincare
-</a>
-<a href="/hair" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/hair" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Hair
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -2146,7 +2146,7 @@ Hair
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full  py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('food')}
 >
 <span>Food</span>
@@ -2165,25 +2165,25 @@ activeAccordion === 'food'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/recipes" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/recipes" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Recipes
-</a>
-<a href="/restaurants" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/restaurants" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Restaurants
-</a>
-<a href="/cooking-tips" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/cooking-tips" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Cooking Tips
-</a>
-<a href="/wine-spirits" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/wine-spirits" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Wine & Spirits
-</a>
-<a href="/food-news" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/food-news" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Food News
-</a>
-<a href="/chefs" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/chefs" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Chefs
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -2192,7 +2192,7 @@ Chefs
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('family')}
 >
 <span>Family & Relationships</span>
@@ -2211,25 +2211,25 @@ activeAccordion === 'family'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/family" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/family" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Family
-</a>
-<a href="/parenting" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/parenting" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Parenting
-</a>
-<a href="/relationships" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/relationships" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Relationships
-</a>
-<a href="/weddings" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/weddings" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Weddings
-</a>
-<a href="/pregnancy" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/pregnancy" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Pregnancy & Baby
-</a>
-<a href="/pets" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/pets" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Pets
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -2238,7 +2238,7 @@ Pets
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full  py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('home')}
 >
 <span>Home & Garden</span>
@@ -2257,25 +2257,25 @@ activeAccordion === 'home'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/real-estate" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/real-estate" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Real Estate
-</a>
-<a href="/home-design" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/home-design" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Home Design
-</a>
-<a href="/interior-design" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/interior-design" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Interior Design
-</a>
-<a href="/gardening" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/gardening" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Gardening
-</a>
-<a href="/diy" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/diy" className="block py-2 px-2 hover:bg-blue-600 rounded">
 DIY & Home Improvement
-</a>
-<a href="/architecture" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/architecture" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Architecture
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -2284,7 +2284,7 @@ Architecture
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('travel')}
 >
 <span>Travel</span>
@@ -2303,22 +2303,22 @@ activeAccordion === 'travel'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/destinations" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/destinations" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Destinations
-</a>
-<a href="/travel-tips" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/travel-tips" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Travel Tips
-</a>
-<a href="/luxury-travel" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/luxury-travel" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Luxury Travel
-</a>
-<a href="/budget-travel" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/budget-travel" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Budget Travel
-</a>
-<a href="/hotels" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/hotels" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Hotels & Resorts
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -2327,7 +2327,7 @@ Hotels & Resorts
 <div className={currentSpecialCoverage.length > 0 ? "border-b border-blue-700" : ""}>
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('other')}
 >
 <span>Other</span>
@@ -2346,19 +2346,19 @@ activeAccordion === 'other'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/cars" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/cars" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Cars
-</a>
-<a href="/luxury" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/luxury" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Luxury Living
-</a>
-<a href="/shopping" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/shopping" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Shopping
-</a>
-<a href="/hobbies" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/hobbies" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Hobbies
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -2368,7 +2368,7 @@ Hobbies
 <div>
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('special')}
 >
 <span>Special Coverage</span>
@@ -2387,14 +2387,14 @@ activeAccordion === 'special'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className=" pb-3 space-y-1">
 {currentSpecialCoverage.map((item) => (
-<a 
+<Link 
 key={item.href}
 href={item.href} 
 className="block py-2 px-2 hover:bg-blue-600 rounded">
 {item.label}
-</a>
+</Link>
 ))}
 </div>
 </div>
@@ -2430,7 +2430,7 @@ activeDropdown === 'technology' ? "rotate-180" : ""
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('personal-tech')}
 >
 <span>Personal Tech</span>
@@ -2449,22 +2449,22 @@ activeAccordion === 'personal-tech'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/tech/smartphones" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/tech/smartphones" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Smartphones
-</a>
-<a href="/tech/laptops" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/tech/laptops" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Laptops & Computers
-</a>
-<a href="/tech/wearables" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/tech/wearables" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Wearables
-</a>
-<a href="/tech/smart-home" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/tech/smart-home" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Smart Home
-</a>
-<a href="/tech/audio" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/tech/audio" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Audio & Headphones
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -2473,7 +2473,7 @@ Audio & Headphones
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full  py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('business-innovation')}
 >
 <span>Business & Innovation</span>
@@ -2492,22 +2492,22 @@ activeAccordion === 'business-innovation'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/tech/artificial-intelligence" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/tech/artificial-intelligence" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Artificial Intelligence
-</a>
-<a href="/tech/startups" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/tech/startups" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Startups
-</a>
-<a href="/tech/cybersecurity" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/tech/cybersecurity" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Cybersecurity
-</a>
-<a href="/tech/internet" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/tech/internet" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Internet & Social Media
-</a>
-<a href="/tech/silicon-valley" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/tech/silicon-valley" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Silicon Valley
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -2516,7 +2516,7 @@ Silicon Valley
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full  py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('reviews-guides')}
 >
 <span>Reviews & Guides</span>
@@ -2535,16 +2535,16 @@ activeAccordion === 'reviews-guides'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/tech/reviews" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/tech/reviews" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Product Reviews
-</a>
-<a href="/tech/buying-guides" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/tech/buying-guides" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Buying Guides
-</a>
-<a href="/tech/how-to" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/tech/how-to" className="block py-2 px-2 hover:bg-blue-600 rounded">
 How-To & Tips
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -2553,7 +2553,7 @@ How-To & Tips
 <div>
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full  py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('gaming')}
 >
 <span>Gaming</span>
@@ -2572,19 +2572,19 @@ activeAccordion === 'gaming'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/tech/gaming" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/tech/gaming" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Video Games
-</a>
-<a href="/tech/gaming/pc" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/tech/gaming/pc" className="block py-2 px-2 hover:bg-blue-600 rounded">
 PC Gaming
-</a>
-<a href="/tech/gaming/consoles" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/tech/gaming/consoles" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Consoles
-</a>
-<a href="/tech/gaming/esports" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/tech/gaming/esports" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Esports
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -2618,7 +2618,7 @@ activeDropdown === 'sports' ? "rotate-180" : ""
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('professional')}
 >
 <span>Professional</span>
@@ -2637,28 +2637,28 @@ activeAccordion === 'professional'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/sports/football" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/sports/football" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Pro Football
-</a>
-<a href="/sports/basketball" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/sports/basketball" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Pro Basketball
-</a>
-<a href="/sports/baseball" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/sports/baseball" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Baseball
-</a>
-<a href="/sports/hockey" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/sports/hockey" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Hockey
-</a>
-<a href="/sports/soccer" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/sports/soccer" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Soccer
-</a>
-<a href="/sports/golf" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/sports/golf" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Golf
-</a>
-<a href="/sports/tennis" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/sports/tennis" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Tennis
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -2667,7 +2667,7 @@ Tennis
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('college')}
 >
 <span>College Sports</span>
@@ -2686,13 +2686,13 @@ activeAccordion === 'college'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/sports/college-football" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/sports/college-football" className="block py-2 px-2 hover:bg-blue-600 rounded">
 College Football
-</a>
-<a href="/sports/college-basketball" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/sports/college-basketball" className="block py-2 px-2 hover:bg-blue-600 rounded">
 College Basketball
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -2701,7 +2701,7 @@ College Basketball
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('international')}
 >
 <span>International</span>
@@ -2720,16 +2720,16 @@ activeAccordion === 'international'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/sports/world-cup" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/sports/world-cup" className="block py-2 px-2 hover:bg-blue-600 rounded">
 World Cup
-</a>
-<a href="/sports/olympics" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/sports/olympics" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Olympics
-</a>
-<a href="/sports/premier-league" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/sports/premier-league" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Premier League
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -2738,7 +2738,7 @@ Premier League
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('other-sports')}
 >
 <span>Other Sports</span>
@@ -2757,25 +2757,25 @@ activeAccordion === 'other-sports'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/sports/boxing" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/sports/boxing" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Boxing & MMA
-</a>
-<a href="/sports/auto-racing" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/sports/auto-racing" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Auto Racing
-</a>
-<a href="/sports/track-and-field" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/sports/track-and-field" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Track & Field
-</a>
-<a href="/sports/ufc" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/sports/ufc" className="block py-2 px-2 hover:bg-blue-600 rounded">
 UFC
-</a>
-<a href="/sports/wrestling" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/sports/wrestling" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Boxing
-</a>
-<a href="/sports/wwe" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/sports/wwe" className="block py-2 px-2 hover:bg-blue-600 rounded">
 WWE
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -2784,7 +2784,7 @@ WWE
 <div>
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('features')}
 >
 <span>Features</span>
@@ -2803,16 +2803,16 @@ activeAccordion === 'features'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
-<a href="/sports/columns" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<div className=" pb-3 space-y-1">
+<Link href="/sports/columns" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Columns
-</a>
-<a href="/sports/podcasts" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/sports/podcasts" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Podcasts
-</a>
-<a href="/sports/photos" className="block py-2 px-2 hover:bg-blue-600 rounded">
+</Link>
+<Link href="/sports/photos" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Photos
-</a>
+</Link>
 </div>
 </div>
 </div>
@@ -2847,7 +2847,7 @@ activeDropdown === 'arts' ? "rotate-180" : ""
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('arts-culture')}
 >
 <span>Arts & Culture</span>
@@ -2866,7 +2866,7 @@ activeAccordion === 'arts-culture'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className=" pb-3 space-y-1">
 <Link href="/arts/theater" className="block py-2 px-2 hover:bg-blue-600 rounded">Theater</Link>
 <Link href="/arts/art-design" className="block py-2 px-2 hover:bg-blue-600 rounded">Art & Design</Link>
 <Link href="/arts/dance" className="block py-2 px-2 hover:bg-blue-600 rounded">Dance</Link>
@@ -2880,7 +2880,7 @@ activeAccordion === 'arts-culture'
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full  py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('screen')}
 >
 <span>Screen</span>
@@ -2899,7 +2899,7 @@ activeAccordion === 'screen'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className=" pb-3 space-y-1">
 <Link href="/arts/movies" className="block py-2 px-2 hover:bg-blue-600 rounded">Movies</Link>
 <Link href="/arts/television" className="block py-2 px-2 hover:bg-blue-600 rounded">Television</Link>
 <Link href="/arts/streaming" className="block py-2 px-2 hover:bg-blue-600 rounded">Streaming</Link>
@@ -2911,7 +2911,7 @@ activeAccordion === 'screen'
 <div className="border-b border-blue-700">
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('pop-culture')}
 >
 <span>Pop Culture</span>
@@ -2930,7 +2930,7 @@ activeAccordion === 'pop-culture'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className=" pb-3 space-y-1">
 <Link href="/arts/pop-music" className="block py-2 px-2 hover:bg-blue-600 rounded">Pop Music</Link>
 <Link href="/arts/comedy" className="block py-2 px-2 hover:bg-blue-600 rounded">Comedy</Link>
 <Link href="/arts/podcasts" className="block py-2 px-2 hover:bg-blue-600 rounded">Podcasts</Link>
@@ -2943,7 +2943,7 @@ activeAccordion === 'pop-culture'
 <div>
 <button
 type="button"
-className="w-full px-4 py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
+className="w-full  py-3 text-sm font-semibold uppercase tracking-wide flex items-center justify-between hover:bg-blue-800 transition-colors"
 onClick={() => toggleAccordion('arts-features')}
 >
 <span>Features</span>
@@ -2962,7 +2962,7 @@ activeAccordion === 'arts-features'
 : "max-h-0 opacity-0"
 }`}
 >
-<div className="px-4 pb-3 space-y-1">
+<div className=" pb-3 space-y-1">
 <Link href="/arts/critics-picks" className="block py-2 px-2 hover:bg-blue-600 rounded">Critics&apos; Picks</Link>
 <Link href="/arts/reviews" className="block py-2 px-2 hover:bg-blue-600 rounded">Reviews</Link>
 <Link href="/arts/what-to-watch" className="block py-2 px-2 hover:bg-blue-600 rounded">What to Watch</Link>
