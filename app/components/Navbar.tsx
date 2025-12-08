@@ -192,8 +192,8 @@ return (
 <nav className="w-full dark:bg-blue-900 text-white shadow-md">
 <div className="container mx-auto">
 {/* Top Support Bar */}
-<div className="w-full bg-blue-600 text-white border-b-2 border-red-600  rounded-md">
-<div className="container mx-auto px-4 py-4">
+<div className="w-full bg-blue-600 text-white border-b-2 border-red-600 p-4 rounded-md">
+<div className="container mx-auto ">
 <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
 
 {/* Left side - Main message */}

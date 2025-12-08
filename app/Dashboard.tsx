@@ -324,7 +324,7 @@ width={1000}
 height={48}
 loading="eager"
 priority
-className="w-full h-48 object-cover hover:scale-105 transition-transformduration-300"/>
+className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"/>
 <div className="p-4">
 <span className="inline-block bg-blue-900 text-white text-xs font-semibold px-2 py-1 rounded mb-2">
 {article.category}

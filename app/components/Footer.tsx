@@ -66,12 +66,10 @@ section="support"
 openSection={openSection}
 toggleSection={toggleSection}
 >
-<FooterLink href="/help" label="Help Center" />
 <FooterLink href="/contact" label="Contact" />
 <FooterLink href="/feedback" label="Send Feedback" />
 <FooterLink href="/corrections" label="Report a Correction" />
 <FooterLink href="/faq" label="FAQ" />
-<FooterLink href="/submit-tip" label="Submit a Story Tip" />
 </FooterCollapse>
 
 {/* Legal */}
@@ -84,8 +82,6 @@ toggleSection={toggleSection}
 <FooterLink href="/privacy" label="Privacy Policy" />
 <FooterLink href="/terms" label="Terms of Service" />
 <FooterLink href="/cookies" label="Cookie Policy" />
-<FooterLink href="/licensing" label="Licensing & Permissions" />
-<FooterLink href="/diversity" label="Diversity Policy"/>
 <FooterLink href="/accessibility" label="Accessibility Statement" />
 </FooterCollapse>
 </div>
