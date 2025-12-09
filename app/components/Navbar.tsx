@@ -17,11 +17,45 @@ const [isLoading, setIsLoading] = useState(true);
 const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 const [user, setUser] = useState<User | null>(null);
 const [email, setEmail] = useState('');
+const [firstname, setFirstName] = useState('');
 const [subscribed, setSubscribed] = useState(false);
 const [isSubscribed, setIsSubscribed] = useState(false);
 const [showNewsletter, setShowNewsletter] = useState(false);
 const router = useRouter();
+useEffect(() => {
+  let mounted = true;
 
+  const loadProfile = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!mounted) return;
+
+    setUser(session?.user ?? null);
+
+    if (session?.user) {
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("full_name, email, subscription_status")
+        .eq("id", session.user.id)
+        .single();
+
+      if (profileData) {
+        setFirstName(profileData.full_name);
+        setEmail(profileData.email);
+        
+        if (profileData.subscription_status !== "free") {
+          setIsSubscribed(true);
+        }
+      }
+    }
+
+    setIsLoading(false);
+  };
+
+  loadProfile();
+  return () => {
+    mounted = false;
+  };
+}, []);
 
 
 // Get current month's special coverage
@@ -290,6 +324,11 @@ className="px-4 py-2 text-sm font-semibold text-white bg-blue-900 border-2 borde
 onClick={() => router.push('/login')}>Sign in
 </button>
 )}
+
+<h2 className=" font-semibold text-white">
+<Link className="hover:underline" href='/profile'>{user ? firstname : ''}</Link>
+</h2>
+
 </div>
 </div>
 </div>

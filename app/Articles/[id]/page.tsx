@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Navbar from '@/app/components/Navbar';
 import supabase from '../../supabase/supabase';
-import { Clock, Share2, Bookmark, Facebook, Twitter, Linkedin, Mail, Calendar, User, PenTool } from 'lucide-react';
+import { Clock, Calendar, User, PenTool } from 'lucide-react';
 import { JSX } from "react";
 import Link from 'next/link';
 import ArticleComment from '@/app/components/ArticleComment';

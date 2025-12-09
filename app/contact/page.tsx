@@ -144,6 +144,7 @@ const categories = [
 { value: 'subscription', label: 'Subscription/Membership' },
 { value: 'press', label: 'Press Inquiry' },
 { value: 'partnership', label: 'Partnership Opportunity' },
+{ value: 'accessibility', label: 'Accessibility Feedback' },
 { value: 'other', label: 'Other' }
 ];
 
