@@ -10,6 +10,27 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
+interface Article {
+id: string;
+title: string;
+image?: string | null;
+content?: string | null;
+bodycontent?: string | null;
+endcontent?: string | null;
+created_at?: string | null;
+category?: string | null;
+author?: string | null;
+author_bio?: string | null;
+author_role?: string | null;
+author_avatar?: string | null;
+author_disclaimer?: string | null;
+excerpt?: string | null;
+tags?: string[] | string | null;
+source?: string | null;
+}
+
+
+
 export default function Navbar() {
 const [menuOpen, setMenuOpen] = useState(false);
 const [activeAccordion, setActiveAccordion] = useState<string | null>(null);
@@ -328,6 +349,8 @@ onClick={() => router.push('/login')}>Sign in
 <h2 className=" font-semibold text-white">
 <Link className="hover:underline" href='/profile'>{user ? firstname : ''}</Link>
 </h2>
+
+
 
 </div>
 </div>
