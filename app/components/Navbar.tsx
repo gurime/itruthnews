@@ -44,38 +44,38 @@ const [isSubscribed, setIsSubscribed] = useState(false);
 const [showNewsletter, setShowNewsletter] = useState(false);
 const router = useRouter();
 useEffect(() => {
-  let mounted = true;
+let mounted = true;
 
-  const loadProfile = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!mounted) return;
+const loadProfile = async () => {
+const { data: { session } } = await supabase.auth.getSession();
+if (!mounted) return;
 
-    setUser(session?.user ?? null);
+setUser(session?.user ?? null);
 
-    if (session?.user) {
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("full_name, email, subscription_status")
-        .eq("id", session.user.id)
-        .single();
+if (session?.user) {
+const { data: profileData } = await supabase
+.from("profiles")
+.select("full_name, email, subscription_status")
+.eq("id", session.user.id)
+.single();
 
-      if (profileData) {
-        setFirstName(profileData.full_name);
-        setEmail(profileData.email);
-        
-        if (profileData.subscription_status !== "free") {
-          setIsSubscribed(true);
-        }
-      }
-    }
+if (profileData) {
+setFirstName(profileData.full_name);
+setEmail(profileData.email);
 
-    setIsLoading(false);
-  };
+if (profileData.subscription_status !== "free") {
+setIsSubscribed(true);
+}
+}
+}
 
-  loadProfile();
-  return () => {
-    mounted = false;
-  };
+setIsLoading(false);
+};
+
+loadProfile();
+return () => {
+mounted = false;
+};
 }, []);
 
 
@@ -346,10 +346,16 @@ onClick={() => router.push('/login')}>Sign in
 </button>
 )}
 
-<h2 className=" font-semibold text-white">
-<Link className="hover:underline" href='/profile'>{user ? firstname : ''}</Link>
-</h2>
 
+
+{user && (
+<Link 
+href='/profile'
+className="relative flex items-center gap-2 px-4 py-2 bg-linear-to-r from-blue-800 to-blue-700 hover:from-blue-700 hover:to-blue-600 rounded-full transition-all duration-200 shadow-md hover:shadow-lg group">
+<div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+<span className="font-semibold text-white group-hover:scale-105 transition-transform">{firstname}</span>
+</Link>
+)}
 
 
 </div>
@@ -364,8 +370,10 @@ onClick={() => router.push('/login')}>Sign in
 <div className="hidden md:block">
 <div className="flex items-center justify-center mb-10">
 <Link href="/">
-<Image src="/images/it_news.png" loading="eager"
-priority alt="Truth News Logo"   style={{ width: "auto" ,height:"auto"}}
+<Image src="/images/it_news.png" 
+loading="eager"
+priority alt="Truth News Logo"   
+style={{ width: "auto" ,height:"auto"}}
 width={200} height={200} />
 </Link>
 </div>

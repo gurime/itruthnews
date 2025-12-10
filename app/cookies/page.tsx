@@ -1,9 +1,12 @@
+'use client'
 import { Cookie, Settings, Eye, BarChart3, Target, Shield, CheckCircle, XCircle } from "lucide-react";
 import Link from "next/link";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
+import { useRouter } from "next/navigation";
 
 export default function Cookies() {
+const router = useRouter()
 const cookieTypes = [
 {
 icon: <CheckCircle className="w-8 h-8" />,
@@ -174,10 +177,13 @@ Optional
 </div>
 </div>
 {type.canDisable && (
-<button className="px-4 py-2 bg-blue-900 text-white rounded-lg font-semibold hover:bg-blue-800 transition-colors text-sm">
+<Link href="/profile?tab=cookies">
+<button className="px-4 py-2 bg-blue-900 text-white rounded-lg font-semibold hover:bg-blue-800 transition-colors text-sm cursor-pointer">
 Manage
 </button>
+</Link>
 )}
+
 </div>
 
 <p className="text-gray-700 mb-4 ml-12">
@@ -269,9 +275,13 @@ Cookie Preference Center
 You can manage your cookie preferences at any time through our Cookie Preference Center. 
 Note that disabling certain cookies may affect your experience on our site.
 </p>
-<button className="px-6 py-3 bg-blue-900 text-white rounded-lg font-bold hover:bg-blue-800 transition-colors">
+<button 
+onClick={() => router.push("/profile?tab=cookies")}
+className="px-6 py-3 bg-blue-900 text-white rounded-lg font-bold hover:bg-blue-800 transition-colors cursor-pointer"
+>
 Manage Cookie Preferences
 </button>
+
 </div>
 </div>
 </div>

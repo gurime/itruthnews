@@ -9,6 +9,8 @@ import Footer from '@/app/components/Footer';
 import Image from 'next/image';
 import RelatedArticles from '@/app/components/RelatedArticles';
 import { ARTICLE_TABLES } from '../article_tables';
+import BookmarkButton from '@/app/components/Bookmark';
+import Goback from '@/app/components/Goback';
 
 interface Article {
 id: string;
@@ -162,10 +164,14 @@ return (
 <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 {/* Category Badge */}
 {data.category && (
-<div className="mb-4">
+<div className="mb-4 flex justify-between items-center">
 <span className="inline-block bg-blue-900 text-white text-xs font-semibold px-3 py-1 rounded-full uppercase">
 {data.category}
+
 </span>
+<div className="ml-auto">
+<Goback/>
+</div>
 </div>
 )}
 
@@ -202,8 +208,11 @@ day: 'numeric'
 <div className="flex items-center gap-2">
 <Clock size={16} />
 <span>{readTime} min read</span>
+
+
 </div>
 )}
+
 {/* Back to Home Link */}
 
 
@@ -253,11 +262,15 @@ viewBox="0 0 24 24"
 
 
 </div>
-<div className="ml-auto">
-<Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium transition">
-← Back to Home
-</Link>
-</div>
+
+<BookmarkButton
+  articleId={id}
+  articleTitle={data.title}
+  articleUrl={`/Articles/${id}`}
+  articleImage={data.image || ''}
+  articleExcerpt={data.excerpt || ''}
+/>
+
 </div>
 
 {/* Featured Image */}
@@ -267,6 +280,8 @@ viewBox="0 0 24 24"
 src={data.image}
 alt={data.title}
 fill
+loading="eager"
+priority 
 className="object-cover object-center"
 />
 </div>
