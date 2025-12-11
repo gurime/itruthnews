@@ -1,5 +1,5 @@
 'use client'
-import { Cookie, Settings, Eye, BarChart3, Target, Shield, CheckCircle, XCircle } from "lucide-react";
+import { Cookie, Settings, Eye, BarChart3, Target, Shield, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
@@ -134,8 +134,8 @@ when you visit a website. They are widely used to make websites work more effici
 provide information to website owners.
 </p>
 <p className="text-gray-700">
-Cookies can be "session" cookies (which are deleted when you close your browser) or 
-"persistent" cookies (which remain on your device for a set period or until you delete them).
+Cookies can be &quot;session&quot; cookies (which are deleted when you close your browser) or 
+&quot;persistent&quot; cookies (which remain on your device for a set period or until you delete them).
 </p>
 </div>
 </div>
@@ -341,7 +341,7 @@ You can opt out of targeted advertising cookies through industry opt-out platfor
 Do Not Track Signals
 </h2>
 <p className="text-gray-700">
-Some browsers include a "Do Not Track" (DNT) feature that signals websites you visit that you 
+Some browsers include a &quot;Do Not Track&quot; (DNT) feature that signals websites you visit that you 
 do not want your online activity tracked. Currently, there is no industry standard for how to 
 respond to DNT signals. At this time, our website does not respond to DNT signals, but we 
 provide you with the cookie management options described above.
@@ -363,7 +363,7 @@ for other operational, legal, or regulatory reasons. We encourage you to review 
 periodically.
 </p>
 <p className="text-gray-700">
-If we make material changes to this policy, we will notify you by updating the "Last Updated" 
+If we make material changes to this policy, we will notify you by updating the &quot;Last Updated&quot; 
 date at the top of this page.
 </p>
 </div>

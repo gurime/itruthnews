@@ -10,23 +10,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-interface Article {
-id: string;
-title: string;
-image?: string | null;
-content?: string | null;
-bodycontent?: string | null;
-endcontent?: string | null;
-created_at?: string | null;
-category?: string | null;
-author?: string | null;
-author_bio?: string | null;
-author_role?: string | null;
-author_avatar?: string | null;
-author_disclaimer?: string | null;
-excerpt?: string | null;
-tags?: string[] | string | null;
-source?: string | null;
+interface NewsletterSubscriber {
+email: string;
+subscribed: boolean;
+daily_newsletter: boolean;
+weekly_newsletter: boolean;
+breaking_news: boolean;
+politics_newsletter: boolean;
+tech_newsletter: boolean;
 }
 
 
@@ -57,7 +48,7 @@ const { data: profileData } = await supabase
 .from("profiles")
 .select("full_name, email, subscription_status")
 .eq("id", session.user.id)
-.single();
+.maybeSingle();
 
 if (profileData) {
 setFirstName(profileData.full_name);
@@ -98,6 +89,40 @@ console.error(error);
 }
 };
 
+// Add this useEffect to listen for newsletter preference changes
+useEffect(() => {
+if (!user?.email) return;
+
+const channel = supabase
+.channel('newsletter-changes')
+.on<NewsletterSubscriber>(
+'postgres_changes',
+{
+event: 'UPDATE',
+schema: 'public',
+table: 'newsletter_subscribers',
+filter: `email=eq.${user.email}`
+},
+(payload) => {
+const newData = payload.new as NewsletterSubscriber;
+// Check if any newsletter is enabled
+const hasAnyNewsletter =
+newData.daily_newsletter ||
+newData.weekly_newsletter ||
+newData.breaking_news ||
+newData.politics_newsletter ||
+newData.tech_newsletter;
+
+setIsSubscribed(newData.subscribed && hasAnyNewsletter);
+}
+)
+.subscribe();
+
+return () => {
+supabase.removeChannel(channel);
+};
+}, [user?.email]);
+
 useEffect(() => {
 let mounted = true;
 
@@ -114,7 +139,7 @@ const { data: subData } = await supabase
 .from("newsletter_subscribers")
 .select("email, subscribed")
 .eq("email", session.user.email)
-.single();
+.maybeSingle();
 
 if (subData?.subscribed) {
 setIsSubscribed(true);
@@ -164,6 +189,8 @@ if (existing && existing.subscribed) {
 toast('This email is already subscribed!');
 return;
 }
+
+
 
 if (existing && !existing.subscribed) {
 const { error } = await supabase
@@ -263,6 +290,14 @@ We&apos;re reader-funded. Join thousands who power iTruth News.
 
 {/* Right side - Actions */}
 <div className="flex flex-col sm:flex-row items-center gap-3">
+{user && (
+<Link 
+href='/profile?tab=account'
+className="relative flex items-center gap-2 px-4 py-2 bg-linear-to-r from-blue-800 to-blue-700 hover:from-blue-700 hover:to-blue-600 rounded-full transition-all duration-200 shadow-md hover:shadow-lg group">
+<div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+<span className="font-semibold text-white group-hover:scale-105 transition-transform">{firstname}</span>
+</Link>
+)}
 
 {/* Newsletter Button */}
 <div className="relative">
@@ -285,10 +320,13 @@ aria-label="Close newsletter form">
 </div>
 
 <p className="text-blue-100 text-sm mb-4">
-{isSubscribed ? 'You are subscribed to our newsletter!' : 'Get our top stories delivered to your inbox.'}
+{isSubscribed 
+? 'You are subscribed to our newsletter!' 
+: <Link href="/profile?tab=newsletters" className="underline">Subscribe on your profile page</Link>}
 </p>
 
-{!isSubscribed ? (
+
+{/* {!isSubscribed ? (
 <div className="space-y-3">
 <label htmlFor="newsletter-email" className="text-white font-semibold text-sm block">
 Email Address
@@ -319,7 +357,7 @@ className="w-full px-4 py-2.5 rounded-full font-bold bg-red-500 text-white hover
 Unsubscribe
 </button>
 </div>
-)}
+)} */}
 </div>
 )}
 </div>
@@ -348,14 +386,6 @@ onClick={() => router.push('/login')}>Sign in
 
 
 
-{user && (
-<Link 
-href='/profile'
-className="relative flex items-center gap-2 px-4 py-2 bg-linear-to-r from-blue-800 to-blue-700 hover:from-blue-700 hover:to-blue-600 rounded-full transition-all duration-200 shadow-md hover:shadow-lg group">
-<div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-<span className="font-semibold text-white group-hover:scale-105 transition-transform">{firstname}</span>
-</Link>
-)}
 
 
 </div>
