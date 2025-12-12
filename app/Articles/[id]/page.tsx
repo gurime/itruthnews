@@ -264,11 +264,11 @@ viewBox="0 0 24 24"
 </div>
 
 <BookmarkButton
-  articleId={id}
-  articleTitle={data.title}
-  articleUrl={`/Articles/${id}`}
-  articleImage={data.image || ''}
-  articleExcerpt={data.excerpt || ''}
+articleId={id}
+articleTitle={data.title}
+articleUrl={`/Articles/${id}`}
+articleImage={data.image || ''}
+articleExcerpt={data.excerpt || ''}
 />
 
 </div>
@@ -420,8 +420,12 @@ className="rounded-full object-cover"
 <div className="pb-8 border-b border-gray-400 mb-8"></div>
 
 {/* Comments Section */}
-<ArticleComment articleId={id} />
-
+<ArticleComment 
+articleId={id} 
+articleUrl={`/Articles/${id}`} 
+articleTitle={data.title}
+articleImage={data.image || ''}
+/>
 <Footer/>
 </div>
 </>

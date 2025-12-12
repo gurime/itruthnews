@@ -30,9 +30,9 @@ const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 const [user, setUser] = useState<User | null>(null);
 const [email, setEmail] = useState('');
 const [firstname, setFirstName] = useState('');
-const [subscribed, setSubscribed] = useState(false);
 const [isSubscribed, setIsSubscribed] = useState(false);
-const [showNewsletter, setShowNewsletter] = useState(false);
+const [isEliteMember, setIsEliteMember] = useState(false);
+
 const router = useRouter();
 useEffect(() => {
 let mounted = true;
@@ -46,7 +46,7 @@ setUser(session?.user ?? null);
 if (session?.user) {
 const { data: profileData } = await supabase
 .from("profiles")
-.select("full_name, email, subscription_status")
+.select("full_name, email, subscription_status, role")
 .eq("id", session.user.id)
 .maybeSingle();
 
@@ -54,7 +54,19 @@ if (profileData) {
 setFirstName(profileData.full_name);
 setEmail(profileData.email);
 
-if (profileData.subscription_status !== "free") {
+// Check if user is admin or elite member
+// Admin gets all access, elite gets iTruth Business
+const isElite = profileData.subscription_status === "elite" || 
+profileData.subscription_status === "elite_yearly" ||
+profileData.subscription_status === "elite_monthly" ||
+profileData.role === "admin";
+
+if (isElite) {
+setIsEliteMember(true);
+setIsSubscribed(true);
+} else if (profileData.subscription_status && 
+profileData.subscription_status !== "free" &&
+profileData.subscription_status !== "") {
 setIsSubscribed(true);
 }
 }
@@ -68,7 +80,6 @@ return () => {
 mounted = false;
 };
 }, []);
-
 
 // Get current month's special coverage
 
@@ -168,78 +179,7 @@ subscription?.unsubscribe();
 }, []);
 
 
-const handleSubscribe = async () => {
-if (!email || !email.includes('@')) {
-toast('Please enter a valid email.');
-return;
-}
 
-const { data: existing, error: fetchError } = await supabase
-.from('newsletter_subscribers')
-.select('email, subscribed')
-.eq('email', email)
-.maybeSingle(); // <= key change
-
-if (fetchError) {
-toast(`Lookup failed: ${fetchError.message}`);
-return;
-}
-
-if (existing && existing.subscribed) {
-toast('This email is already subscribed!');
-return;
-}
-
-
-
-if (existing && !existing.subscribed) {
-const { error } = await supabase
-.from('newsletter_subscribers')
-.update({ subscribed: true, unsubscribed_at: null })
-.eq('email', email);
-
-if (error) {
-toast(`Subscription failed: ${error.message}`);
-return;
-}
-} else if (!existing) {
-const { error } = await supabase
-.from('newsletter_subscribers')
-.insert([{ email }]);
-
-if (error) {
-toast(`Subscription failed: ${error.message}`);
-return;
-}
-}
-
-setIsSubscribed(true);
-setSubscribed(true);
-toast('Successfully subscribed to newsletter!');
-setTimeout(() => setSubscribed(false), 3500);
-};
-
-
-const handleUnsubscribe = async () => {
-if (!email) return;
-
-const { error } = await supabase
-.from('newsletter_subscribers')
-.update({ 
-subscribed: false, 
-unsubscribed_at: new Date().toISOString() 
-})
-.eq('email', email);
-
-if (error) {
-toast('Unsubscribe failed');
-return;
-}
-
-setIsSubscribed(false);
-toast('Successfully unsubscribed from newsletter');
-setEmail('');
-};
 
 const toggleDropdown = (dropdown: string) => {
 setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
@@ -299,68 +239,7 @@ className="relative flex items-center gap-2 px-4 py-2 bg-linear-to-r from-blue-8
 </Link>
 )}
 
-{/* Newsletter Button */}
-<div className="relative">
-<button
-onClick={() => setShowNewsletter(!showNewsletter)}
-className="px-4 py-2 bg-blue-900 text-white rounded-full font-semibold hover:bg-blue-800 transition-colors shadow-sm whitespace-nowrap flex items-center gap-2 cursor-pointer">
-{isSubscribed ? '✓ Subscribed' : '📧 Newsletter'}
-</button>
 
-{showNewsletter && (
-<div className="absolute top-full right-0 mt-2 bg-blue-900 text-white p-6 rounded-lg shadow-2xl z-50 w-80">
-<div className="flex justify-between items-center mb-3">
-<h4 className="text-xl font-bold">Newsletter</h4>
-<button 
-onClick={() => setShowNewsletter(false)}
-className="text-white hover:text-gray-300 text-xl leading-none cursor-pointer"
-aria-label="Close newsletter form">
-✕
-</button>
-</div>
-
-<p className="text-blue-100 text-sm mb-4">
-{isSubscribed 
-? 'You are subscribed to our newsletter!' 
-: <Link href="/profile?tab=newsletters" className="underline">Subscribe on your profile page</Link>}
-</p>
-
-
-{/* {!isSubscribed ? (
-<div className="space-y-3">
-<label htmlFor="newsletter-email" className="text-white font-semibold text-sm block">
-Email Address
-</label>
-
-<input
-id="newsletter-email"
-type="email"
-value={email}
-onChange={(e) => setEmail(e.target.value)}
-onKeyDown={(e) => e.key === 'Enter' && handleSubscribe()}
-placeholder="your@email.com"
-className="w-full px-4 py-2.5 rounded bg-blue-600/40 border border-blue-300/20 focus:outline-none focus:ring-2 focus:ring-blue-300 text-white placeholder-blue-200"/>
-<button
-onClick={handleSubscribe}
-disabled={subscribed}
-className={`w-full px-4 py-2.5 rounded-full font-bold transition-all duration-200 
-${subscribed ? 'bg-green-500 text-white cursor-default': 'bg-teal-400 text-blue-900 hover:bg-yellow-300'}`}>
-{subscribed ? '✓ Subscribed!' : 'Subscribe'}
-</button>
-</div>
-) : (
-<div className="space-y-3">
-<p className="text-sm text-blue-100">Subscribed as: <strong>{email}</strong></p>
-<button
-onClick={handleUnsubscribe}
-className="w-full px-4 py-2.5 rounded-full font-bold bg-red-500 text-white hover:bg-red-600 transition-colors">
-Unsubscribe
-</button>
-</div>
-)} */}
-</div>
-)}
-</div>
 
 {/* Support CTA */}
 <Link 
@@ -521,7 +400,12 @@ South America
 </div>
 </div>
 
+
+
+
 <div>
+{isEliteMember ? (
+
 <div className="relative inline-block">
 <button
 type="button"
@@ -626,8 +510,10 @@ All Business Leaders
 </div>
 )}
 </div>
+) : (
+''
+)}
 </div>
-
 {/* Opinion Dropdown */}
 <div >
 <div className="relative inline-block">
@@ -1869,6 +1755,9 @@ South America
 
 
 
+
+
+{isEliteMember ? (
 <div className="bg-blue-800 pb-5 pt-5 mb-4  rounded-lg">
 <div className="relative inline-block">
 <button
@@ -1974,7 +1863,11 @@ All Business Leaders
 </div>
 )}
 </div>
-</div>
+</div>    
+):(
+''
+)}
+
 {/* Opinion Dropdown */}
 <div className="bg-blue-800 pt-4 pb-4 mb-4 rounded-lg">
 <div className="relative inline-block">

@@ -21,6 +21,9 @@ profiles: {
 full_name: string | null;
 email: string;
 avatar_url: string | null;
+article_url: string | null
+article_title?: string | null  // Add this
+article_image?: string | null  // Add this
 };
 replies?: Comment[];
 user_has_liked?: boolean;
@@ -28,6 +31,9 @@ user_has_liked?: boolean;
 
 interface ArticleCommentProps {
 articleId: string;
+articleUrl: string; // Add this
+articleTitle: string; // Add this
+articleImage: string | null; // Explicitly allow null
 }
 
 // 1. Move helper function outside
@@ -251,7 +257,10 @@ handleSubmitReply={handleSubmitReply}/>
 };
 
 // 4. Main Component
-export default function ArticleComment({ articleId }: ArticleCommentProps) {
+export default function ArticleComment({   articleId, 
+articleUrl, 
+articleTitle, 
+articleImage   }: ArticleCommentProps) {
 const [user, setUser] = useState<User | null>(null);
 const [comments, setComments] = useState<Comment[]>([]);
 const [newComment, setNewComment] = useState("");
@@ -324,7 +333,7 @@ const fetchReplies = async (parentId: string): Promise<Comment[]> => {
 const { data, error } = await supabase
 .from("comments")
 .select(
-        `
+`
 *,
 profiles (
 full_name,
@@ -362,6 +371,7 @@ const { data } = await supabase
 return Boolean(data);
 };
 
+
 const handleSubmitComment = async () => {
 if (!user) {
 router.push("/login");
@@ -371,10 +381,15 @@ return;
 if (!newComment.trim()) return;
 
 setSubmitting(true);
+
+// You need to pass articleTitle and articleImage as props
 const { error } = await supabase.from("comments").insert({
 article_id: articleId,
 user_id: user.id,
 content: newComment.trim(),
+article_url: articleUrl,
+article_title: articleTitle,
+article_image: articleImage ?? null, // Use nullish coalescing instead
 });
 
 if (error) {
@@ -402,6 +417,9 @@ article_id: articleId,
 user_id: user.id,
 content: replyContent.trim(),
 parent_comment_id: parentId,
+article_url: articleUrl,
+article_title: articleTitle,
+article_image: articleImage ?? null, // Use nullish coalescing instead
 });
 
 if (error) {
