@@ -89,12 +89,19 @@ const currentSpecialCoverage = specialCoverage[currentMonth as keyof typeof spec
 useEffect(() => {
 setTimeout(() => setIsLoading(false), 1000);
 }, []);
-
 const handleLogout = async () => {
 try {
 const { error } = await supabase.auth.signOut();
 if (error) throw error;
-router.push('');
+
+// Reset all user-related state
+setUser(null);
+setIsEliteMember(false);
+setIsSubscribed(false);
+setFirstName('');
+setEmail('');
+
+router.push('/');
 } catch (error) {
 console.error(error);
 }
@@ -511,7 +518,16 @@ All Business Leaders
 )}
 </div>
 ) : (
-''
+<Link 
+href="/membership"
+className="text-white/60 hover:text-white font-bold whitespace-nowrap flex items-center transition-colors group"
+title="Upgrade to Elite to access iTruth Business"
+>
+<span>iTruth Business</span>
+<svg className="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
+<path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+</svg>
+</Link>
 )}
 </div>
 {/* Opinion Dropdown */}
@@ -1865,7 +1881,16 @@ All Business Leaders
 </div>
 </div>    
 ):(
-''
+<Link 
+href="/membership"
+className="text-white/60 hover:text-white font-bold whitespace-nowrap flex items-center transition-colors group"
+title="Upgrade to Elite to access iTruth Business"
+>
+<span>iTruth Business</span>
+<svg className="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
+<path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+</svg>
+</Link>
 )}
 
 {/* Opinion Dropdown */}

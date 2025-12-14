@@ -58,38 +58,36 @@ const eliteMonthly = billingPeriod === 'yearly'
 : elitePlan.price;
 
 const freeTierFeatures = [
-'Limited to 5 articles per month',
-'Advertisements displayed',
-'No access to premium content',
-'No newsletters',
-'No access to iTruth Business section'
+'Limited to 3 articles per day',
+'Standard display advertising',
+'Basic breaking news alerts',
+'Access to homepage and section fronts',
+'Limited mobile app features'
 ];
 
 const premiumFeatures = [
-'Unlimited access to all articles',
-'Ad-free reading experience',
-'Exclusive investigative reports',
-'Early access to breaking news',
-'Member-only newsletters',
-'Support independent journalism',
-'Access to archived content',
-'Priority customer support'
+'Unlimited articles across all sections',
+'Ad-free reading on all devices',
+'Full access to investigative journalism',
+'Subscriber-only newsletters and briefings',
+'Complete archive dating back 10+ years',
+'Enhanced mobile and tablet app experience',
+'Offline reading with save-for-later',
+'Commenting privileges on articles'
 ];
 
 const eliteFeatures = [
 'Everything in Premium, plus:',
-'Exclusive access to iTruth Business section',
-'Markets: Stocks, US Markets, Pre-Markets, Crypto, Futures & Commodities, Bonds, ETFs, Mutual Funds',
-'Business Leaders profiles and insights',
-'Direct access to journalists via monthly Q&A sessions',
-'Exclusive virtual events and webinars',
-'Behind-the-scenes content and research notes',
-'Personalized news digest tailored to your interests',
-'First access to investigative series before public release',
-'Invitation to annual member summit',
-'Recognition in our monthly supporter spotlight',
-'Complimentary gift subscription for a friend',
-'VIP customer support with dedicated account manager'
+'Full access to iTruth Business & Markets',
+'Real-time market data and analysis',
+'Exclusive Business section reporting',
+'Company profiles and earnings coverage',
+'Interactive business news tools',
+'Virtual events with journalists and experts',
+'Gift up to 10 articles per month to non-subscribers',
+'Discounted tickets to iTruth Live events',
+'Early access to major investigations',
+'Priority customer service'
 ];
 
 return (
@@ -171,7 +169,7 @@ Save 17%
 <div className="p-8">
 <div className="flex items-center gap-2 mb-2">
 <Star className="w-6 h-6 text-gray-400" />
-<h2 className="text-2xl font-bold text-gray-900">Free Reader</h2>
+<h2 className="text-2xl font-bold text-gray-900">iTruth Reader</h2>
 </div>
 <div className="flex items-baseline gap-2 mb-6">
 <span className="text-5xl font-bold text-gray-900">$0</span>

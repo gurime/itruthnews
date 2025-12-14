@@ -1,8 +1,11 @@
 "use client";
+
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import supabase from "./supabase/supabase";
 import Link from "next/link";
 import Image from "next/image";
+import { X, Lock } from "lucide-react";
 
 interface Article {
   id: number;
@@ -12,398 +15,275 @@ interface Article {
   created_at: string;
   image: string;
   featured?: boolean;
+  premium?: boolean;
+}
+
+interface UserProfile {
+  subscription_status: "free" | "monthly" | "yearly";
+  articles_read_this_month: number;
 }
 
 export default function Dashboard() {
-const [isLoading, setIsLoading] = useState<boolean>(true);
-const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
-const [articles, setArticles] = useState<Article[]>([]);
-const [politicsArticles, setPoliticsArticles] = useState<Article[]>([]);
-const [opinionArticles, setopinionArticles] = useState<Article[]>([]);
-const [error, setError] = useState<string | null>(null);
-const [loadingArticleId, setLoadingArticleId] = useState<number | null>(null);
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+  const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-useEffect(() => {
-async function fetchArticles() {
-try {
-setIsLoading(true);
-        
-// Fetch THE featured article from article table
-const { data: featuredData, error: featuredError } = await supabase
-.from('dashboard')
-.select('*')
-.eq('featured', true)
-.limit(1)
-.single();
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [articlesRead, setArticlesRead] = useState(0);
+  const [showPaywall, setShowPaywall] = useState(false);
 
-if (featuredError && featuredError.code !== 'PGRST116') {
-// PGRST116 is "no rows returned" - that's okay, just means no featured article
-throw featuredError;
+  /* -------------------- FETCH USER -------------------- */
+  useEffect(() => {
+    const stored = localStorage.getItem("articlesReadToday");
+    const today = new Date().toLocaleDateString("en-CA");
+
+    if (stored) {
+      const parsed = JSON.parse(stored);
+
+      if (parsed.date === today) {
+        setArticlesRead(parsed.count);
+      } else {
+        // New day → reset count
+        setArticlesRead(0);
+        localStorage.setItem(
+          "articlesReadToday",
+          JSON.stringify({ count: 0, date: today })
+        );
+      }
+    } else {
+      // First time today
+      localStorage.setItem(
+        "articlesReadToday",
+        JSON.stringify({ count: 0, date: today })
+      );
+    }
+
+    fetchUserProfile();
+    fetchArticles();
+  }, []);
+
+  async function fetchUserProfile() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data } = await supabase
+      .from("profiles")
+      .select("subscription_status, articles_read_this_month")
+      .eq("id", user.id)
+      .single();
+
+    setUserProfile(data);
+  }
+
+  /* -------------------- FETCH ARTICLES -------------------- */
+  async function fetchArticles() {
+    try {
+      setIsLoading(true);
+
+      const { data: featured } = await supabase
+        .from("dashboard")
+        .select("*")
+        .eq("featured", true)
+        .single();
+
+      setFeaturedArticle(featured);
+
+      const { data } = await supabase
+        .from("dashboard")
+        .select("*")
+        .eq("featured", false)
+        .order("created_at", { ascending: false })
+        .limit(6);
+
+      setArticles(data || []);
+    } catch (err) {
+      setError("Failed to load articles");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  /* -------------------- PAYWALL LOGIC -------------------- */
+/* -------------------- PAYWALL LOGIC -------------------- */
+function handleArticleClick(e: React.MouseEvent, article: Article) {
+  e.preventDefault(); // always prevent default, we'll manually navigate
+
+  const isSubscriber = userProfile?.subscription_status !== "free";
+
+  // BLOCK: non-subscribers hitting limit
+  if (!isSubscriber) {
+    if (articlesRead >= 5 || article.premium) {
+      setShowPaywall(true);
+      return; // Stop execution
+    }
+
+    // Increment counter for allowed free articles
+    const newCount = articlesRead + 1;
+    const today = new Date().toLocaleDateString("en-CA");
+    localStorage.setItem(
+      "articlesReadToday",
+      JSON.stringify({ count: newCount, date: today })
+    );
+    setArticlesRead(newCount);
+  }
+
+  // Navigate manually
+  router.push(`/Articles/${article.id}`);
 }
 
-if (featuredData) {
-setFeaturedArticle(featuredData);
-}
-// Fetch THE featured article from article table
 
-// Fetch regular articles from the article table (excluding featured)
-const { data, error } = await supabase
-.from('dashboard')
-.select('*')
-.eq('featured', false)
-.order('created_at', { ascending: false })
-.limit(6);
+  /* -------------------- HELPERS -------------------- */
+  const formatDate = (d: string) =>
+    new Date(d).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
 
-if (error) throw error;
-if (data) {
-setArticles(data);
-}
-// Fetch regular article articles (excluding featured)
+  /* -------------------- UI -------------------- */
+  if (isLoading) return <div className="p-12">Loading…</div>;
+  if (error) return <div className="p-12 text-red-600">{error}</div>;
 
-// Fetch politics articles (excluding featured)
-const { data: politicsData, error: politicsError } = await supabase
-.from('politics')
-.select('*')
-.eq('featured', false)
-.order('created_at', { ascending: false })
-.limit(6);
+  return (
+    <>
+      <div className="container mx-auto p-6">
+        {/* FREE COUNTER */}
+        {userProfile?.subscription_status === "free" && (
+          <div className="mb-6 bg-blue-50 border p-4 rounded text-center">
+            {5 - articlesRead} free articles remaining today
+            <Link href="/membership" className="ml-2 underline font-semibold">
+              Subscribe
+            </Link>
+          </div>
+        )}
 
-if (politicsError) throw politicsError;
-if (politicsData) {
-setPoliticsArticles(politicsData);
-}
-// Fetch regular articles (excluding featured)
-
-// Fetch opinion articles (excluding featured)       
-const { data: opinionData, error: opinionError } = await supabase
-.from('columnists')
-.select('*')
-.eq('featured', false)
-.order('created_at', { ascending: false })
-.limit(6);
-
-
-
-if (opinionError) throw opinionError;
-if (opinionData) {
-setopinionArticles(opinionData);
-}
-// Fetch opinion articles (excluding featured)       
-
-} catch (err) {
-setError(err instanceof Error ? err.message : 'Failed to fetch articles');
-} finally {
-setIsLoading(false);
-}
-}
-
-fetchArticles();
-}, []);
-
-const formatDate = (dateString: string) => {
-const date = new Date(dateString);
-const now = new Date();
-const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-if (diffInHours < 1) return 'Just now';
-if (diffInHours < 24) return `${diffInHours} hours ago`;
-if (diffInHours < 48) return '1 day ago';
-if (diffInHours < 168) return `${Math.floor(diffInHours / 24)} days ago`;
-    
-return date.toLocaleDateString('en-US', { 
-month: 'short', 
-day: 'numeric', 
-year: 'numeric' 
-});
-};
-
-function FeaturedDashboardSkeleton() {
-return (
-<div className="container mx-auto p-6">
-<div className="mb-8">
-{/* Featured Article Skeleton */}
-<div className="w-48 h-8 bg-gray-300 animate-pulse rounded mb-4"></div>
-<div className="bg-white rounded-lg shadow-lg overflow-hidden">
-<div className="md:flex">
-<div className="md:w-2/3 h-96 bg-gray-300 animate-pulse"></div>
-<div className="md:w-1/3 p-6 space-y-4">
-<div className="w-24 h-6 bg-gray-300 animate-pulse rounded"></div>
-<div className="w-full h-8 bg-gray-300 animate-pulse rounded"></div>
-<div className="space-y-2">
-<div className="w-full h-4 bg-gray-200 animate-pulse rounded"></div>
-<div className="w-full h-4 bg-gray-200 animate-pulse rounded"></div>
-<div className="w-3/4 h-4 bg-gray-200 animate-pulse rounded"></div>
-</div>
-<div className="w-32 h-4 bg-gray-200 animate-pulse rounded"></div>
-</div>
-</div>
-</div>
-</div>
-
-{/* Regular Articles Skeleton */}
-<div className="w-48 h-8 bg-gray-300 animate-pulse rounded mb-4"></div>
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-{[...Array(6)].map((_, i) => (
-<div key={i} className="bg-white rounded-lg shadow-md overflow-hidden">
-<div className="w-full h-48 bg-gray-300 animate-pulse"></div>
-<div className="p-4 space-y-3">
-<div className="w-3/4 h-6 bg-gray-300 animate-pulse rounded"></div>
-<div className="w-full h-4 bg-gray-200 animate-pulse rounded"></div>
-<div className="w-5/6 h-4 bg-gray-200 animate-pulse rounded"></div>
-<div className="flex justify-between items-center mt-4">
-<div className="w-24 h-4 bg-gray-200 animate-pulse rounded"></div>
-<div className="w-16 h-4 bg-gray-200 animate-pulse rounded"></div>
-</div>
-</div>
-</div>
-))}
-</div>
-</div>
-);
-}
-
-if (isLoading) {
-return <FeaturedDashboardSkeleton />;
-}
-
-if (error) {
-return (
-<div className="container mx-auto p-6">
-<div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-<h3 className="text-red-800 font-semibold mb-2">Error Loading Articles</h3>
-<p className="text-red-600">{error}</p>
-</div>
-</div>
-);
-}
-
-if (!featuredArticle && articles.length === 0 && politicsArticles.length === 0 && opinionArticles.length === 0) {
-return (
-<div className="container mx-auto p-6">
-<div className="bg-gray-50 border border-gray-200 rounded-lg p-12 text-center">
-<h3 className="text-gray-800 font-semibold mb-2">No Articles Found</h3>
-<p className="text-gray-600">Check back soon for new content!</p>
-</div>
-</div>
-);
-}
-
-return (
-<>
-<div className="container mx-auto p-6 bg-gray-50 min-h-screen">
-{/* Featured Article Section */}
+        {/* FEATURED */}
+  {/* FEATURED - Revised */}
 {featuredArticle && (
-<div className="mb-12">
-<h2 className="text-3xl font-bold mb-6 text-red-800 font-[open-sans]">Featured Story</h2>
-<Link 
-href={`/Articles/${featuredArticle.id}`}
-onClick={() => setLoadingArticleId(featuredArticle.id)}
-className="block bg-white rounded-lg shadow-xl overflow-hidden hover:shadow-2xl transition-shadow relative">
+  <Link
+    href={`/Articles/${featuredArticle.id}`}
+    onClick={(e) => handleArticleClick(e, featuredArticle)}
+    // Remove block, add grid/flex classes for responsiveness
+    className="bg-white rounded-xl shadow mb-12 overflow-hidden hover:shadow-lg transition-shadow md:flex" 
+  >
+    {/* Left Column (Image) - 5/12 of the width on md screens and up */}
+    <div className="relative w-full h-64 md:h-auto md:w-5/12 lg:w-1/2 mb-4">
+      <Image
+        src={featuredArticle.image}
+        alt={featuredArticle.title}
+        priority
+        width={800}
+        height={80}
+        className="object-cover mb-4"
+      />
+      {/* If you wanted to show the premium lock here too */}
+      {featuredArticle.premium && userProfile?.subscription_status === "free" && (
+          <div className="absolute top-4 left-4 bg-amber-500 p-3 rounded-full text-white z-10">
+              <Lock size={20} />
+          </div>
+      )}
+    </div>
 
-{/* Loading overlay for featured article */}
-{loadingArticleId === featuredArticle.id && (
-<div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-10 rounded-lg">
-<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-800"></div>
-</div>
+    {/* Right Column (Content) - 7/12 of the width on md screens and up */}
+    <div className="p-6 md:w-7/12 lg:w-1/2 md:flex md:flex-col md:justify-between">
+      <div>
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3">
+          {featuredArticle.title}
+        </h2>
+        <p className="text-gray-600 text-sm sm:text-base mb-4">
+          {featuredArticle.excerpt}
+        </p>
+      </div>
+      
+      {/* Footer/Meta Info */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-sm text-gray-500 pt-4 border-t gap-2 mt-auto">
+        <span>📅 {formatDate(featuredArticle.created_at)}</span>
+        <span className="inline-block bg-blue-900 text-white text-xs font-semibold px-2 py-1 rounded">
+          {featuredArticle.category}
+        </span>
+      </div>
+    </div>
+  </Link>
 )}
-<div className="md:flex">
-<div className="md:w-2/3">
-<Image 
-src={featuredArticle.image} 
-alt={featuredArticle.title}
-width={1000}
-height={150}
-loading="eager"
-priority
-className="w-full h-auto md:h-150 object-cover hover:scale-105 transition-transform duration-300"
+
+        {/* ARTICLES */}
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {articles.map((article) => {
+            const locked =
+              article.premium && userProfile?.subscription_status === "free";
+
+            return (
+              <Link
+                key={article.id}
+                href={`/Articles/${article.id}`}
+                onClick={(e) => handleArticleClick(e, article)}
+                className="relative bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow"
+              >
+                {locked && (
+                  <div className="absolute top-2 right-2 bg-amber-500 p-2 rounded-full text-white z-10">
+                    <Lock size={16} />
+                  </div>
+                )}
+
+                <div className="relative w-full h-48">
+                  <Image
+                    src={article.image}
+                    alt={article.title}
+                    fill
+                    className={`object-cover ${locked ? "opacity-60" : ""}`}
                   />
-</div>
+                </div>
 
-<div className="md:w-1/3 p-6 flex flex-col justify-between">
-<div>
-<span className="inline-block bg-blue-900 text-white text-xs font-semibold px-3 py-1 rounded-full mb-3">
-{featuredArticle.category}
-</span>
-<h3 className="text-2xl font-bold mb-4 text-gray-800 hover:text-sky-700 cursor-pointer transition-colors">
-{featuredArticle.title}
-</h3>
-<p className="text-gray-600 mb-4 leading-relaxed">
-{featuredArticle.excerpt}
-</p>
-</div>
+                <div className="p-4">
+                  <h3 className="font-semibold mb-2">{article.title}</h3>
+                  <p className={`text-sm text-gray-600 ${locked ? "blur-sm" : ""}`}>
+                    {article.excerpt}
+                  </p>
+                  <div className="text-xs mt-2 text-gray-500 flex justify-between items-center">
+                    <span>{formatDate(article.created_at)}</span>
+                    <span className="inline-block bg-blue-900 text-white text-xs font-semibold px-2 py-1 rounded">
+                      {article.category}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
 
-<div className="flex items-center justify-between text-sm text-gray-500 border-t pt-4">
-<span>📅 {formatDate(featuredArticle.created_at)}</span>
-<span className="text-red-500 font-semibold hover:text-sky-600 transition-colors">
-Read More →
-</span>
-</div>
-</div>
-</div>
-</Link>
-</div>
-)}
+      {/* PAYWALL MODAL */}
+      {showPaywall && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-8 max-w-md w-full relative">
+            <button
+              onClick={() => setShowPaywall(false)}
+              className="absolute top-4 right-4 hover:bg-gray-100 p-2 rounded"
+            >
+              <X />
+            </button>
 
-{featuredArticle && (
-<div className="pb-8 border-b border-gray-400 mb-8"></div>
-)}
+            <h2 className="text-2xl font-bold mb-4">Subscription Required</h2>
 
-{/* Regular Articles Grid */}
-{articles.length > 0 && (
-<div>
-<h2 className="text-3xl font-bold mb-6 text-blue-900 font-[open-sans]">Latest Headlines</h2>
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-{articles.map((article) => (
-<Link
-key={article.id}
-href={`/Articles/${article.id}`}
-onClick={() => setLoadingArticleId(article.id)}
-className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer block relative">
-{/* Loading overlay */}
-{loadingArticleId === article.id && (
-<div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-10 rounded-lg">
-<div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-900"></div>
-</div>
-)}
-<Image 
-src={article.image} 
-alt={article.title}
-width={1000}
-height={48}
-loading="eager"
-priority
-className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
-                  />
-<div className="p-4">
-<span className="inline-block bg-blue-900 text-white text-xs font-semibold px-2 py-1 rounded mb-2">
-{article.category}
-</span>
-<h3 className="text-xl font-semibold mb-2 text-gray-800 hover:text-blue-500 transition-colors">
-{article.title}
-</h3>
-<p className="text-gray-600 text-sm mb-4 line-clamp-2">
-{article.excerpt}
-</p>
-<div className="flex justify-between items-center text-sm border-t pt-3">
-<span className="text-gray-500">📅 {formatDate(article.created_at)}</span>
-<span className="text-red-500 font-medium hover:text-blue-600 transition-colors">
-Read →
-</span>
-</div>
-</div>
-</Link>
-))}
-</div>
-</div>
-)}
+            <p className="mb-6">
+              {articlesRead >= 5
+                ? "You've reached your free article limit for today."
+                : "This is a premium article. Subscribe to access all premium content."}
+            </p>
 
-{articles.length > 0 && politicsArticles.length > 0 && (
-<div className="pb-8 border-b border-gray-400 mb-8"></div>
-)}
-
-{/* Politics Section */}
-{politicsArticles.length > 0 && (
-<div>
-<h2 className="text-3xl font-bold mb-6 text-red-800 font-[open-sans]">Politics</h2>
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-{politicsArticles.map((article) => (
-<Link
-key={article.id}
-href={`/Articles/${article.id}`}
-onClick={() => setLoadingArticleId(article.id)}
-className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer block relative">
-{/* Loading overlay */}
-{loadingArticleId === article.id && (
-<div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-10 rounded-lg">
-<div className="animate-spin rounded-full h-10 w-10 border-b-2 border-red-800"></div>
-</div>
-)}
-<Image 
-src={article.image} 
-alt={article.title}
-width={1000}
-height={48}
-loading="eager"
-priority
-className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"/>
-<div className="p-4">
-<span className="inline-block bg-blue-900 text-white text-xs font-semibold px-2 py-1 rounded mb-2">
-{article.category}
-</span>
-<h3 className="text-xl font-semibold mb-2 text-gray-800 hover:text-blue-500 transition-colors">
-{article.title}
-</h3>
-
-<p className="text-gray-600 text-sm mb-4 line-clamp-2">
-{article.excerpt}
-</p>
-<div className="flex justify-between items-center text-sm border-t pt-3">
-<span className="text-gray-500">📅 {formatDate(article.created_at)}</span>
-<span className="text-red-500 font-medium hover:text-blue-600 transition-colors">
-Read →
-</span>
-</div>
-</div>
-</Link>
-))}
-</div>
-</div>
-)}
-
-{articles.length > 0 && opinionArticles.length > 0 && (
-<div className="pb-8 border-b border-gray-400 mb-8"></div>
-)}
-
-{/* Opinion Section */}
-{opinionArticles.length > 0 && (
-<div>
-<h2 className="text-3xl font-bold mb-6 text-red-800 font-[open-sans]">Opinion</h2>
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-{opinionArticles.map((article) => (
-<Link
-key={article.id}
-href={`/Articles/${article.id}`}
-onClick={() => setLoadingArticleId(article.id)}
-className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer block relative">
-
-{/* Loading overlay */}
-{loadingArticleId === article.id && (
-<div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-10 rounded-lg">
-<div className="animate-spin rounded-full h-10 w-10 border-b-2 border-red-800"></div>
-</div>)}
-<Image 
-src={article.image} 
-alt={article.title}
-width={1000}
-height={48}
-className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"/>
-
-<div className="p-4">
-<span className="inline-block bg-blue-900 text-white text-xs font-semibold px-2 py-1 rounded mb-2">
-{article.category}
-</span>
-
-<h3 className="text-xl font-semibold mb-2 text-gray-800 hover:text-blue-500 transition-colors">
-{article.title}
-</h3>
-
-<p className="text-gray-600 text-sm mb-4 line-clamp-2">
-{article.excerpt}
-</p>
-
-<div className="flex justify-between items-center text-sm border-t pt-3">
-<span className="text-gray-500">📅 {formatDate(article.created_at)}</span>
-<span className="text-red-500 font-medium hover:text-blue-600 transition-colors">
-Read →
-</span>
-</div>
-</div>
-</Link>
-))}
-</div>
-</div>
-)}
-</div>
-</>
+            <Link
+              href="/membership"
+              className="block bg-blue-600 text-white text-center py-3 rounded font-bold hover:bg-blue-700 transition-colors"
+            >
+              View Plans
+            </Link>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

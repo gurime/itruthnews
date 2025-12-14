@@ -341,8 +341,8 @@ Sending...
 
 {/* Optional: Add a message below the button explaining why they need to sign in */}
 {!user && (
-<p className="text-sm text-gray-600 text-center mt-2">
-Please sign in to submit a contact form
+<p className="text-sm text-blue-600 hover:underline text-center mt-2">
+<Link href="/login">Please sign in to submit a contact form</Link>
 </p>
 )}
 </div>

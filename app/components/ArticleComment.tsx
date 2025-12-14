@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { Heart } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
+import Link from "next/link";
 
 interface Comment {
 id: string;
@@ -103,13 +104,19 @@ return (
 
 {/* User Info */}
 <div className="flex items-start gap-3 mb-3">
-<div className="w-10 h-10 rounded-full bg-blue-900 flex items-center justify-center text-white font-semibold shrink-0">
+<Link href={`/profile/${comment.user_id}`}>
+<div className="w-10 h-10 rounded-full bg-blue-900 flex items-center justify-center text-white font-semibold shrink-0 cursor-pointer hover:bg-blue-800 transition-colors">
 {displayName[0].toUpperCase()}
 </div>
+</Link>
 
 <div className="flex-1 min-w-0">
 <div className="flex items-center gap-2 flex-wrap">
-<span className="font-semibold text-gray-900">{displayName}</span>
+<Link href={`/profile/${comment.user_id}`}>
+<span className="font-semibold text-gray-900 hover:text-blue-900 cursor-pointer transition-colors">
+{displayName}
+</span>
+</Link>
 <span className="text-gray-500 text-sm">
 {formatDate(comment.created_at)}
 {comment.is_edited && " (edited)"}
@@ -589,7 +596,6 @@ className="px-6 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transit
 </button>
 </div>
 </div>
-
 {/* Comments List */}
 {loading ? (
 <div className="space-y-4">

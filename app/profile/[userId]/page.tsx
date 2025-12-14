@@ -1,15 +1,14 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { User, Mail, Bell, Cookie, MessageSquare, Bookmark, Loader, Save, LogOut, Heart } from 'lucide-react'
-import supabase from '../supabase/supabase'
+import supabase from '../../supabase/supabase'
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import toast, { Toaster } from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
+import Navbar from '../../components/Navbar'
+import Footer from '../../components/Footer'
 import Image from 'next/image'
 import Link from 'next/link'
-import { version } from 'os'
 
 // --- Types ---
 interface BookmarkItem {
