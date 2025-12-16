@@ -483,36 +483,7 @@ Mutual Funds
 </div>
 </div>
 
-{/* Business Leaders Accordion */}
-<div>
-<button
-type="button"
-className="w-full px-4 py-3 font-semibold flex items-center justify-between hover:bg-blue-800 transition-colors"
-onClick={() => toggleAccordion('business-leaders')}
->
-<span>Business Leaders</span>
-<ChevronDown
-height={18}
-className={`transition-transform duration-300 ${
-activeAccordion === 'business-leaders' ? "rotate-180" : ""
-}`}
-/>
-</button>
 
-<div
-className={`overflow-hidden transition-all duration-300 ease-in-out ${
-activeAccordion === 'business-leaders' 
-? "max-h-96 opacity-100" 
-: "max-h-0 opacity-0"
-}`}
->
-<div className="px-2 pb-3 space-y-1">
-<a href="/business-leaders" className="block py-2 px-2 hover:bg-blue-600 rounded">
-All Business Leaders
-</a>
-</div>
-</div>
-</div>
 
 </div>
 )}
@@ -521,7 +492,7 @@ All Business Leaders
 <Link 
 href="/membership"
 className="text-white/60 hover:text-white font-bold whitespace-nowrap flex items-center transition-colors group"
-title="Upgrade to Elite to access iTruth Business"
+title="Upgrade to iTruth Elite to access iTruth Business"
 >
 <span>iTruth Business</span>
 <svg className="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
@@ -1845,36 +1816,6 @@ Mutual Funds
 </div>
 </div>
 
-{/* Business Leaders Accordion */}
-<div>
-<button
-type="button"
-className="w-full  py-3 font-semibold flex items-center justify-between hover:bg-blue-800 transition-colors"
-onClick={() => toggleAccordion('business-leaders')}
->
-<span>Business Leaders</span>
-<ChevronDown
-height={18}
-className={`transition-transform duration-300 ${
-activeAccordion === 'business-leaders' ? "rotate-180" : ""
-}`}
-/>
-</button>
-
-<div
-className={`overflow-hidden transition-all duration-300 ease-in-out ${
-activeAccordion === 'business-leaders' 
-? "max-h-96 opacity-100" 
-: "max-h-0 opacity-0"
-}`}
->
-<div className=" pb-3 space-y-1">
-<Link href="/business-leaders" className="block py-2 px-2 hover:bg-blue-600 rounded">
-All Business Leaders
-</Link>
-</div>
-</div>
-</div>
 
 </div>
 )}

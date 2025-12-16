@@ -166,7 +166,8 @@ Save 17%
 
 {/* Free Tier */}
 <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow">
-<div className="p-8">
+
+<div className="p-4">
 <div className="flex items-center gap-2 mb-2">
 <Star className="w-6 h-6 text-gray-400" />
 <h2 className="text-2xl font-bold text-gray-900">iTruth Reader</h2>
@@ -215,7 +216,7 @@ ${premiumPlan.price} billed annually
 )}
 </div>
 
-<div className="p-8">
+<div className="p-4">
 <button
 onClick={() => handleSubscribe(premiumPlan.priceId, premiumPlan.status)}
 disabled={loading}
@@ -259,7 +260,7 @@ ${elitePlan.price} billed annually
 )}
 </div>
 
-<div className="p-8">
+<div className="p-4">
 <button
 onClick={() => handleSubscribe(elitePlan.priceId, elitePlan.status)}
 disabled={loading}
