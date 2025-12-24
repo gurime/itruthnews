@@ -254,6 +254,12 @@ return (
 );
 }
 
+const featuredLocked =
+!!featuredArticle &&
+(!userProfile || userProfile.subscription_status === "free") &&
+(featuredArticle.premium || articlesRead >= 5);
+
+
 if (isLoading) {
 return (
 <>
@@ -303,19 +309,20 @@ onClick={(e) => handleArticleClick(e, featuredArticle)}
 className="bg-white rounded-xl shadow mb-12 overflow-hidden hover:shadow-lg transition-shadow md:flex" 
 >
 {/* Left Column (Image) - 5/12 of the width on md screens and up */}
-<div className="relative w-full ">
+<div className="relative w-full md:w-5/12">
 <Image
 src={featuredArticle.image}
 alt={featuredArticle.title}
 priority
 width={1000}
-height={100} 
-className="object-cover "
+height={600} 
+className={`object-cover w-full h-full ${featuredLocked ? "opacity-60" : ""}`}
 />
 {/* If you wanted to show the premium lock here too */}
-{featuredArticle.premium && userProfile?.subscription_status === "free" && (
-<div className="absolute top-4 left-4 bg-amber-500 p-3 rounded-full text-white z-10">
-<Lock size={20} />
+{featuredLocked && (
+
+<div className="absolute top-2 right-2 bg-amber-500 p-2 rounded-full text-white z-10">
+<Lock size={16} />
 </div>
 )}
 </div>
@@ -326,7 +333,11 @@ className="object-cover "
 <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3">
 {featuredArticle.title}
 </h2>
-<p className="text-gray-600 text-sm sm:text-base mb-4">
+<p
+className={`text-gray-600 text-sm sm:text-base mb-4 ${
+featuredLocked ? "blur-sm" : ""
+}`}
+>
 {featuredArticle.excerpt}
 </p>
 </div>

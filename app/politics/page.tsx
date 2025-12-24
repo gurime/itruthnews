@@ -302,13 +302,13 @@ onClick={(e) => handleArticleClick(e, featuredArticle)}
 className="bg-white rounded-xl shadow mb-12 overflow-hidden hover:shadow-lg transition-shadow md:flex" 
 >
 {/* Left Column (Image) - 5/12 of the width on md screens and up */}
-<div className="relative w-full ">
+<div className="relative w-full md:w-5/12">
 <Image
 src={featuredArticle.image}
 alt={featuredArticle.title}
 priority
 width={1000}
-height={100} 
+height={600} 
 className="object-cover "
 />
 {/* If you wanted to show the premium lock here too */}
