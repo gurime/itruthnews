@@ -29,7 +29,7 @@ return (
 <Image
 onClick={scrollToTop}
 title='Back To Top'
-src="/images/it_news.png"
+src="/images/itruthnews.png"
 alt="iTruth News Logo"
 loading="eager"
 priority

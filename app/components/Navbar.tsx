@@ -296,16 +296,16 @@ Sign up
 <div className="flex items-center justify-center mb-10">
 {isEliteMember ? (
 <Link href="/">
-<Image src="/images/itruth_elite.png" 
+<Image src="/images/itruthnews_elite.png" 
 loading="eager"
-priority alt="Truth News Logo"   
+priority alt="Truth News Elite Logo"   
 width={200} height={200} 
 style={{ width: 'auto', height: 'auto' }}
 />
 </Link>
 ) : isSubscribed ? (
 <Link href="/">
-<Image src="/images/itruth_premium.png" 
+<Image src="/images/itruthnews_premium.png" 
 loading="eager"
 priority alt="Truth News Premium Logo"   
 width={200} height={200} 
@@ -315,7 +315,7 @@ style={{ width: 'auto', height: 'auto' }}
 </Link>
 ) : (
 <Link href="/">
-<Image src="/images/it_news.png" 
+<Image src="/images/itruthnews.png" 
 loading="eager"
 priority alt="Truth News Logo"   
 width={200} height={200} 
@@ -1652,7 +1652,7 @@ activeAccordion === 'arts-features'
 <Image 
 loading="eager"
 priority 
-src="/images/itruth_elite.png" 
+src="/images/itruthnews_elite.png" 
 alt="Truth News Elite Logo" 
 width={200} 
 height={200} 
@@ -1665,7 +1665,7 @@ style={{ width: 'auto', height: 'auto' }}
 <Image 
 loading="eager"
 priority 
-src="/images/itruth_premium.png" 
+src="/images/itruthnews_premium.png" 
 alt="Truth News Premium Logo" 
 width={200} 
 height={200} 
@@ -1678,7 +1678,7 @@ style={{ width: 'auto', height: 'auto' }}
 <Image 
 loading="eager"
 priority 
-src="/images/it_news.png" 
+src="/images/itruthnews.png" 
 alt="Truth News Logo" 
 width={200} 
 height={200} 

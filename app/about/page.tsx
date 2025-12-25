@@ -72,7 +72,7 @@ return (
 <Image 
 width={250} 
 height={60} 
-src="/images/it_news.png" 
+src="/images/itruthnews.png" 
 alt="iTruth News"
 className="mx-auto mb-8"
 />
