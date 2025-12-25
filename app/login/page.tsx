@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import supabase from "../supabase/supabase"; // Ensure this path is correct
 import Image from "next/image";
@@ -20,6 +20,15 @@ const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
 const [confirmPassword, setConfirmPassword] = useState("");
 const [error, setError] = useState("");
+const searchParams = useSearchParams();
+const tab = searchParams.get("tab");
+useEffect(() => {
+if (tab === "signup") {
+setIsLogin(false);
+} else {
+setIsLogin(true);
+}
+}, [tab]);
 
 // Check auth on mount
 useEffect(() => {

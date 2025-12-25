@@ -239,7 +239,7 @@ We&apos;re reader-funded. Join thousands who power iTruth News.
 <div className="flex flex-col sm:flex-row items-center gap-3">
 {user && (
 <Link 
-href='/profile?tab=account'
+href={`/profile/${user.id}?tab=account`}
 className="relative flex items-center gap-2 px-4 py-2 bg-linear-to-r from-blue-800 to-blue-700 hover:from-blue-700 hover:to-blue-600 rounded-full transition-all duration-200 shadow-md hover:shadow-lg group">
 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
 <span className="font-semibold text-white group-hover:scale-105 transition-transform">{firstname}</span>
@@ -258,16 +258,24 @@ Support us
 {/* Login/Logout */}
 {user ? (
 <button
-className="px-4 py-2 text-sm font-semibold text-white bg-red-600  rounded-full hover:bg-red-900 transition-colors whitespace-nowrap cursor-pointer"
+className="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-full hover:bg-red-900 transition-colors whitespace-nowrap cursor-pointer"
 type="button"
 onClick={handleLogout}>
 Log out
 </button>
 ) : (
+<div className="flex gap-2 border-2 border-white rounded-full p-3">
 <button
 className="px-4 py-2 text-sm font-semibold text-white bg-blue-900 border-2 border-blue-900 rounded-full hover:bg-blue-800 transition-colors whitespace-nowrap cursor-pointer"
-onClick={() => router.push('/login')}>Sign in
+onClick={() => router.push('/login?tab=signin')}>
+Sign in
 </button>
+<button
+className="px-4 py-2 text-sm font-semibold text-white bg-green-600 border-2 border-green-600 rounded-full hover:bg-green-700 transition-colors whitespace-nowrap cursor-pointer"
+onClick={() => router.push('/login?tab=signup')}>
+Sign up
+</button>
+</div>
 )}
 
 
@@ -284,14 +292,38 @@ onClick={() => router.push('/login')}>Sign in
 
 {/* Desktop Layout */}
 <div className="hidden md:block">
+{/* Desktop Layout - Logo Section */}
 <div className="flex items-center justify-center mb-10">
+{isEliteMember ? (
+<Link href="/">
+<Image src="/images/itruth_elite.png" 
+loading="eager"
+priority alt="Truth News Logo"   
+width={200} height={200} 
+style={{ width: 'auto', height: 'auto' }}
+/>
+</Link>
+) : isSubscribed ? (
+<Link href="/">
+<Image src="/images/itruth_premium.png" 
+loading="eager"
+priority alt="Truth News Premium Logo"   
+width={200} height={200} 
+style={{ width: 'auto', height: 'auto' }}
+
+/>
+</Link>
+) : (
 <Link href="/">
 <Image src="/images/it_news.png" 
 loading="eager"
 priority alt="Truth News Logo"   
-style={{ width: "auto" ,height:"auto"}}
-width={200} height={200} />
-</Link>
+width={200} height={200} 
+style={{ width: 'auto', height: 'auto' }}
+
+/>
+</Link>   
+)}
 </div>
 
 {/* Navigation Links */}
@@ -491,7 +523,7 @@ Mutual Funds
 ) : (
 <Link 
 href="/membership"
-className="text-white/60 hover:text-white font-bold whitespace-nowrap flex items-center transition-colors group"
+className="text-white/60  font-bold whitespace-nowrap flex items-center transition-colors group"
 title="Upgrade to iTruth Elite to access iTruth Business"
 >
 <span>iTruth Business</span>
@@ -1613,12 +1645,48 @@ activeAccordion === 'arts-features'
 {/* Mobile Layout */}
 <div className="md:hidden">
 <div className="flex items-center justify-between p-6">
+{/* Mobile Layout - Logo Section */}
 <div className="shrink-0">
-<Link href="/" >
+{isEliteMember ? (
+<Link href="/">
 <Image 
 loading="eager"
-priority src="/images/it_news.png" alt="Truth News Logo" width={200} height={200} />
+priority 
+src="/images/itruth_elite.png" 
+alt="Truth News Elite Logo" 
+width={200} 
+height={200} 
+style={{ width: 'auto', height: 'auto' }}
+
+/>
 </Link>
+) : isSubscribed ? (
+<Link href="/">
+<Image 
+loading="eager"
+priority 
+src="/images/itruth_premium.png" 
+alt="Truth News Premium Logo" 
+width={200} 
+height={200} 
+style={{ width: 'auto', height: 'auto' }}
+
+/>
+</Link>
+) : (
+<Link href="/">
+<Image 
+loading="eager"
+priority 
+src="/images/it_news.png" 
+alt="Truth News Logo" 
+width={200} 
+height={200} 
+style={{ width: 'auto', height: 'auto' }}
+
+/>
+</Link>
+)}
 </div>
 <button 
 className="text-white focus:outline-none text-2xl cursor-pointer"
@@ -1824,7 +1892,7 @@ Mutual Funds
 ):(
 <Link 
 href="/membership"
-className="text-white/60 hover:text-white font-bold whitespace-nowrap flex items-center transition-colors group"
+className="text-white/60 mb-5 font-bold whitespace-nowrap flex items-center transition-colors group"
 title="Upgrade to Elite to access iTruth Business"
 >
 <span>iTruth Business</span>

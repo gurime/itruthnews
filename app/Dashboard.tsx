@@ -20,7 +20,7 @@ premium?: boolean;
 }
 
 interface UserProfile {
-subscription_status: "free" | "monthly" | "yearly";
+subscription_status: "free" | "monthly" | "yearly" | "premium" | "elite";
 articles_read_this_month: number;
 }
 
@@ -30,10 +30,11 @@ const [isLoading, setIsLoading] = useState(true);
 const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
 const [articles, setArticles] = useState<Article[]>([]);
 const [error, setError] = useState<string | null>(null);
-
+const [isSubscribed, setIsSubscribed] = useState(false);
 const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 const [articlesRead, setArticlesRead] = useState(0);
 const [showPaywall, setShowPaywall] = useState(false);
+const [guestArticlesRead, setGuestArticlesRead] = useState(0);
 
 
 const premiumFeatures = [
@@ -62,43 +63,100 @@ const eliteFeatures = [
 ];
 
 
+
+
 /* -------------------- FETCH USER -------------------- */
 useEffect(() => {
-const stored = localStorage.getItem("articlesReadToday");
-const today = new Date().toLocaleDateString("en-CA");
-const todayCount = getArticlesReadToday();
-setArticlesRead(todayCount);
-if (stored) {
-const parsed = JSON.parse(stored);
-
-if (parsed.date === today) {
-setArticlesRead(parsed.count);
-} else {
-// New day → reset count
-setArticlesRead(0);
-localStorage.setItem(
-"articlesReadToday",
-JSON.stringify({ count: 0, date: today })
-);
-}
-} else {
-// First time today
-localStorage.setItem(
-"articlesReadToday",
-JSON.stringify({ count: 0, date: today })
-);
-}
-
 fetchUserProfile();
 fetchArticles();
+}, []);
 
+useEffect(() => {
+// Only use localStorage for guests (non-logged-in users)
+async function checkAuthAndInitialize() {
+const { data: { user } } = await supabase.auth.getUser();
+
+if (!user) {
+// Guest user - use localStorage
+const today = new Date().toLocaleDateString("en-CA");
+const stored = localStorage.getItem("guestArticlesReadToday");
+
+if (stored) {
+const parsed = JSON.parse(stored);
+if (parsed.date === today) {
+setGuestArticlesRead(parsed.count);
+} else {
+// New day - reset
+setGuestArticlesRead(0);
+localStorage.setItem("guestArticlesReadToday", JSON.stringify({ count: 0, date: today }));
+}
+} else {
+localStorage.setItem("guestArticlesReadToday", JSON.stringify({ count: 0, date: today }));
+}
+}
+}
+
+checkAuthAndInitialize();
+}, []);
+
+// Remove the localStorage useEffect entirely
+useEffect(() => {
+async function getUser() {
+const { data: { user } } = await supabase.auth.getUser();
+
+if (!user) {
+setIsSubscribed(false);
+setUserProfile(null);
+return;
+}
+
+const channel = supabase
+.channel('profile-changes')
+.on('postgres_changes', { 
+event: '*', 
+schema: 'public', 
+table: 'profiles', 
+filter: `id=eq.${user.id}` 
+}, payload => {
+console.log('Change received!', payload);
+fetchUserProfile();
+})
+.subscribe();
+
+return () => {
+supabase.removeChannel(channel);
+};
+}
+
+getUser(); // ADD THIS LINE - it was missing!
+}, []);
+
+useEffect(() => {
+const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+if (event === 'SIGNED_IN') {
+fetchUserProfile();
+} else if (event === 'SIGNED_OUT') {
+setUserProfile(null);
+setIsSubscribed(false);
+}
+});
+
+return () => {
+subscription.unsubscribe();
+};
 }, []);
 
 async function fetchUserProfile() {
 const {
 data: { user },
 } = await supabase.auth.getUser();
-if (!user) return;
+
+if (!user) {
+setUserProfile(null);
+setIsSubscribed(false);
+setArticlesRead(0);
+return;
+}
 
 const { data } = await supabase
 .from("profiles")
@@ -107,8 +165,15 @@ const { data } = await supabase
 .single();
 
 setUserProfile(data);
-}
+setArticlesRead(data?.articles_read_this_month || 0); // Use DB count
 
+setIsSubscribed(
+data?.subscription_status === "monthly" || 
+data?.subscription_status === "yearly" ||
+data?.subscription_status === "premium" ||
+data?.subscription_status === "elite"
+);
+}
 /* -------------------- FETCH ARTICLES -------------------- */
 async function fetchArticles() {
 try {
@@ -138,47 +203,97 @@ setIsLoading(false);
 }
 
 /* -------------------- PAYWALL LOGIC -------------------- */
-function handleArticleClick(e: React.MouseEvent, article: Article) {
-e.preventDefault(); // always prevent default, we'll manually navigate
+async function handleArticleClick(e: React.MouseEvent, article: Article) {
+  e.preventDefault();
 
-// Default to free user if profile not loaded or status is "free"
-const isSubscriber = userProfile?.subscription_status === "monthly" || 
-userProfile?.subscription_status === "yearly";
-const today = new Date().toLocaleDateString("en-CA");
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  const isSubscriber = userProfile?.subscription_status === "monthly" || 
+    userProfile?.subscription_status === "yearly" ||
+    userProfile?.subscription_status === "premium" ||
+    userProfile?.subscription_status === "elite";
 
-// Get current count from localStorage for most up-to-date value
-const stored = localStorage.getItem("articlesReadToday");
-let currentCount = 0;
+  if (!isSubscriber) {
+    if (user) {
+      // Logged-in free user - use database
+      const currentCount = userProfile?.articles_read_this_month || 0;
+      
+      if (currentCount >= 5 || article.premium) {
+        setShowPaywall(true);
+        return;
+      }
+      
+      await incrementArticleCount();
+    } else {
+      // Guest user - check with backend (IP-based)
+      try {
+        const response = await fetch('/api/track-article-read', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ articleId: article.id })
+        });
+        
+        const data = await response.json(); // <-- ADD THIS
+        console.log('Track article read response:', data); // Debug log
+        
+        if (!data.allowed || article.premium) { // <-- USE data.allowed
+          setShowPaywall(true);
+          return;
+        }
+        
+        setGuestArticlesRead(data.count); // <-- UPDATE state with actual count
+      } catch (error) {
+        console.error('Failed to track article read:', error);
+        // Fallback: show paywall on error to be safe
+        setShowPaywall(true);
+        return;
+      }
+    }
+  }
 
-if (stored) {
-const parsed = JSON.parse(stored);
-if (parsed.date === today) {
-currentCount = parsed.count;
+  router.push(`/Articles/${article.id}`);
 }
+
+useEffect(() => {
+  async function checkAuthAndInitialize() {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      // Guest user - fetch their current count from backend
+      try {
+        const response = await fetch('/api/get-article-count', {
+          method: 'GET',
+        });
+        
+        const data = await response.json();
+        setGuestArticlesRead(data.count || 0);
+      } catch (error) {
+        console.error('Failed to get article count:', error);
+        setGuestArticlesRead(0);
+      }
+    }
+  }
+  
+  checkAuthAndInitialize();
+}, []);
+// Add this helper function:
+async function incrementArticleCount() {
+const { data: { user } } = await supabase.auth.getUser();
+if (!user) return;
+
+const newCount = (userProfile?.articles_read_this_month || 0) + 1;
+
+await supabase
+.from("profiles")
+.update({ articles_read_this_month: newCount })
+.eq("id", user.id);
+
+setArticlesRead(newCount);
+// Optionally refresh profile to ensure sync
+fetchUserProfile();
 }
 
 
-
-// BLOCK: non-subscribers hitting limit
-if (!isSubscriber) {
-if (currentCount >= 5 || article.premium) {
-setShowPaywall(true);
-return;
-}
-
-const newCount = currentCount + 1;
-localStorage.setItem(
-"articlesReadToday",
-JSON.stringify({ count: newCount, date: today })
-);
-setArticlesRead(newCount); // make UI reflect the new count
-}
-else {
-}
-
-// Navigate manually
-router.push(`/Articles/${article.id}`);
-}
 
 /* -------------------- HELPERS -------------------- */
 const formatDate = (d: string) =>
@@ -187,19 +302,6 @@ month: "short",
 day: "numeric",
 year: "numeric",
 });
-
-function getArticlesReadToday() {
-if (typeof window === "undefined") return 0;
-
-const today = new Date().toLocaleDateString("en-CA");
-const stored = localStorage.getItem("articlesReadToday");
-
-if (!stored) return 0;
-
-const parsed = JSON.parse(stored);
-return parsed.date === today ? parsed.count : 0;
-}
-
 
 
 
@@ -268,20 +370,16 @@ return (
 <>
 <div className="container mx-auto p-6">
 {/* FREE COUNTER - Show if not subscribed */}
-{(!userProfile || userProfile?.subscription_status === "free") && (
-<div 
-className="mb-4 bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 shadow-sm"
-role="status"
-aria-live="polite"
->
+{(!userProfile || !['monthly', 'yearly', 'premium', 'elite'].includes(userProfile?.subscription_status || '')) && (
+<div className="mb-4 bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 shadow-sm">
 <div className="flex items-center justify-between gap-4 flex-wrap">
 <p className="text-gray-800 font-medium">
 <span className="inline-flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-full font-bold mr-2">
-{Math.max(0, 5 - articlesRead)}
+{Math.max(0, 5 - (userProfile ? (userProfile.articles_read_this_month || 0) : guestArticlesRead))}
 </span>
-{articlesRead >= 5 
-? "You've reached your free article limit" 
-: `free article${5 - articlesRead !== 1 ? 's' : ''} remaining today`
+{(userProfile ? (userProfile.articles_read_this_month || 0) : guestArticlesRead) >= 5 
+? "You've reached your free article limit this month" 
+: `free article${5 - (userProfile ? (userProfile.articles_read_this_month || 0) : guestArticlesRead) !== 1 ? 's' : ''} remaining this month`
 }
 </p>
 <Link 
@@ -374,7 +472,7 @@ Latest stories curated for you
 {articles.map((article) => {
 const locked =
 (!userProfile || userProfile.subscription_status === "free") &&
-(article.premium || articlesRead >= 5);
+(article.premium || (userProfile ? (userProfile.articles_read_this_month || 0) : guestArticlesRead) >= 5);
 
 return (
 <Link
@@ -389,7 +487,7 @@ className="relative bg-white rounded-lg shadow overflow-hidden hover:shadow-lg t
 </div>
 )}
 
-<div className="relative w-full h-80">
+<div className="relative w-full h-60">
 <Image
 src={article.image}
 alt={article.title}
