@@ -11,8 +11,11 @@ import RelatedArticles from '@/app/components/RelatedArticles';
 import { ARTICLE_TABLES } from '../article_tables';
 import BookmarkButton from '@/app/components/Bookmark';
 import Goback from '@/app/components/Goback';
+import ArticleCount from '@/app/components/ArticleCount';
+import ArticleAccess from '@/app/components/ArticleCount';
 
 interface Article {
+premium: boolean | undefined;
 id: string;
 title: string;
 image?: string | null;
@@ -160,8 +163,13 @@ return (
 <>
 <Navbar />
 <div className="min-h-screen bg-gray-50">
+<div className="container mx-auto p-6">
+
+
+</div>
 {/* Main Content */}
 <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<ArticleAccess articleId={id} isPremium={data.premium} children={undefined}/>
 {/* Category Badge */}
 {data.category && (
 <div className="mb-4 flex justify-between items-center">
