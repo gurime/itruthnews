@@ -11,7 +11,6 @@ import RelatedArticles from '@/app/components/RelatedArticles';
 import { ARTICLE_TABLES } from '../article_tables';
 import BookmarkButton from '@/app/components/Bookmark';
 import Goback from '@/app/components/Goback';
-// Ensure this import points to the component that contains the Logic + UI
 import ArticleAccess from '@/app/components/ArticleCount'; 
 
 interface Article {
@@ -146,6 +145,7 @@ return (
 
 {/* Main Content */}
 <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<ArticleAccess articleId={id} isPremium={data.premium}>
 
 {/* --- Header Section (Always Visible) --- */}
 {data.category && (
@@ -255,7 +255,6 @@ className="object-cover object-center"
 If the user has access, this shows. 
 If not, it shows the Paywall Modal. */}
 
-<ArticleAccess articleId={id} isPremium={data.premium}>
 
 <div className="max-w-3xl mx-auto mb-12">
 <div className="font-serif text-gray-900 leading-[1.75] text-[19px] space-y-6">
