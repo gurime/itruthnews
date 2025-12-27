@@ -310,6 +310,7 @@ className="relative bg-white rounded-lg shadow overflow-hidden hover:shadow-lg t
 src={article.image}
 alt={article.title}
 fill
+sizes="(max-width: 768px) 100vw, 300px"
 className={`object-cover ${locked ? "opacity-60" : ""}`}
 />
 </div>

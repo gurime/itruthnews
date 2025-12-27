@@ -146,7 +146,7 @@ return (
 {/* Main Content */}
 <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 <ArticleAccess articleId={id} isPremium={data.premium}>
-
+<div className="pb-8 border-b border-gray-300 mb-8"></div>
 {/* --- Header Section (Always Visible) --- */}
 {data.category && (
 <div className="mb-4 flex justify-between items-center">
