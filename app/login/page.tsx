@@ -144,7 +144,7 @@ return (
 <div className="text-center mb-8">
 <Link href="/" className="inline-block">
 <Image
-src="/images/it_news.png"
+src="/images/itruthnews.png"
 alt="iTruth News Logo"
 width={200}
 height={80}

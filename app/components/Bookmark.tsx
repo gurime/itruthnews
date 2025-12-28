@@ -43,7 +43,7 @@ const { data } = await supabase
 .select('id')
 .eq('user_id', session.user.id)
 .eq('article_id', articleId)
-.single()
+.maybeSingle()
 
 setIsSaved(!!data)
 }

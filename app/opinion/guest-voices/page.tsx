@@ -30,7 +30,7 @@ articles_read_today: number;
 last_read_date: string;
 }
 
-export default function Dashboard() {
+export default function GuestVoices() {
 const router = useRouter();
 const [isLoading, setIsLoading] = useState(true);
 const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
@@ -310,8 +310,10 @@ className="relative bg-white rounded-lg shadow overflow-hidden hover:shadow-lg t
 src={article.image}
 alt={article.title}
 fill
-sizes="(max-width: 768px) 100vw, 300px"
-className={`object-cover ${locked ? "opacity-60" : ""}`}
+  sizes="(max-width: 640px) 100vw,
+                 (max-width: 1024px) 50vw,
+                 33vw"
+className={`object-contain ${locked ? "opacity-60" : ""}`}
 />
 </div>
 <div className="p-4">

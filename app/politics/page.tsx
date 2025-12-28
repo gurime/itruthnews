@@ -11,8 +11,6 @@ import { PaywallModal } from "@/app/components/PaywallModal";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 
-// Import the Named exports from your ArticleAccess file
-
 interface Article {
 id: number;
 title: string;
@@ -49,7 +47,14 @@ initializeApp();
 async function initializeApp() {
 try {
 setIsLoading(true);
-await fetchArticles();
+
+// 1. Fetch Articles (Catch errors here so Auth still runs)
+await fetchArticles().catch(err => {
+console.error("Failed to load politics articles:", err);
+setError("Could not load articles");
+});
+
+// 2. Check Auth
 const { data: { user } } = await supabase.auth.getUser();
 
 if (user) {
@@ -59,11 +64,12 @@ setupRealtimeSubscription(user.id);
 await fetchGuestArticleCount();
 }
 
-setIsAuthChecked(true);
 } catch (err) {
-console.error('Initialization error:', err);
-setError("Failed to initialize");
+console.error('Initialization critical error:', err);
+setError("Failed to initialize application");
 } finally {
+// ✅ FIX: This guarantees the loading screen goes away
+setIsAuthChecked(true);
 setIsLoading(false);
 }
 }
@@ -142,25 +148,27 @@ setGuestArticlesRead(0);
 }
 
 async function fetchArticles() {
-try {
-const { data: featured } = await supabase
+// 1. Fetch Featured
+// ✅ FIX: Use .maybeSingle() instead of .single() to avoid crashing if empty
+const { data: featured, error: featuredError } = await supabase
 .from("politics")
 .select("*")
 .eq("featured", true)
-.single();
-setFeaturedArticle(featured);
+.maybeSingle();
 
-const { data } = await supabase
+if (featuredError) console.warn("Error fetching featured:", featuredError);
+if (featured) setFeaturedArticle(featured);
+
+// 2. Fetch List
+const { data, error } = await supabase
 .from("politics")
 .select("*")
 .eq("featured", false)
 .order("created_at", { ascending: false })
 .limit(6);
+
+if (error) throw error;
 setArticles(data || []);
-} catch (err) {
-console.error('Error fetching articles:', err);
-throw err;
-}
 }
 
 // ========== PAYWALL LOGIC ==========
@@ -177,6 +185,7 @@ return userProfile ? userProfile.articles_read_today : guestArticlesRead;
 function getRemainingArticles(): number {
 return Math.max(0, 5 - getCurrentReadCount());
 }
+
 async function handleArticleClick(e: React.MouseEvent, article: Article) {
 e.preventDefault();
 
@@ -187,20 +196,13 @@ return;
 
 const currentCount = getCurrentReadCount();
 
-// Check if locked
 if (article.premium || currentCount >= 5) {
 setShowPaywall(true);
 return;
 }
 
-// Access allowed - just navigate, let ArticleAccess handle tracking
-// REMOVED: await trackGuestArticleRead(article.id);
 router.push(`/Articles/${article.id}`);
 }
-
-// You can remove this function entirely now
-// async function trackGuestArticleRead(articleId: number) { ... }
-
 
 const formatDate = (d: string) =>
 new Date(d).toLocaleDateString("en-US", {
@@ -228,14 +230,33 @@ return (
 
 // ========== RENDER ==========
 if (isLoading || !isAuthChecked) return <FeaturedDashboardSkeleton />;
-if (error) return <div className="p-12 text-red-600">{error}</div>;
+
+// Show a retry button if there is a critical error (no articles)
+if (error && articles.length === 0 && !featuredArticle) {
+return (
+<div className="min-h-screen flex flex-col">
+<Navbar />
+<div className="flex-1 flex flex-col items-center justify-center p-12 text-center">
+<h2 className="text-xl font-bold text-red-600 mb-2">Unable to load content</h2>
+<p className="text-gray-600 mb-4">{error}</p>
+<button 
+onClick={() => window.location.reload()} 
+className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+>
+Retry
+</button>
+</div>
+<Footer />
+</div>
+);
+}
 
 const featuredLocked = featuredArticle ? isArticleLocked(featuredArticle) : false;
 
 return (
 <>
-<Navbar/>
-<div className="container mx-auto p-6">
+<Navbar />
+<div className="container mx-auto p-6 min-h-screen">
 
 {/* REUSED BANNER COMPONENT */}
 <ArticleLimitBanner 
@@ -310,7 +331,10 @@ className="relative bg-white rounded-lg shadow overflow-hidden hover:shadow-lg t
 src={article.image}
 alt={article.title}
 fill
-className={`object-cover ${locked ? "opacity-60" : ""}`}
+sizes="(max-width: 640px) 100vw,
+(max-width: 1024px) 50vw,
+33vw"
+className={`object-contain ${locked ? "opacity-60" : ""}`}
 />
 </div>
 <div className="p-4">
@@ -336,7 +360,7 @@ isOpen={showPaywall}
 onClose={() => setShowPaywall(false)}
 variant={getCurrentReadCount() >= 5 ? "limit-reached" : "premium-content"}
 />
-<Footer/>
+<Footer />
 </>
 );
 }

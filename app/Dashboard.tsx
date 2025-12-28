@@ -8,7 +8,6 @@ import Image from "next/image";
 import { Lock } from "lucide-react";
 import { ArticleLimitBanner } from "./components/ArticleLimitBanner";
 import { PaywallModal } from "./components/PaywallModal";
-// Import the Named exports from your ArticleAccess file
 
 interface Article {
 id: number;
@@ -46,7 +45,15 @@ initializeApp();
 async function initializeApp() {
 try {
 setIsLoading(true);
-await fetchArticles();
+
+// 1. Fetch Articles (We await this, but catch its specific errors internally if needed)
+// If this fails, we still want to check Auth, so we don't return early.
+await fetchArticles().catch(err => {
+console.error("Failed to fetch articles:", err);
+setError("Could not load articles");
+});
+
+// 2. Check Auth
 const { data: { user } } = await supabase.auth.getUser();
 
 if (user) {
@@ -56,11 +63,12 @@ setupRealtimeSubscription(user.id);
 await fetchGuestArticleCount();
 }
 
-setIsAuthChecked(true);
 } catch (err) {
-console.error('Initialization error:', err);
-setError("Failed to initialize");
+console.error('Initialization critical error:', err);
+setError("Failed to initialize application");
 } finally {
+// ✅ FIX: These must run regardless of success or failure
+setIsAuthChecked(true);
 setIsLoading(false);
 }
 }
@@ -113,6 +121,8 @@ const { data, error } = await supabase
 if (error) throw error;
 
 const today = new Date().toLocaleDateString("en-CA");
+
+// Handle date reset
 if (data && data.last_read_date !== today) {
 await supabase
 .from("profiles")
@@ -124,7 +134,7 @@ setUserProfile({ ...data, articles_read_today: 0, last_read_date: today });
 setUserProfile(data);
 }
 } catch (err) {
-console.error('Error fetching user profile:', err);
+console.error("Error fetching profile:", err);
 }
 }
 
@@ -139,25 +149,26 @@ setGuestArticlesRead(0);
 }
 
 async function fetchArticles() {
-try {
-const { data: featured } = await supabase
+// Featured
+const { data: featured, error: featuredError } = await supabase
 .from("dashboard")
 .select("*")
 .eq("featured", true)
-.single();
-setFeaturedArticle(featured);
+.maybeSingle(); // Use maybeSingle to prevent 406 error if 0 rows found
 
-const { data } = await supabase
+if (featuredError) console.warn("Featured fetch error:", featuredError);
+if (featured) setFeaturedArticle(featured);
+
+// List
+const { data, error } = await supabase
 .from("dashboard")
 .select("*")
 .eq("featured", false)
 .order("created_at", { ascending: false })
 .limit(6);
+
+if (error) throw error;
 setArticles(data || []);
-} catch (err) {
-console.error('Error fetching articles:', err);
-throw err;
-}
 }
 
 // ========== PAYWALL LOGIC ==========
@@ -174,6 +185,7 @@ return userProfile ? userProfile.articles_read_today : guestArticlesRead;
 function getRemainingArticles(): number {
 return Math.max(0, 5 - getCurrentReadCount());
 }
+
 async function handleArticleClick(e: React.MouseEvent, article: Article) {
 e.preventDefault();
 
@@ -184,20 +196,13 @@ return;
 
 const currentCount = getCurrentReadCount();
 
-// Check if locked
 if (article.premium || currentCount >= 5) {
 setShowPaywall(true);
 return;
 }
 
-// Access allowed - just navigate, let ArticleAccess handle tracking
-// REMOVED: await trackGuestArticleRead(article.id);
 router.push(`/Articles/${article.id}`);
 }
-
-// You can remove this function entirely now
-// async function trackGuestArticleRead(articleId: number) { ... }
-
 
 const formatDate = (d: string) =>
 new Date(d).toLocaleDateString("en-US", {
@@ -224,23 +229,37 @@ return (
 }
 
 // ========== RENDER ==========
+// 1. Show skeleton ONLY if we are actively loading OR auth hasn't been checked yet
 if (isLoading || !isAuthChecked) return <FeaturedDashboardSkeleton />;
-if (error) return <div className="p-12 text-red-600">{error}</div>;
+
+// 2. Show error if one exists (and we aren't loading)
+if (error && articles.length === 0 && !featuredArticle) {
+return (
+<div className="p-12 text-center">
+<h2 className="text-xl font-bold text-red-600 mb-2">Something went wrong</h2>
+<p className="text-gray-600">{error}</p>
+<button 
+onClick={() => window.location.reload()} 
+className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+>
+Retry
+</button>
+</div>
+);
+}
 
 const featuredLocked = featuredArticle ? isArticleLocked(featuredArticle) : false;
 
 return (
 <>
 <div className="container mx-auto p-6">
-
-{/* REUSED BANNER COMPONENT */}
 <ArticleLimitBanner 
 remaining={getRemainingArticles()} 
 isSubscriber={isSubscriber()} 
 />
 
 {/* FEATURED ARTICLE */}
-{featuredArticle && (
+{featuredArticle ? (
 <Link
 href={`/Articles/${featuredArticle.id}`}
 onClick={(e) => handleArticleClick(e, featuredArticle)}
@@ -276,6 +295,9 @@ className={`object-cover w-full h-full ${featuredLocked ? "opacity-60" : ""}`}
 </div>
 </div>
 </Link>
+) : (
+// Fallback if no featured article is found but page loaded
+<div className="mb-12 text-gray-500">No featured article available</div>
 )}
 
 <div className="pb-8 border-b border-gray-200 mb-8"></div>
@@ -301,21 +323,22 @@ className="relative bg-white rounded-lg shadow overflow-hidden hover:shadow-lg t
 <Lock size={16} />
 </div>
 )}
-<div className="relative w-full h-60">
+<div className="relative w-full aspect-video">
 <Image
 src={article.image}
 alt={article.title}
 fill
-sizes="(max-width: 768px) 100vw, 300px"
-className={`object-cover ${locked ? "opacity-60" : ""}`}
+sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+className={`object-contain ${locked ? "opacity-60" : ""}`}
 />
 </div>
+
 <div className="p-4">
-<h3 className="font-semibold mb-2">{article.title}</h3>
+<h3 className="line-clamp-2 font-semibold mb-2">{article.title}</h3>
 <p className={`text-sm text-gray-600 ${locked ? "blur-sm" : ""}`}>{article.excerpt}</p>
 <div className="text-xs mt-2 text-gray-500 flex justify-between items-center">
 <span>{formatDate(article.created_at)}</span>
-<span className="inline-block bg-blue-900 text-white text-xs font-semibold px-2 py-1 rounded">
+<span className="line-clamp-3 inline-block bg-blue-900 text-white text-xs font-semibold px-2 py-1 rounded">
 {article.category}
 </span>
 </div>
@@ -327,7 +350,6 @@ className={`object-cover ${locked ? "opacity-60" : ""}`}
 </section>
 </div>
 
-{/* REUSED PAYWALL MODAL */}
 <PaywallModal 
 isOpen={showPaywall} 
 onClose={() => setShowPaywall(false)}

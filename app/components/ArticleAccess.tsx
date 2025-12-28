@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import supabase from '../supabase/supabase';
 import Link from 'next/link';
 import { Check, X } from 'lucide-react';
 
 interface UserProfile {
+id: string;
 subscription_status: "free" | "monthly" | "yearly" | "premium" | "elite";
 articles_read_today: number;
 last_read_date: string;
@@ -52,97 +53,38 @@ const eliteFeatures = [
 'Priority customer service'
 ];
 
-// ========== INITIALIZATION ==========
-useEffect(() => {
-checkArticleAccess();
-}, [articleId]);
-
-async function checkArticleAccess() {
-try {
-setIsLoading(true);
-const { data: { user } } = await supabase.auth.getUser();
-
-if (user) {
-await fetchUserProfile(user.id);
-const profile = await getUserProfile(user.id);
-
-// Check if subscriber
-if (isUserSubscriber(profile)) {
-setHasAccess(true);
-setIsLoading(false);
-return;
+// ========== HELPER FUNCTIONS ==========
+function isUserSubscriber(profile: UserProfile | null): boolean {
+return ['monthly', 'yearly', 'premium', 'elite'].includes(
+profile?.subscription_status || ''
+);
 }
 
-// Check if can access
-const currentCount = profile?.articles_read_today || 0;
-if (isPremium || currentCount >= 5) {
-setShowPaywall(true);
-setHasAccess(false);
-setIsLoading(false);
-return;
+function isSubscriber(): boolean {
+return isUserSubscriber(userProfile);
 }
 
-// Grant access and increment
-await incrementUserArticleCount(user.id);
-setHasAccess(true);
-} else {
-// Guest user
-const count = await fetchGuestArticleCount();
-
-if (isPremium || count >= 5) {
-setShowPaywall(true);
-setHasAccess(false);
-setIsLoading(false);
-return;
+function getCurrentReadCount(): number {
+return userProfile 
+? userProfile.articles_read_today 
+: guestArticlesRead;
 }
 
-// Grant access and track
-const allowed = await trackGuestArticleRead();
-setHasAccess(allowed);
-if (!allowed) {
-setShowPaywall(true);
+function getRemainingArticles(): number {
+return Math.max(0, 5 - getCurrentReadCount());
 }
-}
-
-setIsAuthChecked(true);
-setIsLoading(false);
-} catch (err) {
-console.error('Article access check error:', err);
-setIsAuthChecked(true);
-setIsLoading(false);
-setShowPaywall(true);
-}
-}
-
-// ========== AUTH STATE CHANGES ==========
-useEffect(() => {
-const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-if (event === 'SIGNED_IN' && session?.user) {
-await fetchUserProfile(session.user.id);
-await checkArticleAccess();
-} else if (event === 'SIGNED_OUT') {
-setUserProfile(null);
-await checkArticleAccess();
-}
-});
-
-return () => {
-subscription.unsubscribe();
-};
-}, []);
 
 // ========== DATA FETCHING ==========
 async function getUserProfile(userId: string): Promise<UserProfile | null> {
 try {
 const { data, error } = await supabase
 .from("profiles")
-.select("subscription_status, articles_read_today, last_read_date")
+.select("id, subscription_status, articles_read_today, last_read_date")
 .eq("id", userId)
 .single();
 
 if (error) throw error;
 
-// Check if we need to reset the daily count
 const today = new Date().toLocaleDateString("en-CA");
 if (data && data.last_read_date !== today) {
 await supabase
@@ -167,11 +109,6 @@ return null;
 }
 }
 
-async function fetchUserProfile(userId: string) {
-const profile = await getUserProfile(userId);
-setUserProfile(profile);
-}
-
 async function fetchGuestArticleCount(): Promise<number> {
 try {
 const response = await fetch('/api/get-article-count');
@@ -180,17 +117,17 @@ const count = data.count || 0;
 setGuestArticlesRead(count);
 return count;
 } catch (error) {
-console.error('Failed to get guest article count:', error);
+console.error('Error fetching guest count:', error);
 setGuestArticlesRead(0);
 return 0;
 }
 }
 
 // ========== ARTICLE TRACKING ==========
-async function incrementUserArticleCount(userId: string) {
+async function incrementUserArticleCount(userId: string, currentProfile: UserProfile | null) {
 try {
 const today = new Date().toLocaleDateString("en-CA");
-const newCount = (userProfile?.articles_read_today || 0) + 1;
+const newCount = (currentProfile?.articles_read_today || 0) + 1;
 
 const { error } = await supabase
 .from("profiles")
@@ -228,40 +165,164 @@ setGuestArticlesRead(data.count);
 
 return data.allowed || false;
 } catch (error) {
-console.error('Failed to track guest article read:', error);
+console.error('Error tracking guest read:', error);
 return false;
 }
 }
 
+// ========== INITIALIZATION ==========
+useEffect(() => {
+let mounted = true;
+
+async function init() {
+const { data: { user } } = await supabase.auth.getUser();
+
+if (!mounted) return;
+
+if (user) {
+const profile = await getUserProfile(user.id);
+if (mounted) {
+setUserProfile(profile);
+}
+}
+
+if (mounted) {
+setIsAuthChecked(true);
+}
+}
+
+init();
+
+return () => {
+mounted = false;
+};
+}, []);
+
+// ========== AUTH STATE CHANGES ==========
+useEffect(() => {
+const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+if (event === 'SIGNED_IN' && session?.user) {
+const profile = await getUserProfile(session.user.id);
+setUserProfile(profile);
+setIsAuthChecked(true);
+} else if (event === 'SIGNED_OUT') {
+setUserProfile(null);
+setIsAuthChecked(true);
+}
+});
+
+return () => subscription.unsubscribe();
+}, []);
+
+// ========== ACCESS CHECK ==========
+// ✅ FIX: Remove checkArticleAccess from dependencies to prevent infinite loop
+useEffect(() => {
+if (!isAuthChecked) return;
+
+async function checkAccess() {
+setIsLoading(true);
+setShowPaywall(false);
+setHasAccess(false);
+
+// Logged-in user
+if (userProfile) {
+if (isUserSubscriber(userProfile)) {
+setHasAccess(true);
+setIsLoading(false);
+return;
+}
+
+const count = userProfile.articles_read_today || 0;
+
+if (isPremium || count >= 5) {
+setShowPaywall(true);
+setIsLoading(false);
+return;
+}
+
+await incrementUserArticleCount(userProfile.id, userProfile);
+setHasAccess(true);
+setIsLoading(false);
+return;
+}
+
+// Guest
+const guestCount = await fetchGuestArticleCount();
+
+if (isPremium || guestCount >= 5) {
+setShowPaywall(true);
+setIsLoading(false);
+return;
+}
+
+const allowed = await trackGuestArticleRead();
+setHasAccess(allowed);
+setShowPaywall(!allowed);
+setIsLoading(false);
+}
+
+checkAccess();
+}, [articleId, isPremium, isAuthChecked, userProfile]); // ✅ Include actual dependencies, not the function
+
 // ========== HELPER FUNCTIONS ==========
-function isUserSubscriber(profile: UserProfile | null): boolean {
-return ['monthly', 'yearly', 'premium', 'elite'].includes(
-profile?.subscription_status || ''
-);
-}
-
-function isSubscriber(): boolean {
-return isUserSubscriber(userProfile);
-}
-
-function getCurrentReadCount(): number {
-return userProfile 
-? userProfile.articles_read_today 
-: guestArticlesRead;
-}
-
-function getRemainingArticles(): number {
-return Math.max(0, 5 - getCurrentReadCount());
-}
 
 // ========== RENDER ==========
 if (isLoading || !isAuthChecked) {
 return (
-<div className="min-h-screen bg-gray-50 flex items-center justify-center">
-<div className="text-center">
-<div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-<p className="text-gray-600">Loading article...</p>
+<div className="min-h-screen bg-gray-50">
+<article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-pulse">
+{/* Category + Go Back */}
+<div className="flex justify-between items-center mb-6">
+<div className="h-6 w-28 bg-gray-300 rounded-full" />
+<div className="h-8 w-8 bg-gray-300 rounded-full" />
 </div>
+
+{/* Title */}
+<div className="space-y-3 mb-8">
+<div className="h-10 bg-gray-300 rounded w-3/4" />
+<div className="h-10 bg-gray-300 rounded w-2/3" />
+</div>
+
+{/* Meta Info */}
+<div className="flex flex-wrap gap-4 mb-8">
+{[...Array(4)].map((_, i) => (
+<div key={i} className="h-4 w-32 bg-gray-300 rounded" />
+))}
+</div>
+
+{/* Disclaimer Bar */}
+<div className="h-10 bg-gray-400 rounded mb-8" />
+
+{/* Social + Bookmark */}
+<div className="flex justify-between items-center border-y py-4 mb-8">
+<div className="flex gap-4">
+{[...Array(3)].map((_, i) => (
+<div key={i} className="h-6 w-6 bg-gray-300 rounded" />
+))}
+</div>
+<div className="h-8 w-24 bg-gray-300 rounded" />
+</div>
+
+{/* Hero Image */}
+<div className="h-96 w-full bg-gray-300 rounded mb-10" />
+
+{/* Excerpt */}
+<div className="p-6 bg-gray-200 rounded mb-10 space-y-3">
+<div className="h-4 bg-gray-300 rounded w-full" />
+<div className="h-4 bg-gray-300 rounded w-5/6" />
+</div>
+
+{/* Body Content */}
+<div className="max-w-3xl mx-auto space-y-6 mb-12">
+{[...Array(8)].map((_, i) => (
+<div key={i} className="space-y-2">
+<div className="h-4 bg-gray-300 rounded w-full" />
+<div className="h-4 bg-gray-300 rounded w-11/12" />
+<div className="h-4 bg-gray-300 rounded w-10/12" />
+</div>
+))}
+</div>
+</article>
 </div>
 );
 }

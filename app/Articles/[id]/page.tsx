@@ -11,7 +11,7 @@ import RelatedArticles from '@/app/components/RelatedArticles';
 import { ARTICLE_TABLES } from '../article_tables';
 import BookmarkButton from '@/app/components/Bookmark';
 import Goback from '@/app/components/Goback';
-import ArticleAccess from '@/app/components/ArticleCount'; 
+import ArticleAccess from '@/app/components/ArticleAccess'; 
 
 interface Article {
 premium: boolean | undefined;
@@ -111,6 +111,10 @@ const { id } = await params;
 
 // Fetch the article from all tables
 const data = await fetchArticleFromTables(id);
+
+// ========== RENDER ==========
+// REMOVED: if (isLoading) return <FeaturedDashboardSkeleton />;
+// Server components don't have loading states - they just wait for data
 
 if (!data) {
 return (
@@ -234,6 +238,7 @@ articleExcerpt={data.excerpt || ''}
 src={data.image}
 alt={data.title}
 fill
+sizes="(max-width: 768px) 100vw, 600px"
 loading="eager"
 priority
 className="object-cover object-center"

@@ -10,15 +10,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-interface NewsletterSubscriber {
-email: string;
-subscribed: boolean;
-daily_newsletter: boolean;
-weekly_newsletter: boolean;
-breaking_news: boolean;
-politics_newsletter: boolean;
-tech_newsletter: boolean;
-}
 
 
 
@@ -34,61 +25,81 @@ const [isSubscribed, setIsSubscribed] = useState(false);
 const [isEliteMember, setIsEliteMember] = useState(false);
 
 const router = useRouter();
+// ✅ CONSOLIDATED - Single initialization and auth listener
 useEffect(() => {
 let mounted = true;
 
-const loadProfile = async () => {
-const { data: { session } } = await supabase.auth.getSession();
-if (!mounted) return;
-
-setUser(session?.user ?? null);
-
-if (session?.user) {
+const loadProfile = async (userId: string) => {
 const { data: profileData } = await supabase
 .from("profiles")
 .select("full_name, email, subscription_status, role")
-.eq("id", session.user.id)
+.eq("id", userId)
 .maybeSingle();
 
-if (profileData) {
-setFirstName(profileData.full_name);
-setEmail(profileData.email);
+if (!mounted || !profileData) return;
+
+setFirstName(profileData.full_name || '');
+setEmail(profileData.email || '');
 
 // Check if user is admin or elite member
-// Admin gets all access, elite gets iTruth Business
 const isElite = profileData.subscription_status === "elite" || 
 profileData.subscription_status === "elite_yearly" ||
 profileData.subscription_status === "elite_monthly" ||
 profileData.role === "admin";
 
-if (isElite) {
-setIsEliteMember(true);
-setIsSubscribed(true);
-} else if (profileData.subscription_status && 
+setIsEliteMember(isElite);
+
+// Check if user has any paid subscription
+const hasPaidSubscription = profileData.subscription_status && 
 profileData.subscription_status !== "free" &&
-profileData.subscription_status !== "") {
-setIsSubscribed(true);
-}
-}
+profileData.subscription_status !== "";
+
+setIsSubscribed(isElite || hasPaidSubscription);
+};
+
+const init = async () => {
+// Get initial session
+const { data: { session } } = await supabase.auth.getSession();
+
+if (!mounted) return;
+
+if (session?.user) {
+setUser(session.user);
+await loadProfile(session.user.id);
 }
 
 setIsLoading(false);
 };
 
-loadProfile();
+init();
+
+// Auth listener
+const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+if (!mounted) return;
+
+if (event === 'SIGNED_IN' && session?.user) {
+setUser(session.user);
+await loadProfile(session.user.id);
+} else if (event === 'SIGNED_OUT') {
+setUser(null);
+setIsEliteMember(false);
+setIsSubscribed(false);
+setFirstName('');
+setEmail('');
+}
+});
+
 return () => {
 mounted = false;
+subscription?.unsubscribe();
 };
 }, []);
-
 // Get current month's special coverage
 
 const currentMonth = new Date().getMonth(); 
 const currentSpecialCoverage = specialCoverage[currentMonth as keyof typeof specialCoverage] || [];
 
-useEffect(() => {
-setTimeout(() => setIsLoading(false), 1000);
-}, []);
+
 const handleLogout = async () => {
 try {
 const { error } = await supabase.auth.signOut();
@@ -107,83 +118,6 @@ console.error(error);
 }
 };
 
-// Add this useEffect to listen for newsletter preference changes
-useEffect(() => {
-if (!user?.email) return;
-
-const channel = supabase
-.channel('newsletter-changes')
-.on<NewsletterSubscriber>(
-'postgres_changes',
-{
-event: 'UPDATE',
-schema: 'public',
-table: 'newsletter_subscribers',
-filter: `email=eq.${user.email}`
-},
-(payload) => {
-const newData = payload.new as NewsletterSubscriber;
-// Check if any newsletter is enabled
-const hasAnyNewsletter =
-newData.daily_newsletter ||
-newData.weekly_newsletter ||
-newData.breaking_news ||
-newData.politics_newsletter ||
-newData.tech_newsletter;
-
-setIsSubscribed(newData.subscribed && hasAnyNewsletter);
-}
-)
-.subscribe();
-
-return () => {
-supabase.removeChannel(channel);
-};
-}, [user?.email]);
-
-useEffect(() => {
-let mounted = true;
-
-const init = async () => {
-// Get initial session
-const { data: { session } } = await supabase.auth.getSession();
-if (!mounted) return;
-
-setUser(session?.user ?? null);
-
-// Check subscription status if logged in
-if (session?.user?.email) {
-const { data: subData } = await supabase
-.from("newsletter_subscribers")
-.select("email, subscribed")
-.eq("email", session.user.email)
-.maybeSingle();
-
-if (subData?.subscribed) {
-setIsSubscribed(true);
-setEmail(session.user.email);
-}
-}
-
-setIsLoading(false);
-};
-
-init();
-
-// Auth listener
-const {
-data: { subscription }
-} = supabase.auth.onAuthStateChange((_event, session) => {
-if (!mounted) return;
-
-setUser(session?.user ?? null);
-});
-
-return () => {
-mounted = false;
-subscription?.unsubscribe();
-};
-}, []);
 
 
 
@@ -298,7 +232,7 @@ Sign up
 <Link href="/">
 <Image src="/images/itruthnews_elite.png" 
 loading="eager"
-priority alt="Truth News Elite Logo"   
+priority alt="iTruth News Elite Logo"   
 width={200} height={200} 
 style={{ width: 'auto', height: 'auto' }}
 />
@@ -317,7 +251,7 @@ style={{ width: 'auto', height: 'auto' }}
 <Link href="/">
 <Image src="/images/itruthnews.png" 
 loading="eager"
-priority alt="Truth News Logo"   
+priority alt="iTruth News Logo"   
 width={200} height={200} 
 style={{ width: 'auto', height: 'auto' }}
 
