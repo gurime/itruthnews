@@ -3,9 +3,6 @@ const ARTICLE_TABLES = [
   'politics', 
   'columnists',
   'guest_voices',
- 
- 
-
 ];
 
 export { ARTICLE_TABLES };

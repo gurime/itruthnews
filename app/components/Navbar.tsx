@@ -1018,7 +1018,14 @@ activeDropdown === 'technology' ? "rotate-180" : ""
 </button>
 
 {activeDropdown === 'technology' && (
-<div className="absolute left-0 bg-blue-900 text-white mt-2 py-4 w-80 rounded shadow-lg z-50">
+<div className="
+  absolute left-0 md:left-auto md:right-0
+  bg-blue-900 text-white
+  mt-2 py-4
+  w-72 max-w-[90vw] md:w-80
+  rounded shadow-lg z-50
+"
+>
 
 {/* Personal Tech Accordion */}
 <div className="border-b border-blue-700">
@@ -1208,7 +1215,14 @@ activeDropdown === 'sports' ? "rotate-180" : ""
 </button>
 
 {activeDropdown === 'sports' && (
-<div className="absolute left-0 bg-blue-900 text-white mt-2 py-4 w-80 rounded shadow-lg z-50">
+<div className="
+  absolute left-0 md:left-auto md:right-0
+  bg-blue-900 text-white
+  mt-2 py-4
+  w-72 max-w-[90vw] md:w-80
+  rounded shadow-lg z-50
+"
+>
 
 {/* Professional Sports Accordion */}
 <div className="border-b border-blue-700">
@@ -1438,7 +1452,14 @@ activeDropdown === 'arts' ? "rotate-180" : ""
 </button>
 
 {activeDropdown === 'arts' && (
-<div className="absolute left-0 bg-blue-900 text-white mt-2 py-4 w-80 rounded shadow-lg z-50">
+<div className="
+  absolute left-0 md:left-auto md:right-0
+  bg-blue-900 text-white
+  mt-2 py-4
+  w-72 max-w-[90vw] md:w-80
+  rounded shadow-lg z-50
+"
+>
 
 {/* Arts & Culture Accordion */}
 <div className="border-b border-blue-700">

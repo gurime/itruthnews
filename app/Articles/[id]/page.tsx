@@ -82,7 +82,7 @@ const { data, error } = await supabase
 .from(table)
 .select('*')
 .eq('id', id)
-.single();
+.maybeSingle();
 
 if (!error && data) {
 return data as Article;
@@ -111,10 +111,6 @@ const { id } = await params;
 
 // Fetch the article from all tables
 const data = await fetchArticleFromTables(id);
-
-// ========== RENDER ==========
-// REMOVED: if (isLoading) return <FeaturedDashboardSkeleton />;
-// Server components don't have loading states - they just wait for data
 
 if (!data) {
 return (
@@ -233,14 +229,13 @@ articleExcerpt={data.excerpt || ''}
 </div>
 
 {data.image && (
-<div className="h-96 w-full relative overflow-hidden shadow-md">
+<div className=" aspect-video w-full relative overflow-hidden shadow-md">
 <Image
 src={data.image}
 alt={data.title}
 fill
 sizes="(max-width: 768px) 100vw, 600px"
 loading="eager"
-priority
 className="object-cover object-center"
 />
 </div>

@@ -262,7 +262,7 @@ setIsLoading(false);
 }
 
 checkAccess();
-}, [articleId, isPremium, isAuthChecked, userProfile]); // ✅ Include actual dependencies, not the function
+}, [articleId, isPremium, isAuthChecked]);
 
 // ========== HELPER FUNCTIONS ==========
 

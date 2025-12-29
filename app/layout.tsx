@@ -1,17 +1,16 @@
 import type { Metadata } from "next";
-import {  Montserrat } from "next/font/google";
+import {  Roboto } from "next/font/google";
 import "./globals.css";
 
-
-const geistMono = Montserrat({
-variable: "--font-geist-mono",
+const RobotoMono = Roboto({
 subsets: ["latin"],
+weight: ["400", "700"],
+variable: "--font-roboto-mono",
 });
-
 
 export const metadata: Metadata = {
 metadataBase: new URL("https://itruthnews.com"), // <-- set your production domain here
-title: "iTruth News",
+title: "iTruth News | Smart News for Honest Minds",
 description: "Breaking political news, in-depth analysis, and fact-based reporting from iTruth News.",
 openGraph: {
 title: "iTruth News",
@@ -21,7 +20,7 @@ siteName: "iTruth News",
 
 images: [
 {
-url: "/og-image.png", // resolves to https://itruthnews.com/og-image.png
+url: "/images/itruthnews.png", // resolves to https://itruthnews.com/og-image.png
 width: 1200,
 height: 630,
 alt: "iTruth News logo",
@@ -34,8 +33,8 @@ type: "website",
 twitter: {
 card: "summary_large_image",
 title: "iTruth News",
-description: "Breaking political news and fact-based reporting.",
-images: ["/og-image.png"], // resolves correctly now
+description: "Breaking political news, in-depth analysis, and fact-based reporting from iTruth News.",
+images: ["/images/itruthnews.png"], // resolves correctly now
 },
 };
 
@@ -47,7 +46,7 @@ export default function RootLayout({
 return (
 <html lang="en">
 <body
-className={`${geistMono.variable} antialiased`}>
+className={`${RobotoMono.variable} antialiased`}>
 {children}
 </body>
 </html>

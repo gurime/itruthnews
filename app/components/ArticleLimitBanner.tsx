@@ -1,10 +1,5 @@
 "use client";
-
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import supabase from '../supabase/supabase';
 import Link from 'next/link';
-import { Check, X } from 'lucide-react';
 
 // ================= EXPORTED UI COMPONENTS =================
 

@@ -11,7 +11,6 @@ import { PaywallModal } from "@/app/components/PaywallModal";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 
-// Import the Named exports from your ArticleAccess file
 
 interface Article {
 id: number;
@@ -30,7 +29,7 @@ articles_read_today: number;
 last_read_date: string;
 }
 
-export default function Columnists() {
+export default function Columnist() {
 const router = useRouter();
 const [isLoading, setIsLoading] = useState(true);
 const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
@@ -39,69 +38,60 @@ const [error, setError] = useState<string | null>(null);
 const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 const [guestArticlesRead, setGuestArticlesRead] = useState(0);
 const [showPaywall, setShowPaywall] = useState(false);
-const [isAuthChecked, setIsAuthChecked] = useState(false);
+const [profileChannelCleanup, setProfileChannelCleanup] = useState<null | (() => void)>(null);
 
 // ========== INITIALIZATION ==========
 useEffect(() => {
-initializeApp();
-}, []);
+let mounted = true;
 
-async function initializeApp() {
+const init = async () => {
 try {
-setIsLoading(true);
-await fetchArticles();
-const { data: { user } } = await supabase.auth.getUser();
+const { data: { session } } = await supabase.auth.getSession();
 
-if (user) {
-await fetchUserProfile(user.id);
-setupRealtimeSubscription(user.id);
+if (!mounted) return;
+
+if (session?.user) {
+await fetchUserProfile(session.user.id);
+setupRealtimeSubscription(session.user.id);
 } else {
 await fetchGuestArticleCount();
 }
 
-setIsAuthChecked(true);
+await fetchArticles();
 } catch (err) {
-console.error('Initialization error:', err);
-setError("Failed to initialize");
+console.error("Dashboard init error:", err);
+if (mounted) setError("Failed to load dashboard");
 } finally {
-setIsLoading(false);
+if (mounted) setIsLoading(false);
 }
-}
+};
 
-// ========== AUTH STATE CHANGES ==========
-useEffect(() => {
-const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-if (event === 'SIGNED_IN' && session?.user) {
-await fetchUserProfile(session.user.id);
-setupRealtimeSubscription(session.user.id);
-} else if (event === 'SIGNED_OUT') {
-setUserProfile(null);
-await fetchGuestArticleCount();
-}
-});
+init();
 
 return () => {
-subscription.unsubscribe();
+mounted = false;
 };
 }, []);
 
+
+
+
 // ========== REALTIME SUBSCRIPTION ==========
 function setupRealtimeSubscription(userId: string) {
+profileChannelCleanup?.();
+
 const channel = supabase
-.channel('profile-changes')
-.on('postgres_changes', { 
-event: '*', 
-schema: 'public', 
-table: 'profiles', 
-filter: `id=eq.${userId}` 
-}, () => {
-fetchUserProfile(userId);
-})
+.channel("profile-changes")
+.on(
+"postgres_changes",
+{ event: "*", schema: "public", table: "profiles", filter: `id=eq.${userId}` },
+() => fetchUserProfile(userId)
+)
 .subscribe();
 
-return () => {
+setProfileChannelCleanup(() => () => {
 supabase.removeChannel(channel);
-};
+});
 }
 
 // ========== DATA FETCHING ==========
@@ -116,8 +106,10 @@ const { data, error } = await supabase
 if (error) throw error;
 
 const today = new Date().toLocaleDateString("en-CA");
+
 if (data && data.last_read_date !== today) {
-await supabase
+// Fire and forget the update
+supabase
 .from("profiles")
 .update({ articles_read_today: 0, last_read_date: today })
 .eq("id", userId);
@@ -127,7 +119,7 @@ setUserProfile({ ...data, articles_read_today: 0, last_read_date: today });
 setUserProfile(data);
 }
 } catch (err) {
-console.error('Error fetching user profile:', err);
+console.error("Error fetching profile:", err);
 }
 }
 
@@ -143,25 +135,25 @@ setGuestArticlesRead(0);
 
 async function fetchArticles() {
 try {
-const { data: featured } = await supabase
+const { data, error } = await supabase
 .from("columnists")
 .select("*")
-.eq("featured", true)
-.single();
-setFeaturedArticle(featured);
-
-const { data } = await supabase
-.from("columnists")
-.select("*")
-.eq("featured", false)
 .order("created_at", { ascending: false })
-.limit(6);
-setArticles(data || []);
+.limit(20);
+
+if (error) throw error;
+
+const featured = data?.find(a => a.featured);
+const regular = data?.filter(a => !a.featured).slice(0, 6) ?? [];
+
+setFeaturedArticle(featured || null);
+setArticles(regular);
 } catch (err) {
-console.error('Error fetching articles:', err);
-throw err;
+console.error("Articles fetch error:", err);
+setError("Failed to load articles");
 }
 }
+
 
 // ========== PAYWALL LOGIC ==========
 function isSubscriber(): boolean {
@@ -177,6 +169,7 @@ return userProfile ? userProfile.articles_read_today : guestArticlesRead;
 function getRemainingArticles(): number {
 return Math.max(0, 5 - getCurrentReadCount());
 }
+
 async function handleArticleClick(e: React.MouseEvent, article: Article) {
 e.preventDefault();
 
@@ -187,20 +180,13 @@ return;
 
 const currentCount = getCurrentReadCount();
 
-// Check if locked
 if (article.premium || currentCount >= 5) {
 setShowPaywall(true);
 return;
 }
 
-// Access allowed - just navigate, let ArticleAccess handle tracking
-// REMOVED: await trackGuestArticleRead(article.id);
 router.push(`/Articles/${article.id}`);
 }
-
-// You can remove this function entirely now
-// async function trackGuestArticleRead(articleId: number) { ... }
-
 
 const formatDate = (d: string) =>
 new Date(d).toLocaleDateString("en-US", {
@@ -227,8 +213,22 @@ return (
 }
 
 // ========== RENDER ==========
-if (isLoading || !isAuthChecked) return <FeaturedDashboardSkeleton />;
-if (error) return <div className="p-12 text-red-600">{error}</div>;
+if (isLoading) return <FeaturedDashboardSkeleton />;
+
+if (error && articles.length === 0 && !featuredArticle) {
+return (
+<div className="p-12 text-center">
+<h2 className="text-xl font-bold text-red-600 mb-2">Something went wrong</h2>
+<p className="text-gray-600">{error}</p>
+<button 
+onClick={() => window.location.reload()} 
+className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+>
+Retry
+</button>
+</div>
+);
+}
 
 const featuredLocked = featuredArticle ? isArticleLocked(featuredArticle) : false;
 
@@ -236,28 +236,27 @@ return (
 <>
 <Navbar/>
 <div className="container mx-auto p-6">
-
-{/* REUSED BANNER COMPONENT */}
 <ArticleLimitBanner 
 remaining={getRemainingArticles()} 
 isSubscriber={isSubscriber()} 
 />
 
 {/* FEATURED ARTICLE */}
-{featuredArticle && (
+{featuredArticle ? (
 <Link
 href={`/Articles/${featuredArticle.id}`}
 onClick={(e) => handleArticleClick(e, featuredArticle)}
-className="bg-white rounded-xl shadow mb-12 overflow-hidden hover:shadow-lg transition-shadow md:flex"
+className="bg-white h-auto rounded-xl shadow mb-12 overflow-hidden hover:shadow-lg transition-shadow md:flex"
 >
-<div className="relative w-full md:w-5/12">
+<div className="relative w-full aspect-video md:w-5/12 h-64 md:h-auto">
 <Image
 src={featuredArticle.image}
 alt={featuredArticle.title}
+fill
+loading="eager"
 priority
-width={1000}
-height={600}
-className={`object-cover w-full h-full ${featuredLocked ? "opacity-60" : ""}`}
+sizes="(max-width: 768px) 100vw, 40vw"
+className={`object-cover  ${featuredLocked ? "opacity-60" : ""}`}
 />
 {featuredLocked && (
 <div className="absolute top-2 right-2 bg-amber-500 p-2 rounded-full text-white z-10">
@@ -280,7 +279,7 @@ className={`object-cover w-full h-full ${featuredLocked ? "opacity-60" : ""}`}
 </div>
 </div>
 </Link>
-)}
+) : null}
 
 <div className="pb-8 border-b border-gray-200 mb-8"></div>
 
@@ -291,7 +290,7 @@ className={`object-cover w-full h-full ${featuredLocked ? "opacity-60" : ""}`}
 </div>
 
 <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-{articles.map((article) => {
+{articles.map((article, index) => {
 const locked = isArticleLocked(article);
 return (
 <Link
@@ -305,20 +304,20 @@ className="relative bg-white rounded-lg shadow overflow-hidden hover:shadow-lg t
 <Lock size={16} />
 </div>
 )}
-<div className="relative w-full h-60">
+<div className="relative w-full aspect-video">
 <Image
 src={article.image}
 alt={article.title}
 fill
-  sizes="(max-width: 640px) 100vw,
-                 (max-width: 1024px) 50vw,
-                 33vw"
-className={`object-contain ${locked ? "opacity-60" : ""}`}
+loading={index < 3 ? "eager" : "lazy"}
+sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+className={`object-cover ${locked ? "opacity-60" : ""}`}
 />
 </div>
+
 <div className="p-4">
-<h3 className="font-semibold mb-2">{article.title}</h3>
-<p className={`text-sm text-gray-600 ${locked ? "blur-sm" : ""}`}>{article.excerpt}</p>
+<h3 className="line-clamp-2 font-semibold mb-2">{article.title}</h3>
+<p className={`text-sm text-gray-600 line-clamp-2 ${locked ? "blur-sm" : ""}`}>{article.excerpt}</p>
 <div className="text-xs mt-2 text-gray-500 flex justify-between items-center">
 <span>{formatDate(article.created_at)}</span>
 <span className="inline-block bg-blue-900 text-white text-xs font-semibold px-2 py-1 rounded">
@@ -333,7 +332,6 @@ className={`object-contain ${locked ? "opacity-60" : ""}`}
 </section>
 </div>
 
-{/* REUSED PAYWALL MODAL */}
 <PaywallModal 
 isOpen={showPaywall} 
 onClose={() => setShowPaywall(false)}

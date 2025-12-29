@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import supabase from "../supabase/supabase";
 import Link from "next/link";
 import Image from "next/image";
 import { Lock } from "lucide-react";
-import supabase from "@/app/supabase/supabase";
-import { ArticleLimitBanner } from "@/app/components/ArticleLimitBanner";
-import { PaywallModal } from "@/app/components/PaywallModal";
-import Navbar from "@/app/components/Navbar";
-import Footer from "@/app/components/Footer";
+import { ArticleLimitBanner } from "../components/ArticleLimitBanner";
+import { PaywallModal } from "../components/PaywallModal";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 interface Article {
 id: number;
@@ -28,7 +28,7 @@ articles_read_today: number;
 last_read_date: string;
 }
 
-export default function Dashboard() {
+export default function Politics() {
 const router = useRouter();
 const [isLoading, setIsLoading] = useState(true);
 const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
@@ -37,77 +37,60 @@ const [error, setError] = useState<string | null>(null);
 const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 const [guestArticlesRead, setGuestArticlesRead] = useState(0);
 const [showPaywall, setShowPaywall] = useState(false);
-const [isAuthChecked, setIsAuthChecked] = useState(false);
+const [profileChannelCleanup, setProfileChannelCleanup] = useState<null | (() => void)>(null);
 
 // ========== INITIALIZATION ==========
 useEffect(() => {
-initializeApp();
-}, []);
+let mounted = true;
 
-async function initializeApp() {
+const init = async () => {
 try {
-setIsLoading(true);
+const { data: { session } } = await supabase.auth.getSession();
 
-// 1. Fetch Articles (Catch errors here so Auth still runs)
-await fetchArticles().catch(err => {
-console.error("Failed to load politics articles:", err);
-setError("Could not load articles");
-});
+if (!mounted) return;
 
-// 2. Check Auth
-const { data: { user } } = await supabase.auth.getUser();
-
-if (user) {
-await fetchUserProfile(user.id);
-setupRealtimeSubscription(user.id);
+if (session?.user) {
+await fetchUserProfile(session.user.id);
+setupRealtimeSubscription(session.user.id);
 } else {
 await fetchGuestArticleCount();
 }
 
+await fetchArticles();
 } catch (err) {
-console.error('Initialization critical error:', err);
-setError("Failed to initialize application");
+console.error("Dashboard init error:", err);
+if (mounted) setError("Failed to load dashboard");
 } finally {
-// ✅ FIX: This guarantees the loading screen goes away
-setIsAuthChecked(true);
-setIsLoading(false);
+if (mounted) setIsLoading(false);
 }
-}
+};
 
-// ========== AUTH STATE CHANGES ==========
-useEffect(() => {
-const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-if (event === 'SIGNED_IN' && session?.user) {
-await fetchUserProfile(session.user.id);
-setupRealtimeSubscription(session.user.id);
-} else if (event === 'SIGNED_OUT') {
-setUserProfile(null);
-await fetchGuestArticleCount();
-}
-});
+init();
 
 return () => {
-subscription.unsubscribe();
+mounted = false;
 };
 }, []);
 
+
+
+
 // ========== REALTIME SUBSCRIPTION ==========
 function setupRealtimeSubscription(userId: string) {
+profileChannelCleanup?.();
+
 const channel = supabase
-.channel('profile-changes')
-.on('postgres_changes', { 
-event: '*', 
-schema: 'public', 
-table: 'profiles', 
-filter: `id=eq.${userId}` 
-}, () => {
-fetchUserProfile(userId);
-})
+.channel("profile-changes")
+.on(
+"postgres_changes",
+{ event: "*", schema: "public", table: "profiles", filter: `id=eq.${userId}` },
+() => fetchUserProfile(userId)
+)
 .subscribe();
 
-return () => {
+setProfileChannelCleanup(() => () => {
 supabase.removeChannel(channel);
-};
+});
 }
 
 // ========== DATA FETCHING ==========
@@ -122,8 +105,10 @@ const { data, error } = await supabase
 if (error) throw error;
 
 const today = new Date().toLocaleDateString("en-CA");
+
 if (data && data.last_read_date !== today) {
-await supabase
+// Fire and forget the update
+supabase
 .from("profiles")
 .update({ articles_read_today: 0, last_read_date: today })
 .eq("id", userId);
@@ -133,7 +118,7 @@ setUserProfile({ ...data, articles_read_today: 0, last_read_date: today });
 setUserProfile(data);
 }
 } catch (err) {
-console.error('Error fetching user profile:', err);
+console.error("Error fetching profile:", err);
 }
 }
 
@@ -148,28 +133,26 @@ setGuestArticlesRead(0);
 }
 
 async function fetchArticles() {
-// 1. Fetch Featured
-// ✅ FIX: Use .maybeSingle() instead of .single() to avoid crashing if empty
-const { data: featured, error: featuredError } = await supabase
-.from("politics")
-.select("*")
-.eq("featured", true)
-.maybeSingle();
-
-if (featuredError) console.warn("Error fetching featured:", featuredError);
-if (featured) setFeaturedArticle(featured);
-
-// 2. Fetch List
+try {
 const { data, error } = await supabase
 .from("politics")
 .select("*")
-.eq("featured", false)
 .order("created_at", { ascending: false })
-.limit(6);
+.limit(20);
 
 if (error) throw error;
-setArticles(data || []);
+
+const featured = data?.find(a => a.featured);
+const regular = data?.filter(a => !a.featured).slice(0, 6) ?? [];
+
+setFeaturedArticle(featured || null);
+setArticles(regular);
+} catch (err) {
+console.error("Articles fetch error:", err);
+setError("Failed to load articles");
 }
+}
+
 
 // ========== PAYWALL LOGIC ==========
 function isSubscriber(): boolean {
@@ -229,24 +212,19 @@ return (
 }
 
 // ========== RENDER ==========
-if (isLoading || !isAuthChecked) return <FeaturedDashboardSkeleton />;
+if (isLoading) return <FeaturedDashboardSkeleton />;
 
-// Show a retry button if there is a critical error (no articles)
 if (error && articles.length === 0 && !featuredArticle) {
 return (
-<div className="min-h-screen flex flex-col">
-<Navbar />
-<div className="flex-1 flex flex-col items-center justify-center p-12 text-center">
-<h2 className="text-xl font-bold text-red-600 mb-2">Unable to load content</h2>
-<p className="text-gray-600 mb-4">{error}</p>
+<div className="p-12 text-center">
+<h2 className="text-xl font-bold text-red-600 mb-2">Something went wrong</h2>
+<p className="text-gray-600">{error}</p>
 <button 
 onClick={() => window.location.reload()} 
-className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
 >
 Retry
 </button>
-</div>
-<Footer />
 </div>
 );
 }
@@ -255,30 +233,29 @@ const featuredLocked = featuredArticle ? isArticleLocked(featuredArticle) : fals
 
 return (
 <>
-<Navbar />
-<div className="container mx-auto p-6 min-h-screen">
-
-{/* REUSED BANNER COMPONENT */}
+<Navbar/>
+<div className="container mx-auto p-6">
 <ArticleLimitBanner 
 remaining={getRemainingArticles()} 
 isSubscriber={isSubscriber()} 
 />
 
 {/* FEATURED ARTICLE */}
-{featuredArticle && (
+{featuredArticle ? (
 <Link
 href={`/Articles/${featuredArticle.id}`}
 onClick={(e) => handleArticleClick(e, featuredArticle)}
-className="bg-white rounded-xl shadow mb-12 overflow-hidden hover:shadow-lg transition-shadow md:flex"
+className="bg-white rounded-xl shadow mb-12 overflow-hidden hover:shadow-lg transition-shadow h-auto md:flex"
 >
-<div className="relative w-full md:w-5/12">
+<div className="relative w-full aspect-video md:w-5/12 h-64 md:h-auto">
 <Image
 src={featuredArticle.image}
 alt={featuredArticle.title}
+fill
+loading="eager"
 priority
-width={1000}
-height={600}
-className={`object-cover w-full h-full ${featuredLocked ? "opacity-60" : ""}`}
+sizes="(max-width: 768px) 100vw, 40vw"
+className={`object-cover  ${featuredLocked ? "opacity-60" : ""}`}
 />
 {featuredLocked && (
 <div className="absolute top-2 right-2 bg-amber-500 p-2 rounded-full text-white z-10">
@@ -301,7 +278,7 @@ className={`object-cover w-full h-full ${featuredLocked ? "opacity-60" : ""}`}
 </div>
 </div>
 </Link>
-)}
+) : null}
 
 <div className="pb-8 border-b border-gray-200 mb-8"></div>
 
@@ -312,7 +289,7 @@ className={`object-cover w-full h-full ${featuredLocked ? "opacity-60" : ""}`}
 </div>
 
 <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-{articles.map((article) => {
+{articles.map((article, index) => {
 const locked = isArticleLocked(article);
 return (
 <Link
@@ -326,20 +303,20 @@ className="relative bg-white rounded-lg shadow overflow-hidden hover:shadow-lg t
 <Lock size={16} />
 </div>
 )}
-<div className="relative w-full h-60">
+<div className="relative w-full aspect-video">
 <Image
 src={article.image}
 alt={article.title}
 fill
-sizes="(max-width: 640px) 100vw,
-(max-width: 1024px) 50vw,
-33vw"
-className={`object-contain ${locked ? "opacity-60" : ""}`}
+loading={index < 3 ? "eager" : "lazy"}
+sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+className={`object-cover ${locked ? "opacity-60" : ""}`}
 />
 </div>
+
 <div className="p-4">
-<h3 className="font-semibold mb-2">{article.title}</h3>
-<p className={`text-sm text-gray-600 ${locked ? "blur-sm" : ""}`}>{article.excerpt}</p>
+<h3 className="line-clamp-2 font-semibold mb-2">{article.title}</h3>
+<p className={`text-sm text-gray-600 line-clamp-2 ${locked ? "blur-sm" : ""}`}>{article.excerpt}</p>
 <div className="text-xs mt-2 text-gray-500 flex justify-between items-center">
 <span>{formatDate(article.created_at)}</span>
 <span className="inline-block bg-blue-900 text-white text-xs font-semibold px-2 py-1 rounded">
@@ -354,13 +331,12 @@ className={`object-contain ${locked ? "opacity-60" : ""}`}
 </section>
 </div>
 
-{/* REUSED PAYWALL MODAL */}
 <PaywallModal 
 isOpen={showPaywall} 
 onClose={() => setShowPaywall(false)}
 variant={getCurrentReadCount() >= 5 ? "limit-reached" : "premium-content"}
 />
-<Footer />
+<Footer/>
 </>
 );
 }

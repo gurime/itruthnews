@@ -50,6 +50,7 @@ const searchParams = useSearchParams()
 
 // Loading & User State
 const [isLoading, setIsLoading] = useState(true)
+const [isInitialized, setIsInitialized] = useState(false); // ✅ Add this
 const [isSaving, setIsSaving] = useState(false)
 const [user, setUser] = useState<SupabaseUser | null>(null)
 const [comments, setComments] = useState<Comment[]>([]);
@@ -122,10 +123,12 @@ supabase.removeChannel(channel)
 }, [user])
 
 useEffect(() => {
-if (!user) return;
+if (!user?.id) return; // ✅ Check for user.id specifically
+
+const channelName = `user-comments-${user.id}`; // ✅ Unique channel name
 
 const channel = supabase
-.channel('user-comments')
+.channel(channelName)
 .on(
 'postgres_changes',
 {
@@ -135,22 +138,32 @@ table: 'comments',
 filter: `user_id=eq.${user.id}`
 },
 (payload) => {
-setComments(prev => [payload.new as Comment, ...prev]);
+setComments(prev => {
+// ✅ Prevent duplicates
+const exists = prev.some(c => c.id === payload.new.id);
+if (exists) return prev;
+return [payload.new as Comment, ...prev];
+});
 }
 )
-
-.subscribe();
+.subscribe((status) => {
+// ✅ Log subscription status
+console.log('Comments subscription status:', status);
+});
 
 return () => {
+console.log('Cleaning up comments channel');
 supabase.removeChannel(channel);
 };
-}, [user]);
+}, [user?.id]); // ✅ Only depend on user.id, not entire user object
 
 useEffect(() => {
-if (!user) return;
+if (!user?.id) return;
+
+let timeoutId: NodeJS.Timeout;
 
 const channel = supabase
-.channel('cookie_preferences_channel')
+.channel(`cookie_preferences_${user.id}`)
 .on(
 'postgres_changes',
 {
@@ -160,7 +173,9 @@ table: 'cookie_preferences',
 filter: `user_id=eq.${user.id}`,
 },
 payload => {
-// Fix: Access the correct properties from payload.new
+// ✅ Debounce state updates
+clearTimeout(timeoutId);
+timeoutId = setTimeout(() => {
 setCookieSettings({
 necessary: payload.new.necessary,
 analytics: payload.new.analytics,
@@ -171,20 +186,22 @@ personalization: payload.new.personalization,
 thirdParty: payload.new.third_party,
 version: payload.new.version
 });
+}, 100);
 }
 )
 .subscribe();
 
 return () => {
+clearTimeout(timeoutId);
 supabase.removeChannel(channel);
 };
-}, [user]);
-
+}, [user?.id]);
 
 
 // --- Data Loading ---
 useEffect(() => {
-const mounted = true
+if (isInitialized) return; // ✅ Prevent re-initialization
+let mounted = true
 
 const loadProfile = async () => {
 try {
@@ -195,9 +212,13 @@ router.push('/login')
 return
 }
 
+if(!mounted) return;
+
 if (mounted) {
+setIsInitialized(true); // ✅ Mark as initialized
 setUser(session.user)
 setEmail(session.user.email || '')
+if (!mounted) return;
 
 // In your useEffect, replace this section:
 const [profileReq, bookmarkReq, newsletterReq, notificationReq, commentsReq,cookieReq] = await Promise.all([
@@ -217,14 +238,7 @@ setComments(commentsReq.data)
 
 
 // Set Notification Preferences - UPDATE THIS
-if (notificationReq.data) {
-setNotifications({
-commentReplies: notificationReq.data.comment_replies ?? true,
-breakingNews: notificationReq.data.breaking_news ?? false,
-weeklyDigest: notificationReq.data.weekly_digest ?? true,
-productUpdates: notificationReq.data.product_updates ?? false
-})
-} else {
+else {
 // Create default preferences if none exist
 const { error } = await supabase
 .from('notification_preferences')
@@ -297,8 +311,7 @@ if (mounted) setIsLoading(false)
 }
 
 loadProfile()
-// ... rest of your code
-}, [router])
+}, [router, isInitialized])
 
 
 // --- URL Tab Sync ---

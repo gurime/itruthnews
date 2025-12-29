@@ -35,7 +35,7 @@ loading="eager"
 priority
 width={150}
 height={50}
-  style={{ width: "auto" ,height:"auto"}}
+style={{ width: "auto" ,height:"auto"}}
 
 className="mb-4 cursor-pointer"/>
 

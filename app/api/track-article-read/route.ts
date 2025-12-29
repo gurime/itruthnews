@@ -53,7 +53,6 @@ const { data: allReads, error: countError } = await supabase
 .eq('date', today);
 
 if (countError) {
-console.error('Count error:', countError);
 return NextResponse.json({ 
 allowed: false, 
 count: 0,
