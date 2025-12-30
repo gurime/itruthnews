@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Navbar from '@/app/components/Navbar';
-import supabase from '../../supabase/supabase';
 import { Clock, Calendar, User, PenTool } from 'lucide-react';
 import { JSX } from "react";
 import Link from 'next/link';
@@ -12,6 +11,7 @@ import { ARTICLE_TABLES } from '../article_tables';
 import BookmarkButton from '@/app/components/Bookmark';
 import Goback from '@/app/components/Goback';
 import ArticleAccess from '@/app/components/ArticleAccess'; 
+import { supabaseServer } from '@/app/supabase/supabase-ts';
 
 interface Article {
 premium: boolean | undefined;
@@ -51,7 +51,7 @@ if (!category) return [];
 // Concurrent queries
 const fetchPromises = ARTICLE_TABLES.map(async (table) => {
 try {
-const { data, error } = await supabase
+const { data, error } = await supabaseServer
 .from(table)
 .select("id, title, image, category")
 .eq("category", category)
@@ -78,7 +78,7 @@ return relatedArticles.slice(0, limit);
 async function fetchArticleFromTables(id: string): Promise<Article | null> {
 for (const table of ARTICLE_TABLES) {
 try {
-const { data, error } = await supabase
+const { data, error } = await supabaseServer
 .from(table)
 .select('*')
 .eq('id', id)
