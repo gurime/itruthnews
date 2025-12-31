@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import supabase from "../supabase/supabase";
 import Link from "next/link";
 import Image from "next/image";
-import { Lock } from "lucide-react";
-import { PaywallModal } from "../components/PaywallModal";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { PaywallModal } from "../components/PaywallModal";
+import { Lock } from "lucide-react";
 
 interface Article {
 id: number;
@@ -34,9 +34,8 @@ const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
 const [articles, setArticles] = useState<Article[]>([]);
 const [error, setError] = useState<string | null>(null);
 const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-const [guestArticlesRead, setGuestArticlesRead] = useState(0);
-const [showPaywall, setShowPaywall] = useState(false);
 const [profileChannelCleanup, setProfileChannelCleanup] = useState<null | (() => void)>(null);
+const [showPaywall, setShowPaywall] = useState(false);
 
 // ========== INITIALIZATION ==========
 useEffect(() => {
@@ -51,10 +50,7 @@ if (!mounted) return;
 if (session?.user) {
 await fetchUserProfile(session.user.id);
 setupRealtimeSubscription(session.user.id);
-} else {
-await fetchGuestArticleCount();
-}
-
+} 
 await fetchArticles();
 } catch (err) {
 console.error("Dashboard init error:", err);
@@ -121,15 +117,7 @@ console.error("Error fetching profile:", err);
 }
 }
 
-async function fetchGuestArticleCount() {
-try {
-const response = await fetch('/api/get-article-count');
-const data = await response.json();
-setGuestArticlesRead(data.count || 0);
-} catch (error) {
-setGuestArticlesRead(0);
-}
-}
+
 
 async function fetchArticles() {
 try {
@@ -160,13 +148,6 @@ userProfile?.subscription_status || ''
 );
 }
 
-function getCurrentReadCount(): number {
-return userProfile ? userProfile.articles_read_today : guestArticlesRead;
-}
-
-function getRemainingArticles(): number {
-return Math.max(0, 5 - getCurrentReadCount());
-}
 
 async function handleArticleClick(e: React.MouseEvent, article: Article) {
 e.preventDefault();
@@ -176,12 +157,7 @@ router.push(`/Articles/${article.id}`);
 return;
 }
 
-const currentCount = getCurrentReadCount();
 
-if (article.premium || currentCount >= 5) {
-setShowPaywall(true);
-return;
-}
 
 router.push(`/Articles/${article.id}`);
 }
@@ -191,10 +167,7 @@ new Date(d).toLocaleDateString("en-US", {
 month: "short", day: "numeric", year: "numeric",
 });
 
-function isArticleLocked(article: Article): boolean {
-if (isSubscriber()) return false;
-return article.premium || getCurrentReadCount() >= 5;
-}
+
 
 // ========== SKELETON ==========
 function FeaturedDashboardSkeleton() {
@@ -228,7 +201,6 @@ Retry
 );
 }
 
-const featuredLocked = featuredArticle ? isArticleLocked(featuredArticle) : false;
 
 return (
 <>
@@ -241,7 +213,7 @@ return (
 <Link
 href={`/Articles/${featuredArticle.id}`}
 onClick={(e) => handleArticleClick(e, featuredArticle)}
-className="bg-white rounded-xl shadow mb-12 overflow-hidden hover:shadow-lg transition-shadow h-auto md:flex"
+className="bg-white h-auto rounded-xl shadow mb-12 overflow-hidden hover:shadow-lg transition-shadow md:flex"
 >
 <div className="relative w-full aspect-video md:w-5/12 h-64 md:h-auto">
 <Image
@@ -251,18 +223,16 @@ fill
 loading="eager"
 priority
 sizes="(max-width: 768px) 100vw, 40vw"
-className={`object-cover  ${featuredLocked ? "opacity-60" : ""}`}
+className="object-cover"
 />
-{featuredLocked && (
-<div className="absolute top-2 right-2 bg-amber-500 p-2 rounded-full text-white z-10">
-<Lock size={16} />
-</div>
-)}
+
+
+
 </div>
 <div className="p-6 md:w-7/12 lg:w-1/2 md:flex md:flex-col md:justify-between">
 <div>
 <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3">{featuredArticle.title}</h2>
-<p className={`text-gray-600 text-sm sm:text-base mb-4 ${featuredLocked ? "blur-sm" : ""}`}>
+<p className={`text-gray-600 text-sm sm:text-base mb-4 line-clamp-3`}>
 {featuredArticle.excerpt}
 </p>
 </div>
@@ -276,7 +246,7 @@ className={`object-cover  ${featuredLocked ? "opacity-60" : ""}`}
 </Link>
 ) : null}
 
-<div className="pb-8 border-b border-gray-200 mb-8"></div>
+<div className="mt-16 pt-8 border-t border-blue-600"></div>
 
 {/* HEADLINES */}
 <section className="mt-10">
@@ -286,7 +256,6 @@ className={`object-cover  ${featuredLocked ? "opacity-60" : ""}`}
 
 <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
 {articles.map((article, index) => {
-const locked = isArticleLocked(article);
 return (
 <Link
 key={article.id}
@@ -294,11 +263,12 @@ href={`/Articles/${article.id}`}
 onClick={(e) => handleArticleClick(e, article)}
 className="relative bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow"
 >
-{locked && (
-<div className="absolute top-2 right-2 bg-amber-500 p-2 rounded-full text-white z-10">
-<Lock size={16} />
+{(article.premium && !isSubscriber()) && (
+<div className="absolute top-2 right-2 bg-white bg-opacity-80 rounded-full p-1 z-10">
+<Lock className="w-5 h-5 text-gray-800"/>
 </div>
 )}
+
 <div className="relative w-full aspect-video">
 <Image
 src={article.image}
@@ -306,13 +276,13 @@ alt={article.title}
 fill
 loading={index < 3 ? "eager" : "lazy"}
 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-className={`object-cover ${locked ? "opacity-60" : ""}`}
+className={`object-cover ${article.premium && !isSubscriber() ? "opacity-60" : ""}`}
 />
 </div>
 
 <div className="p-4">
 <h3 className="line-clamp-2 font-semibold mb-2">{article.title}</h3>
-<p className={`text-sm text-gray-600 line-clamp-2 ${locked ? "blur-sm" : ""}`}>{article.excerpt}</p>
+<p className={`text-sm text-gray-600 line-clamp-2`}>{article.excerpt}</p>
 <div className="text-xs mt-2 text-gray-500 flex justify-between items-center">
 <span>{formatDate(article.created_at)}</span>
 <span className="inline-block bg-blue-900 text-white text-xs font-semibold px-2 py-1 rounded">
@@ -330,7 +300,7 @@ className={`object-cover ${locked ? "opacity-60" : ""}`}
 <PaywallModal 
 isOpen={showPaywall} 
 onClose={() => setShowPaywall(false)}
-variant={getCurrentReadCount() >= 5 ? "limit-reached" : "premium-content"}
+variant="premium-content"
 />
 <Footer/>
 </>

@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { User, Mail, Bell, Cookie, MessageSquare, Bookmark, Loader, Save, LogOut, Heart, Crown, Star, Sparkles, Shield } from 'lucide-react'
+import { User, Mail, Bell, Cookie, MessageSquare, Bookmark, Loader, Save, LogOut, Heart, Crown, Star,  Shield } from 'lucide-react'
 import supabase from '../../supabase/supabase'
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import toast, { Toaster } from 'react-hot-toast'
@@ -66,58 +66,58 @@ const [email, setEmail] = useState('')
 const [role, setRole] = useState('')
 const [subscriptionStatus, setSubscriptionStatus] = useState('free')
 const getSubscriptionConfig = (status: string) => {
-  const configs = {
-    free: {
-      name: 'iTruth Free',
-      icon: <User className="w-5 h-5" />,
-      bgGradient: 'from-gray-600 to-gray-700',
-      ringColor: 'ring-gray-400',
-      badgeColor: 'bg-gray-500',
-      textColor: 'text-gray-700'
-    },
-    monthly: {
-      name: 'iTruth Premium',
-      icon: <Star className="w-5 h-5" />,
-      bgGradient: 'from-blue-600 to-blue-700',
-      ringColor: 'ring-blue-400',
-      badgeColor: 'bg-blue-500',
-      textColor: 'text-blue-700'
-    },
-    yearly: {
-      name: 'iTruth Premium',
-      icon: <Star className="w-5 h-5" />,
-      bgGradient: 'from-blue-600 to-blue-700',
-      ringColor: 'ring-blue-400',
-      badgeColor: 'bg-blue-500',
-      textColor: 'text-white'
-    },
-    premium: {
-      name: 'iTruth Premium',
-      icon: <Star className="w-5 h-5" />,
-      bgGradient: 'from-blue-600 to-blue-700',
-      ringColor: 'ring-blue-400',
-      badgeColor: 'bg-blue-500',
-      textColor: 'text-white'
-    },
-    premium_monthly: {
-      name: 'iTruth Premium',
-      icon: <Star className="w-5 h-5" />,
-      bgGradient: 'from-blue-600 to-blue-700',
-      ringColor: 'ring-blue-400',
-      badgeColor: 'bg-blue-500',
-      textColor: 'text-blue-700'
-    },
-    premium_yearly: {
-      name: 'iTruth Premium',
-      icon: <Star className="w-5 h-5" />,
-      bgGradient: 'from-blue-600 to-blue-700',
-      ringColor: 'ring-blue-400',
-      badgeColor: 'bg-blue-500',
-      textColor: 'text-white'
-    }
-  }
-  
-  return configs[status as keyof typeof configs] || configs.free
+const configs = {
+free: {
+name: 'iTruth Free',
+icon: <User className="w-5 h-5" />,
+bgGradient: 'from-gray-600 to-gray-700',
+ringColor: 'ring-gray-400',
+badgeColor: 'bg-gray-500',
+textColor: 'text-white'
+},
+monthly: {
+name: 'iTruth Premium',
+icon: <Star className="w-5 h-5" />,
+bgGradient: 'from-blue-600 to-blue-700',
+ringColor: 'ring-blue-400',
+badgeColor: 'bg-blue-500',
+textColor: 'text-blue-700'
+},
+yearly: {
+name: 'iTruth Premium',
+icon: <Star className="w-5 h-5" />,
+bgGradient: 'from-blue-600 to-blue-700',
+ringColor: 'ring-blue-400',
+badgeColor: 'bg-blue-500',
+textColor: 'text-white'
+},
+premium: {
+name: 'iTruth Premium',
+icon: <Star className="w-5 h-5" />,
+bgGradient: 'from-blue-600 to-blue-700',
+ringColor: 'ring-blue-400',
+badgeColor: 'bg-blue-500',
+textColor: 'text-white'
+},
+premium_monthly: {
+name: 'iTruth Premium',
+icon: <Star className="w-5 h-5" />,
+bgGradient: 'from-blue-600 to-blue-700',
+ringColor: 'ring-blue-400',
+badgeColor: 'bg-blue-500',
+textColor: 'text-blue-700'
+},
+premium_yearly: {
+name: 'iTruth Premium',
+icon: <Star className="w-5 h-5" />,
+bgGradient: 'from-blue-600 to-blue-700',
+ringColor: 'ring-blue-400',
+badgeColor: 'bg-blue-500',
+textColor: 'text-white'
+}
+}
+
+return configs[status as keyof typeof configs] || configs.free
 }
 
 // Preferences State
@@ -200,9 +200,7 @@ return [payload.new as Comment, ...prev];
 });
 }
 )
-.subscribe((status) => {
-
-});
+.subscribe();
 
 return () => {
 console.log('Cleaning up comments channel');
@@ -254,7 +252,7 @@ supabase.removeChannel(channel);
 // --- Data Loading ---
 useEffect(() => {
 if (isInitialized) return; // ✅ Prevent re-initialization
-let mounted = true
+const mounted = true
 
 const loadProfile = async () => {
 try {
@@ -544,11 +542,11 @@ className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-g
 
 {/* Enhanced Subscription Display */}
 <div>
-<label className="block text-sm font-semibold text-gray-700 mb-3">Current Subscription</label>
+<label className="block text-sm font-semibold text-white mb-3">Current Subscription</label>
 <div className={`bg-linear-to-br ${
-  subscriptionStatus !== 'free' && subscriptionStatus !== ''
-    ? 'from-blue-900 via-blue-800 to-blue-900'
-    : 'from-gray-700 via-gray-800 to-gray-900'
+subscriptionStatus !== 'free' && subscriptionStatus !== ''
+? 'from-blue-900 via-blue-800 to-blue-900'
+: 'from-gray-700 via-gray-800 to-gray-900'
 } text-white shadow-2xl relative overflow-hidden`}>
 {/* Background gradient */}
 <div className={`absolute inset-0 bg-linear-to-r ${subConfig.bgGradient} opacity-10`}></div>
@@ -558,8 +556,8 @@ className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-g
 <div className="flex items-center gap-4">
 {/* Tier Icon */}
 <div className={`relative w-24 h-24 rounded-full border-4 ${
-  subscriptionStatus !== 'free' ? 'border-blue-300 shadow-blue-500/50' : 'border-white'
-} shadow-2xl flex items-center justify-center text-2xl font-bold bg-gradient-to-br ${subConfig.bgGradient}`}>
+subscriptionStatus !== 'free' ? 'border-blue-300 shadow-blue-500/50' : 'border-white'
+} shadow-2xl flex items-center justify-center text-2xl font-bold bg-linear-to-br ${subConfig.bgGradient}`}>
 {subConfig.icon}
 </div>
 
@@ -571,13 +569,13 @@ className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-g
 
 </div>
 
-<p className="text-sm text-gray-600">
-  {subscriptionStatus === 'free' && 'Free tier - Upgrade to unlock all premium features'}
-  {subscriptionStatus === 'monthly' && 'Monthly billing • Full access to all features'}
-  {subscriptionStatus === 'yearly' && 'Yearly billing • Full access to all features'}
-  {subscriptionStatus === 'premium' && 'Premium membership • Full access to all features'}
-  {subscriptionStatus === 'premium_monthly' && 'Monthly billing • Full access to all features'}
-  {subscriptionStatus === 'premium_yearly' && 'Yearly billing • Full access to all features'}
+<p className="text-sm text-white">
+{subscriptionStatus === 'free' && 'Free tier - Upgrade to unlock all premium features'}
+{subscriptionStatus === 'monthly' && 'Monthly billing • Full access to all features'}
+{subscriptionStatus === 'yearly' && 'Yearly billing • Full access to all features'}
+{subscriptionStatus === 'premium' && 'Premium membership • Full access to all features'}
+{subscriptionStatus === 'premium_monthly' && 'Monthly billing • Full access to all features'}
+{subscriptionStatus === 'premium_yearly' && 'Yearly billing • Full access to all features'}
 </p>
 </div>
 </div>
@@ -594,7 +592,7 @@ Upgrade Now
 ) : (
 <Link
 href="/membership"
-className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-semibold transition-all"
+className="px-6 py-3 border-2 border-gray-300 text-white font-semibold transition-all"
 >
 Manage Plan
 </Link>
@@ -603,29 +601,29 @@ Manage Plan
 
 {/* Feature highlights for current tier */}
 {subscriptionStatus !== 'free' && (
-  <div className="mt-4 pt-4 border-t border-gray-200">
-    <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Active Benefits</p>
-    <div className="grid grid-cols-2 gap-2">
-      <span className="text-xs text-gray-600 flex items-center gap-1">
-        <Shield className="w-3 h-3 text-blue-500" /> Ad-free reading
-      </span>
-      <span className="text-xs text-gray-600 flex items-center gap-1">
-        <Shield className="w-3 h-3 text-blue-500" /> Exclusive newsletters
-      </span>
-      <span className="text-xs text-gray-600 flex items-center gap-1">
-        <Shield className="w-3 h-3 text-blue-500" /> Full archive access
-      </span>
-      <span className="text-xs text-gray-600 flex items-center gap-1">
-        <Shield className="w-3 h-3 text-blue-500" /> Comment privileges
-      </span>
-      <span className="text-xs text-gray-600 flex items-center gap-1">
-        <Shield className="w-3 h-3 text-blue-500" /> Audio articles
-      </span>
-      <span className="text-xs text-gray-600 flex items-center gap-1">
-        <Shield className="w-3 h-3 text-blue-500" /> Priority support
-      </span>
-    </div>
-  </div>
+<div className="mt-4 pt-4 border-t border-gray-200">
+<p className="text-xs font-semibold text-white uppercase mb-2">Active Benefits</p>
+<div className="grid grid-cols-2 gap-2">
+<span className="text-xs text-white flex items-center gap-1">
+<Shield className="w-3 h-3 text-blue-500" /> Ad-free reading
+</span>
+<span className="text-xs text-white flex items-center gap-1">
+<Shield className="w-3 h-3 text-blue-500" /> Exclusive newsletters
+</span>
+<span className="text-xs text-white flex items-center gap-1">
+<Shield className="w-3 h-3 text-blue-500" /> Full archive access
+</span>
+<span className="text-xs text-white flex items-center gap-1">
+<Shield className="w-3 h-3 text-blue-500" /> Comment privileges
+</span>
+<span className="text-xs text-white flex items-center gap-1">
+<Shield className="w-3 h-3 text-blue-500" /> Audio articles
+</span>
+<span className="text-xs text-white flex items-center gap-1">
+<Shield className="w-3 h-3 text-blue-500" /> Priority support
+</span>
+</div>
+</div>
 )}
 </div>
 </div>
@@ -1021,8 +1019,7 @@ return (
 
 {/* Enhanced Header with Tier-specific styling */}
 <div className={`bg-linear-to-br ${
-subscriptionStatus.includes('premium') ? 'from-amber-600 via-yellow-600 to-amber-700' 
-: subscriptionStatus !== 'free'
+subscriptionStatus !== 'free' && subscriptionStatus !== ''
 ? 'from-blue-900 via-blue-800 to-blue-900'
 : 'from-gray-700 via-gray-800 to-gray-900'
 } text-white shadow-2xl relative overflow-hidden`}>
@@ -1039,9 +1036,7 @@ backgroundSize: '40px 40px'
 <div className="flex flex-col items-center justify-center space-y-4">
 {/* Avatar with tier-specific styling */}
 <div className={`relative w-24 h-24 rounded-full border-4 ${
-subscriptionStatus.includes('premium') ? 'border-amber-300 shadow-amber-500/50' :
-subscriptionStatus !== 'free' ? 'border-blue-300 shadow-blue-500/50' :
-'border-white'
+subscriptionStatus !== 'free' ? 'border-blue-300 shadow-blue-500/50' : 'border-white'
 } shadow-2xl flex items-center justify-center text-2xl font-bold bg-linear-to-br ${subConfig.bgGradient}`}>
 {fullName ? fullName.charAt(0).toUpperCase() : <User />}
 
@@ -1089,17 +1084,13 @@ key={tab.id}
 onClick={() => setActiveTab(tab.id)}
 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-left font-medium ${
 activeTab === tab.id
-? subscriptionStatus.includes('premium')
-? 'bg-amber-50 text-amber-900 shadow-sm ring-1 ring-amber-100'
-: 'bg-blue-50 text-blue-900 shadow-sm ring-1 ring-blue-100'
+? 'bg-blue-50 text-blue-900 shadow-sm ring-1 ring-blue-100'
 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
 }`}
 >
 <span className={
 activeTab === tab.id 
-? subscriptionStatus.includes('premium') 
-? 'text-amber-600' 
-: 'text-blue-600'
+? 'text-blue-600'
 : 'text-gray-400'
 }>
 {tab.icon}

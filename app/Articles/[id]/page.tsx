@@ -10,7 +10,7 @@ import RelatedArticles from '@/app/components/RelatedArticles';
 import { ARTICLE_TABLES } from '../article_tables';
 import BookmarkButton from '@/app/components/Bookmark';
 import Goback from '@/app/components/Goback';
-import { supabaseServer } from '@/app/supabase/supabase-ts';
+import supabase from '@/app/supabase/supabase';
 
 interface Article {
 premium: boolean | undefined;
@@ -50,7 +50,7 @@ if (!category) return [];
 // Concurrent queries
 const fetchPromises = ARTICLE_TABLES.map(async (table) => {
 try {
-const { data, error } = await supabaseServer
+const { data, error } = await supabase
 .from(table)
 .select("id, title, image, category")
 .eq("category", category)
@@ -82,7 +82,7 @@ setTimeout(() => resolve(null), 10000) // 10 second timeout
 const fetchPromise = (async () => {
 for (const table of ARTICLE_TABLES) {
 try {
-const { data, error } = await supabaseServer
+const { data, error } = await supabase
 .from(table)
 .select('*')
 .eq('id', id)

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import supabase from "./supabase/supabase";
 import Link from "next/link";
@@ -9,6 +9,7 @@ import { Lock } from "lucide-react";
 import { PaywallModal } from "./components/PaywallModal";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import type { AuthChangeEvent,Session } from "@supabase/supabase-js";
 
 interface Article {
 id: number;
@@ -43,7 +44,7 @@ const [showPaywall, setShowPaywall] = useState(false);
 useEffect(() => {
 
 let mounted = true;
-let authSubscription: any;
+let authSubscription: { unsubscribe: () => void } | undefined;
 
 const init = async () => {
 try {
@@ -66,7 +67,7 @@ setGuest_voicesArticles(guestVoices);
 
 // Auth listener
 const { data } = supabase.auth.onAuthStateChange(
-async (_event, session) => {
+async (_event: AuthChangeEvent, session: Session | null) => {
 if (!mounted) return;
 
 if (session?.user) {
