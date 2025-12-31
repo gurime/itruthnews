@@ -6,7 +6,6 @@ import supabase from "../supabase/supabase";
 import Link from "next/link";
 import Image from "next/image";
 import { Lock } from "lucide-react";
-import { ArticleLimitBanner } from "../components/ArticleLimitBanner";
 import { PaywallModal } from "../components/PaywallModal";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -235,10 +234,7 @@ return (
 <>
 <Navbar/>
 <div className="container mx-auto p-6">
-<ArticleLimitBanner 
-remaining={getRemainingArticles()} 
-isSubscriber={isSubscriber()} 
-/>
+
 
 {/* FEATURED ARTICLE */}
 {featuredArticle ? (

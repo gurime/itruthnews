@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { User, Mail, Bell, Cookie, MessageSquare, Bookmark, Loader, Save, LogOut, Heart } from 'lucide-react'
+import { User, Mail, Bell, Cookie, MessageSquare, Bookmark, Loader, Save, LogOut, Heart, Crown, Star, Sparkles, Shield } from 'lucide-react'
 import supabase from '../../supabase/supabase'
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import toast, { Toaster } from 'react-hot-toast'
@@ -65,6 +65,60 @@ const [fullName, setFullName] = useState('')
 const [email, setEmail] = useState('')
 const [role, setRole] = useState('')
 const [subscriptionStatus, setSubscriptionStatus] = useState('free')
+const getSubscriptionConfig = (status: string) => {
+  const configs = {
+    free: {
+      name: 'iTruth Free',
+      icon: <User className="w-5 h-5" />,
+      bgGradient: 'from-gray-600 to-gray-700',
+      ringColor: 'ring-gray-400',
+      badgeColor: 'bg-gray-500',
+      textColor: 'text-gray-700'
+    },
+    monthly: {
+      name: 'iTruth Premium',
+      icon: <Star className="w-5 h-5" />,
+      bgGradient: 'from-blue-600 to-blue-700',
+      ringColor: 'ring-blue-400',
+      badgeColor: 'bg-blue-500',
+      textColor: 'text-blue-700'
+    },
+    yearly: {
+      name: 'iTruth Premium',
+      icon: <Star className="w-5 h-5" />,
+      bgGradient: 'from-blue-600 to-blue-700',
+      ringColor: 'ring-blue-400',
+      badgeColor: 'bg-blue-500',
+      textColor: 'text-white'
+    },
+    premium: {
+      name: 'iTruth Premium',
+      icon: <Star className="w-5 h-5" />,
+      bgGradient: 'from-blue-600 to-blue-700',
+      ringColor: 'ring-blue-400',
+      badgeColor: 'bg-blue-500',
+      textColor: 'text-white'
+    },
+    premium_monthly: {
+      name: 'iTruth Premium',
+      icon: <Star className="w-5 h-5" />,
+      bgGradient: 'from-blue-600 to-blue-700',
+      ringColor: 'ring-blue-400',
+      badgeColor: 'bg-blue-500',
+      textColor: 'text-blue-700'
+    },
+    premium_yearly: {
+      name: 'iTruth Premium',
+      icon: <Star className="w-5 h-5" />,
+      bgGradient: 'from-blue-600 to-blue-700',
+      ringColor: 'ring-blue-400',
+      badgeColor: 'bg-blue-500',
+      textColor: 'text-white'
+    }
+  }
+  
+  return configs[status as keyof typeof configs] || configs.free
+}
 
 // Preferences State
 const [newsletters, setNewsletters] = useState<NewsletterPrefs>({
@@ -147,8 +201,7 @@ return [payload.new as Comment, ...prev];
 }
 )
 .subscribe((status) => {
-// ✅ Log subscription status
-console.log('Comments subscription status:', status);
+
 });
 
 return () => {
@@ -224,7 +277,7 @@ if (!mounted) return;
 const [profileReq, bookmarkReq, newsletterReq, notificationReq, commentsReq,cookieReq] = await Promise.all([
 supabase.from("profiles").select("*").eq("id", session.user.id).single(),
 supabase.from("bookmarks").select("*").eq("user_id", session.user.id).order("created_at", { ascending: false }),
-supabase.from("newsletter_subscribers").select("*").eq("email", session.user.email).single(),
+supabase.from("newsletter_subscribers").select("*").eq("email", session.user.email).maybeSingle(),
 supabase.from("notification_preferences").select("*").eq("user_id", session.user.id).maybeSingle(),
 supabase.from("comments").select("*").eq("user_id", session.user.id).order("created_at", { ascending: false }) ,
 supabase.from("cookie_preferences").select("*").eq("user_id", session.user.id).maybeSingle()  // Add this
@@ -443,14 +496,25 @@ toast.error(errorMessage);
 setIsSaving(false);
 }
 };
+const handleLogout = async () => {
+try {
+const { error } = await supabase.auth.signOut();
+if (error) throw error;
 
-const handleSignOut = async () => {
-await supabase.auth.signOut()
-router.push('/login')
+// Reset all user-related state
+
+
+router.push('/');
+} catch (error) {
+console.error(error);
 }
+};
 
 // --- Render Helpers ---
+
 const renderContent = () => {
+const subConfig = getSubscriptionConfig(subscriptionStatus)
+
 switch (activeTab) {
 case 'account':
 return (
@@ -466,28 +530,107 @@ onChange={(e) => setFullName(e.target.value)}
 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-900"
 />
 </div>
+
 <div>
 <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
-<input type="email" value={email} disabled className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed" />
+<input 
+type="email" 
+value={email} 
+disabled 
+className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed" 
+/>
 <p className="text-sm text-gray-500 mt-1">Email cannot be changed from profile.</p>
 </div>
-<div>
 
-<label className="block text-sm font-semibold text-gray-700 mb-2">Subscription</label>
-<div className="px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 flex justify-between items-center">
-<span className="text-gray-900 font-semibold capitalize">
-{subscriptionStatus === 'free' ? 'Free Reader' : 
-subscriptionStatus === 'monthly' ? 'iTruth Premium (Monthly)' : 
-subscriptionStatus === 'yearly' ? 'iTruth Elite (Yearly)' : 
-subscriptionStatus}
-</span>
-{subscriptionStatus === 'free' && (
-<a href="/membership" className="text-sm text-blue-600 hover:text-blue-800 font-medium">
-Upgrade to Premium
-</a>
+{/* Enhanced Subscription Display */}
+<div>
+<label className="block text-sm font-semibold text-gray-700 mb-3">Current Subscription</label>
+<div className={`bg-linear-to-br ${
+  subscriptionStatus !== 'free' && subscriptionStatus !== ''
+    ? 'from-blue-900 via-blue-800 to-blue-900'
+    : 'from-gray-700 via-gray-800 to-gray-900'
+} text-white shadow-2xl relative overflow-hidden`}>
+{/* Background gradient */}
+<div className={`absolute inset-0 bg-linear-to-r ${subConfig.bgGradient} opacity-10`}></div>
+
+<div className="relative p-6">
+<div className="flex items-center justify-between">
+<div className="flex items-center gap-4">
+{/* Tier Icon */}
+<div className={`relative w-24 h-24 rounded-full border-4 ${
+  subscriptionStatus !== 'free' ? 'border-blue-300 shadow-blue-500/50' : 'border-white'
+} shadow-2xl flex items-center justify-center text-2xl font-bold bg-gradient-to-br ${subConfig.bgGradient}`}>
+{subConfig.icon}
+</div>
+
+<div>
+<div className="flex items-center gap-2 mb-1">
+<h3 className={`text-xl font-bold ${subConfig.textColor}`}>
+{subConfig.name}
+</h3>
+
+</div>
+
+<p className="text-sm text-gray-600">
+  {subscriptionStatus === 'free' && 'Free tier - Upgrade to unlock all premium features'}
+  {subscriptionStatus === 'monthly' && 'Monthly billing • Full access to all features'}
+  {subscriptionStatus === 'yearly' && 'Yearly billing • Full access to all features'}
+  {subscriptionStatus === 'premium' && 'Premium membership • Full access to all features'}
+  {subscriptionStatus === 'premium_monthly' && 'Monthly billing • Full access to all features'}
+  {subscriptionStatus === 'premium_yearly' && 'Yearly billing • Full access to all features'}
+</p>
+</div>
+</div>
+
+{/* Action Button */}
+{subscriptionStatus === 'free' ? (
+<Link
+href="/membership"
+className="px-6 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 font-semibold transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+>
+<Crown className="w-4 h-4" />
+Upgrade Now
+</Link>
+) : (
+<Link
+href="/membership"
+className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-semibold transition-all"
+>
+Manage Plan
+</Link>
+)}
+</div>
+
+{/* Feature highlights for current tier */}
+{subscriptionStatus !== 'free' && (
+  <div className="mt-4 pt-4 border-t border-gray-200">
+    <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Active Benefits</p>
+    <div className="grid grid-cols-2 gap-2">
+      <span className="text-xs text-gray-600 flex items-center gap-1">
+        <Shield className="w-3 h-3 text-blue-500" /> Ad-free reading
+      </span>
+      <span className="text-xs text-gray-600 flex items-center gap-1">
+        <Shield className="w-3 h-3 text-blue-500" /> Exclusive newsletters
+      </span>
+      <span className="text-xs text-gray-600 flex items-center gap-1">
+        <Shield className="w-3 h-3 text-blue-500" /> Full archive access
+      </span>
+      <span className="text-xs text-gray-600 flex items-center gap-1">
+        <Shield className="w-3 h-3 text-blue-500" /> Comment privileges
+      </span>
+      <span className="text-xs text-gray-600 flex items-center gap-1">
+        <Shield className="w-3 h-3 text-blue-500" /> Audio articles
+      </span>
+      <span className="text-xs text-gray-600 flex items-center gap-1">
+        <Shield className="w-3 h-3 text-blue-500" /> Priority support
+      </span>
+    </div>
+  </div>
 )}
 </div>
 </div>
+</div>
+
 <div className="flex justify-between items-center pt-4">
 <button
 onClick={handleUpdateProfile}
@@ -497,7 +640,7 @@ className="px-6 py-3 rounded-lg font-bold transition-colors flex items-center ga
 {isSaving ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
 Save Changes
 </button>
-<button onClick={handleSignOut} className="text-red-600 hover:text-red-800 flex items-center gap-2 font-medium">
+<button onClick={handleLogout} className="text-red-600 hover:text-red-800 flex items-center gap-2 font-medium cursor-pointer">
 <LogOut className="w-4 h-4" /> Sign Out
 </button>
 </div>
@@ -868,6 +1011,7 @@ const tabs = [
 { id: 'comments', label: 'My Comments', icon: <MessageSquare className="w-5 h-5" /> },
 { id: 'saved', label: 'Saved Articles', icon: <Bookmark className="w-5 h-5" /> }
 ]
+const subConfig = getSubscriptionConfig(subscriptionStatus)
 
 return (
 <>
@@ -875,22 +1019,56 @@ return (
 <div className="min-h-screen bg-gray-100">
 <Toaster position="top-center" />
 
-{/* Header */}
-<div className="bg-linear-to-br from-blue-900 via-blue-800 to-blue-900 text-white shadow-2xl">
-<div className="container mx-auto px-4 py-12">
-<div className="flex flex-col items-center justify-center space-y-4">
-<div className="w-24 h-24 bg-blue-700 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-2xl font-bold">
-{fullName ? fullName.charAt(0).toUpperCase() : <User />}
+{/* Enhanced Header with Tier-specific styling */}
+<div className={`bg-linear-to-br ${
+subscriptionStatus.includes('premium') ? 'from-amber-600 via-yellow-600 to-amber-700' 
+: subscriptionStatus !== 'free'
+? 'from-blue-900 via-blue-800 to-blue-900'
+: 'from-gray-700 via-gray-800 to-gray-900'
+} text-white shadow-2xl relative overflow-hidden`}>
+
+{/* Decorative background pattern */}
+<div className="absolute inset-0 opacity-10">
+<div className="absolute inset-0" style={{
+backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
+backgroundSize: '40px 40px'
+}}></div>
 </div>
+
+<div className="container mx-auto px-4 py-12 relative z-10">
+<div className="flex flex-col items-center justify-center space-y-4">
+{/* Avatar with tier-specific styling */}
+<div className={`relative w-24 h-24 rounded-full border-4 ${
+subscriptionStatus.includes('premium') ? 'border-amber-300 shadow-amber-500/50' :
+subscriptionStatus !== 'free' ? 'border-blue-300 shadow-blue-500/50' :
+'border-white'
+} shadow-2xl flex items-center justify-center text-2xl font-bold bg-linear-to-br ${subConfig.bgGradient}`}>
+{fullName ? fullName.charAt(0).toUpperCase() : <User />}
+
+{/* Tier badge */}
+{subscriptionStatus !== 'free' && (
+<div className={`absolute -bottom-2 -right-2 ${subConfig.badgeColor} rounded-full p-2 border-2 border-white shadow-lg`}>
+{subConfig.icon}
+</div>
+)}
+</div>
+
 <div className="text-center">
 <h1 className="text-4xl font-bold mb-2 text-white">My Profile</h1>
-<p className="text-lg font-medium text-blue-100">{fullName}</p>
-<p className="text-blue-200 font-semibold text-sm mt-1">{email}</p>
-{role ?(
-<p className="text-blue-200 font-extrabold text-sm mt-1 capitalize">{role}</p>
-):(
-<p className="text-blue-200 font-extrabold text-sm mt-1 capitalize">User</p>
+<p className="text-lg font-medium text-white">{fullName}</p>
+<p className="text-white/90 font-semibold text-sm mt-1">{email}</p>
+
+{/* Tier badge */}
+<div className="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
+{subConfig.icon}
+<span className="font-bold text-sm">{subConfig.name}</span>
+{role === 'admin' && (
+<>
+<span className="text-white/50">•</span>
+<span className="font-bold text-sm">Admin</span>
+</>
 )}
+</div>
 </div>
 </div>
 </div>
@@ -911,11 +1089,19 @@ key={tab.id}
 onClick={() => setActiveTab(tab.id)}
 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-left font-medium ${
 activeTab === tab.id
-? 'bg-blue-50 text-blue-900 shadow-sm ring-1 ring-blue-100'
+? subscriptionStatus.includes('premium')
+? 'bg-amber-50 text-amber-900 shadow-sm ring-1 ring-amber-100'
+: 'bg-blue-50 text-blue-900 shadow-sm ring-1 ring-blue-100'
 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
 }`}
 >
-<span className={activeTab === tab.id ? 'text-blue-600' : 'text-gray-400'}>
+<span className={
+activeTab === tab.id 
+? subscriptionStatus.includes('premium') 
+? 'text-amber-600' 
+: 'text-blue-600'
+: 'text-gray-400'
+}>
 {tab.icon}
 </span>
 {tab.label}

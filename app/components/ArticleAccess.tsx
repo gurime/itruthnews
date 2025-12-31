@@ -29,28 +29,31 @@ const [hasAccess, setHasAccess] = useState(false);
 const [isLoading, setIsLoading] = useState(true);
 
 const premiumFeatures = [
-'Unlimited articles across all sections',
-'Ad-free reading on all devices',
-'Full access to investigative journalism',
-'Subscriber-only newsletters and briefings',
-'Complete archive dating back 10+ years',
-'Enhanced mobile and tablet app experience',
-'Offline reading with save-for-later',
-'Commenting privileges on articles'
+  'Full access to all articles and reporting',
+  'Ad-free reading on all devices',
+  'Complete archive dating back 10+ years',
+  'Commenting privileges on articles',
+  'Customizable news feed and topics',
+  'Priority customer support',
+  'Audio versions of articles',
+  'Enhanced sharing with rich previews',
+  'Weekly digest emails tailored to your interests',
 ];
 
 const eliteFeatures = [
-'Everything in Premium, plus:',
-'Full access to iTruth Business & Markets',
-'Real-time market data and analysis',
-'Exclusive Business section reporting',
-'Company profiles and earnings coverage',
-'Interactive business news tools',
-'Virtual events with journalists and experts',
-'Gift up to 10 articles per month to non-subscribers',
-'Discounted tickets to iTruth Live events',
-'Early access to major investigations',
-'Priority customer service'
+  'Everything in Premium, plus:',
+  'Full access to iTruth Business & Markets',
+  'Real-time market data and analysis',
+  'Daily Market Briefings',
+  'Monthly Q&A sessions with editors',
+  'Company profiles and earnings coverage',
+  'Virtual events with journalists and experts',
+  'Discounted tickets to iTruth Live events',
+  'Early access to major investigations',
+  'Exclusive deep-dive reports and whitepapers',
+  'Direct messaging with select journalists',
+  'Concierge research assistance',
+  'Custom news alerts on companies/topics you follow',
 ];
 
 // ========== HELPER FUNCTIONS ==========

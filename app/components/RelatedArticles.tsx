@@ -18,45 +18,63 @@ export default function RelatedArticles({ articles }: RelatedArticlesProps) {
 const [loadingArticleId, setLoadingArticleId] = useState<string | null>(null);
 
 return (
-<div className="mb-12">
-<h2 className="text-2xl font-semibold text-gray-900 mb-6">Related</h2>
+<section className="mb-12">
+<h2 className="text-2xl font-semibold text-gray-900 mb-6">
+Related
+</h2>
+
 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-blue-50 border-l-4 border-blue-600 rounded-r-lg shadow-sm p-4">
-{articles.map((article) => (
-<Link 
+{articles.map((article) => {
+const isLoading = loadingArticleId === article.id;
+
+return (
+<Link
 key={article.id}
 href={`/Articles/${article.id}`}
+prefetch
+aria-busy={isLoading}
 onClick={() => setLoadingArticleId(article.id)}
-className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition cursor-pointer block relative"
+className="group relative block bg-white rounded-lg overflow-hidden shadow-md transition hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-sky-500"
 >
 {/* Loading overlay */}
-{loadingArticleId === article.id && (
-<div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-10 rounded-lg">
-<div className="animate-spin rounded-full h-10 w-10 border-b-2 border-sky-600"></div>
+{isLoading && (
+<div
+className="absolute inset-0 z-10 flex items-center justify-center bg-white/90 rounded-lg"
+role="status"
+aria-label="Loading article"
+>
+<div className="h-10 w-10 animate-spin rounded-full border-2 border-sky-600 border-t-transparent" />
 </div>
 )}
-            
+
 {article.image && (
-<Image 
-src={article.image} 
+<Image
+src={article.image}
 alt={article.title}
-height={400}
 width={400}
-className="w-full h-40 object-cover"/>
+height={400}
+sizes="(min-width: 768px) 33vw, 100vw"
+loading="lazy"
+className=" w-full object-contain transition-transform duration-300 group-hover:scale-105"
+/>
 )}
 
 <div className="p-4">
 {article.category && (
-<span className="text-xs font-semibold text-sky-600 uppercase">
+<span className="text-xs font-semibold uppercase text-sky-600">
 {article.category}
 </span>
 )}
-<h3 className="font-bold text-gray-900 mt-2 line-clamp-2">
+
+<h3 className="mt-2 font-bold text-gray-900 line-clamp-2">
 {article.title}
 </h3>
 </div>
 </Link>
-))}
+);
+})}
 </div>
-</div>
+</section>
+
 );
 }

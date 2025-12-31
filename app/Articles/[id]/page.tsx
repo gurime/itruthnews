@@ -10,7 +10,6 @@ import RelatedArticles from '@/app/components/RelatedArticles';
 import { ARTICLE_TABLES } from '../article_tables';
 import BookmarkButton from '@/app/components/Bookmark';
 import Goback from '@/app/components/Goback';
-import ArticleAccess from '@/app/components/ArticleAccess'; 
 import { supabaseServer } from '@/app/supabase/supabase-ts';
 
 interface Article {
@@ -76,6 +75,11 @@ return relatedArticles.slice(0, limit);
 }
 
 async function fetchArticleFromTables(id: string): Promise<Article | null> {
+const timeout = new Promise<null>((resolve) => 
+setTimeout(() => resolve(null), 10000) // 10 second timeout
+);
+
+const fetchPromise = (async () => {
 for (const table of ARTICLE_TABLES) {
 try {
 const { data, error } = await supabaseServer
@@ -88,14 +92,22 @@ if (!error && data) {
 return data as Article;
 }
 } catch (err) {
+console.error(`Error fetching from ${table}:`, err);
 continue;
 }
 }
 return null;
+})();
+
+return Promise.race([fetchPromise, timeout]);
 }
 
 // Generate dynamic metadata for SEO
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<{ title: string }> {
+export async function generateMetadata({
+params,
+}: {
+params: Promise<{ id: string }>;
+}) {
 const { id } = await params;
 try {
 const article = await fetchArticleFromTables(id);
@@ -106,11 +118,17 @@ return { title: 'iTruth News | Page Not Found' };
 }
 }
 
-export default async function DetailsPage({ params }: { params: Promise<{ id: string }> }): Promise<JSX.Element> {
+export default async function DetailsPage({
+params,
+}: {
+params: Promise<{ id: string }>;
+}): Promise<JSX.Element> {
 const { id } = await params;
 
-// Fetch the article from all tables
 const data = await fetchArticleFromTables(id);
+
+// Handle case where article is not found
+
 
 if (!data) {
 return (
@@ -145,7 +163,6 @@ return (
 
 {/* Main Content */}
 <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-<ArticleAccess articleId={id} isPremium={data.premium}>
 <div className="pb-8 border-b border-gray-300 mb-8"></div>
 {/* --- Header Section (Always Visible) --- */}
 {data.category && (
@@ -329,7 +346,7 @@ className="inline-block bg-sky-100 text-sky-700 text-sm font-medium px-4 py-2 ro
 </div>
 )}
 
-</ArticleAccess>
+
 {/* --- END PROTECTED CONTENT --- */}
 
 <div className="pb-8 border-b border-gray-200 mb-8"></div>
@@ -372,10 +389,10 @@ className="rounded-full object-cover"
 
 {/* Comments Section */}
 <ArticleComment
-articleId={id}
-articleUrl={`/Articles/${id}`}
-articleTitle={data.title}
-articleImage={data.image || ''}
+  articleId={id}
+  articleUrl={`/Articles/${id}`}
+  articleTitle={data.title}
+  articleImage={data.image || ''}
 />
 <Footer />
 </div>

@@ -236,10 +236,7 @@ return (
 <>
 <Navbar/>
 <div className="container mx-auto p-6">
-<ArticleLimitBanner 
-remaining={getRemainingArticles()} 
-isSubscriber={isSubscriber()} 
-/>
+
 
 {/* FEATURED ARTICLE */}
 {featuredArticle ? (

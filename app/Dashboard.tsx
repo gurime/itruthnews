@@ -38,12 +38,9 @@ const [error, setError] = useState<string | null>(null);
 const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 const [showPaywall, setShowPaywall] = useState(false);
 
-const initRef = useRef(false);
 
 // ========== INITIALIZATION ==========
 useEffect(() => {
-if (initRef.current) return;
-initRef.current = true;
 
 let mounted = true;
 let authSubscription: any;

@@ -32,11 +32,12 @@ user_has_liked?: boolean;
 
 interface ArticleCommentProps {
 articleId: string;
-articleUrl: string; // Add this
-articleTitle: string; // Add this
-articleImage: string | null; // Explicitly allow null
+articleUrl: string;
+articleTitle: string;
+articleImage: string | null;
+userSubscriptionStatus?: string | null; // Add this
+userRole?: string | null; // Add this
 }
-
 // 1. Move helper function outside
 const formatDate = (dateString: string) => {
 const date = new Date(dateString);
@@ -267,10 +268,13 @@ handleSubmitReply={handleSubmitReply}/>
 export default function ArticleComment({   articleId, 
 articleUrl, 
 articleTitle, 
-articleImage   }: ArticleCommentProps) {
+articleImage,  
+userSubscriptionStatus,
+userRole   }: ArticleCommentProps) {
 const [user, setUser] = useState<User | null>(null);
 const [comments, setComments] = useState<Comment[]>([]);
 const [newComment, setNewComment] = useState("");
+const [hasAccess, setHasAccess] = useState(false); // Add this
 const [replyTo, setReplyTo] = useState<string | null>(null);
 const [replyContent, setReplyContent] = useState("");
 const [editingId, setEditingId] = useState<string | null>(null);
@@ -284,6 +288,42 @@ useEffect(() => {
 checkUser();
 fetchComments();
 }, [articleId]);
+
+// Add this useEffect to check access
+useEffect(() => {
+if (!user) {
+setHasAccess(false);
+return;
+}
+
+const checkAccess = async () => {
+const { data: profileData } = await supabase
+.from("profiles")
+.select("subscription_status, role")
+.eq("id", user.id)
+.maybeSingle();
+
+if (!profileData) {
+setHasAccess(false);
+return;
+}
+
+const isElite =
+profileData.subscription_status === "elite" ||
+profileData.subscription_status === "elite_yearly" ||
+profileData.subscription_status === "elite_monthly" ||
+profileData.role === "admin";
+
+const isPremium =
+profileData.subscription_status === "premium" ||
+profileData.subscription_status === "premium_yearly" ||
+profileData.subscription_status === "premium_monthly";
+
+setHasAccess(isElite || isPremium);
+};
+
+checkAccess();
+}, [user]);
 
 useEffect(() => {
 if (editingId && editTextareaRef.current) {
@@ -560,6 +600,68 @@ await supabase
 }
 fetchComments();
 };
+
+if (!user) {
+return (
+<div className="max-w-4xl mx-auto px-4 py-8">
+<div className="bg-blue-50 border border-blue-200 rounded-lg p-8 text-center">
+<h2 className="text-2xl font-bold text-gray-900 mb-4">
+Join the Conversation
+</h2>
+<p className="text-gray-600 mb-6">
+Sign in to read and participate in comments
+</p>
+<button
+onClick={() => router.push('/login?tab=signin')}
+className="px-6 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors font-semibold"
+>
+Sign In
+</button>
+</div>
+</div>
+);
+}
+
+if (!hasAccess) {
+return (
+<div className="max-w-4xl mx-auto px-4 py-8">
+<div className="bg-linear-to-br from-blue-50 to-blue-100 border-2 border-blue-300 rounded-lg p-8 text-center">
+<div className="mb-4">
+<svg className="w-16 h-16 mx-auto text-blue-900" fill="currentColor" viewBox="0 0 20 20">
+<path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+</svg>
+</div>
+<h2 className="text-2xl font-bold text-gray-900 mb-4">
+Premium Feature
+</h2>
+<p className="text-gray-700 mb-6 max-w-md mx-auto">
+Comments are available exclusively to Premium and Elite members. 
+Upgrade to join the discussion and engage with our community.
+</p>
+<div className="flex flex-col sm:flex-row gap-4 justify-center">
+<button
+onClick={() => router.push('/membership')}
+className="px-8 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors font-semibold"
+>
+View Membership Options
+</button>
+</div>
+
+{/* Optional: Show what they're missing */}
+<div className="mt-8 pt-8 border-t border-blue-300">
+<p className="text-sm text-gray-600 mb-4">With Premium or Elite, you can:</p>
+<ul className="text-sm text-gray-700 space-y-2">
+<li>✓ Comment on articles</li>
+<li>✓ Reply to other readers</li>
+<li>✓ Engage with our community</li>
+<li>✓ Join the conversation</li>
+</ul>
+</div>
+</div>
+</div>
+);
+}
+
 
 return (
 <div className="max-w-4xl mx-auto px-4 py-8">
