@@ -28,7 +28,7 @@ articles_read_today: number;
 last_read_date: string;
 }
 
-export default function GuestVoices() {
+export default function Technology() {
 const router = useRouter();
 const [isLoading, setIsLoading] = useState(true);
 const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
@@ -52,6 +52,7 @@ if (session?.user) {
 await fetchUserProfile(session.user.id);
 setupRealtimeSubscription(session.user.id);
 } 
+
 await fetchArticles();
 } catch (err) {
 console.error("Dashboard init error:", err);
@@ -123,7 +124,7 @@ console.error("Error fetching profile:", err);
 async function fetchArticles() {
 try {
 const { data, error } = await supabase
-.from("guest_voices")
+.from("smartphones")
 .select("*")
 .order("created_at", { ascending: false })
 .limit(20);

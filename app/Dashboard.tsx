@@ -230,7 +230,6 @@ return (
 <>
 <Navbar/>
 <div className="container mx-auto p-6">
-{/* Removed ArticleLimitBanner */}
 
 {/* FEATURED ARTICLE */}
 {featuredArticle ? (

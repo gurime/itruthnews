@@ -1060,7 +1060,11 @@ subscriptionStatus !== 'free' ? 'border-blue-300 shadow-blue-500/50' : 'border-w
 {role === 'admin' && (
 <>
 <span className="text-white/50">•</span>
-<span className="font-bold text-sm">Admin</span>
+<span className="font-bold text-sm">
+<Link href="/admin" className="underline hover:text-white">
+{role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()}
+</Link>
+</span>
 </>
 )}
 </div>

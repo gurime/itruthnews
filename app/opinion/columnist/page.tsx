@@ -150,6 +150,10 @@ userProfile?.subscription_status || ''
 );
 }
 
+function isArticleLocked(article: Article): boolean {
+if (isSubscriber()) return false;
+return article.premium || false;
+}
 async function handleArticleClick(e: React.MouseEvent, article: Article) {
 e.preventDefault();
 
@@ -157,6 +161,7 @@ if (isSubscriber()) {
 router.push(`/Articles/${article.id}`);
 return;
 }
+
 
 
 router.push(`/Articles/${article.id}`);
@@ -201,19 +206,19 @@ Retry
 );
 }
 
+const featuredLocked = featuredArticle ? isArticleLocked(featuredArticle) : false;
 
 return (
 <>
 <Navbar/>
 <div className="container mx-auto p-6">
 
-
 {/* FEATURED ARTICLE */}
 {featuredArticle ? (
 <Link
 href={`/Articles/${featuredArticle.id}`}
 onClick={(e) => handleArticleClick(e, featuredArticle)}
-className="bg-white h-auto rounded-xl shadow mb-12 overflow-hidden hover:shadow-lg transition-shadow md:flex"
+className="bg-white h-96 rounded-xl shadow mb-12 overflow-hidden hover:shadow-lg transition-shadow md:flex"
 >
 <div className="relative w-full aspect-video md:w-5/12 h-64 md:h-auto">
 <Image
@@ -223,16 +228,18 @@ fill
 loading="eager"
 priority
 sizes="(max-width: 768px) 100vw, 40vw"
-className="object-cover"
+className={`object-cover ${featuredLocked ? "opacity-60" : ""}`}
 />
-
-
-
+{featuredLocked && (
+<div className="absolute top-2 right-2 bg-amber-500 p-2 rounded-full text-white z-10">
+<Lock size={16} />
+</div>
+)}
 </div>
 <div className="p-6 md:w-7/12 lg:w-1/2 md:flex md:flex-col md:justify-between">
 <div>
 <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3">{featuredArticle.title}</h2>
-<p className={`text-gray-600 text-sm sm:text-base mb-4 line-clamp-3`}>
+<p className={`text-gray-600 text-sm sm:text-base mb-4 ${featuredLocked ? "blur-sm" : ""}`}>
 {featuredArticle.excerpt}
 </p>
 </div>
@@ -256,6 +263,7 @@ className="object-cover"
 
 <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
 {articles.map((article, index) => {
+const locked = isArticleLocked(article);
 return (
 <Link
 key={article.id}
@@ -263,12 +271,11 @@ href={`/Articles/${article.id}`}
 onClick={(e) => handleArticleClick(e, article)}
 className="relative bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow"
 >
-{(article.premium && !isSubscriber()) && (
-<div className="absolute top-2 right-2 bg-white bg-opacity-80 rounded-full p-1 z-10">
-<Lock className="w-5 h-5 text-gray-800"/>
+{locked && (
+<div className="absolute top-2 right-2 bg-amber-500 p-2 rounded-full text-white z-10">
+<Lock size={16} />
 </div>
 )}
-
 <div className="relative w-full aspect-video">
 <Image
 src={article.image}
@@ -276,13 +283,13 @@ alt={article.title}
 fill
 loading={index < 3 ? "eager" : "lazy"}
 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-className={`object-cover ${article.premium && !isSubscriber() ? "opacity-60" : ""}`}
+className={`object-cover ${locked ? "opacity-60" : ""}`}
 />
 </div>
 
 <div className="p-4">
 <h3 className="line-clamp-2 font-semibold mb-2">{article.title}</h3>
-<p className={`text-sm text-gray-600 line-clamp-2`}>{article.excerpt}</p>
+<p className={`text-sm text-gray-600 line-clamp-2 ${locked ? "blur-sm" : ""}`}>{article.excerpt}</p>
 <div className="text-xs mt-2 text-gray-500 flex justify-between items-center">
 <span>{formatDate(article.created_at)}</span>
 <span className="inline-block bg-blue-900 text-white text-xs font-semibold px-2 py-1 rounded">
@@ -295,8 +302,8 @@ className={`object-cover ${article.premium && !isSubscriber() ? "opacity-60" : "
 })}
 </div>
 </section>
-</div>
 
+</div>
 <PaywallModal 
 isOpen={showPaywall} 
 onClose={() => setShowPaywall(false)}

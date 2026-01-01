@@ -28,6 +28,7 @@ excerpt?: string | null;
 tags?: string[] | string | null;
 source?: string | null;
 featured?: boolean;
+position?: string | null;
 }
 
 export default function Admin() {
@@ -40,14 +41,18 @@ const [isSubmitting, setIsSubmitting] = useState(false);
 // Login form states
 const [loginEmail, setLoginEmail] = useState("");
 const [loginPassword, setLoginPassword] = useState("");
-
+const [profile, setProfile] = useState<{
+role: string;
+full_name?: string;
+position?: string;
+} | null>(null);
 // Article form states
 const [title, setTitle] = useState("");
 const [excerpt, setExcerpt] = useState("");
 const [category, setCategory] = useState("politics");
 const [author, setAuthor] = useState("");
 const [authorBio, setAuthorBio] = useState("");
-const [authorRole, setAuthorRole] = useState("Staff Writer");
+const [authorRole, setAuthorRole] = useState("");
 const [authorAvatar, setAuthorAvatar] = useState("");
 const [authorDisclaimer, setAuthorDisclaimer] = useState("The views expressed in this article are those of the author and do not reflect the views of iTruth News.");
 const [featured, setFeatured] = useState(false);
@@ -71,26 +76,39 @@ try {
 const { data: { session } } = await supabase.auth.getSession();
 
 if (session?.user) {
-// Check if user has admin/staff role
-const { data: profile } = await supabase
+const { data: profileData, error } = await supabase
 .from('profiles')
-.select('email, full_name, role')
+.select('email, full_name, role, position')  // Add position here
 .eq('id', session.user.id)
 .single();
 
-if (profile) {
+if (error) {
+console.error("Profile fetch error:", error);
+toast.error("Unable to verify user permissions");
+await supabase.auth.signOut();
+setIsLoading(false);
+return;
+}
+
+if (profileData && ['admin', 'staff'].includes(profileData.role)) {
 setUser(session.user);
+setProfile(profileData);  // Store profile data
 setIsAuthenticated(true);
-setAuthor(profile.full_name || profile.email || session.user.email || "");
+setAuthor(profileData.full_name || profileData.email || session.user.email || "");
+} else {
+toast.error("Access denied. Admin privileges required.");
+await supabase.auth.signOut();
 }
 }
 } catch (error) {
 console.error("Auth check error:", error);
+toast.error("Authentication error occurred");
 } finally {
 setIsLoading(false);
 }
 };
 
+// Also update handleLogin:
 const handleLogin = async () => {
 if (!loginEmail || !loginPassword) {
 toast.error("Please enter email and password");
@@ -106,9 +124,26 @@ password: loginPassword,
 if (error) throw error;
 
 if (data.user) {
+const { data: profileData, error: profileError } = await supabase
+.from('profiles')
+.select('email, full_name, role, position')  // Add position here
+.eq('id', data.user.id)
+.single();
+
+if (profileError) {
+throw new Error("Unable to verify user permissions");
+}
+
+if (profileData.role !== 'admin') {
+await supabase.auth.signOut();
+toast.error("Access denied. Admin privileges required.");
+return;
+}
+
 setUser(data.user);
+setProfile(profileData);  // Store profile data
 setIsAuthenticated(true);
-setAuthor(data.user.email || "");
+setAuthor(profileData.full_name || profileData.email || data.user.email || "");
 toast.success("Login successful!");
 }
 } catch (error: unknown) {
@@ -116,7 +151,6 @@ const errorMessage = error instanceof Error ? error.message : "Login failed";
 toast.error(errorMessage);
 }
 };
-
 const handleLogout = async () => {
 try {
 await supabase.auth.signOut();
@@ -325,6 +359,11 @@ Sign In
 <p className="text-sm text-gray-600">
 Access restricted to authorized staff only
 </p>
+<Link
+href="/"
+className="text-sm text-gray-600 transition-colors cursor-pointer">
+← Back to iTruth News
+</Link>
 </div>
 </div>
 </div>
@@ -349,11 +388,11 @@ return (
 <div className="flex items-center gap-4">
 <div className="text-right">
 <p className="text-sm font-semibold">{user?.email}</p>
-<p className="text-xs text-blue-200">Staff Writer</p>
+<p className="text-xs text-blue-200">{profile?.position || 'Staff'}</p>
 </div>
 <button
 onClick={handleLogout}
-className="flex items-center gap-2 px-4 py-2 bg-blue-800 rounded-lg hover:bg-blue-700 transition-colors">
+className="flex items-center gap-2 px-4 py-2 bg-blue-800 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">
 <LogOut className="w-4 h-4" />
 Logout
 </button>
@@ -390,7 +429,7 @@ Category * <span className="text-gray-500 font-normal">(Determines which table t
 <select
 value={category}
 onChange={(e) => setCategory(e.target.value)}
-className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900">
+className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 cursor-pointer">
 {categories.map((cat) => (
 <option key={cat.value} value={cat.value}>
 {cat.label} (Table: {cat.table})
@@ -485,7 +524,7 @@ Upload Image
 type="file"
 accept="image/*"
 onChange={handleImageChange}
-className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 cursor-pointer"
 />
 {imagePreview && (
 <div className="mt-4">
@@ -505,7 +544,7 @@ type="url"
 value={imageUrl}
 onChange={(e) => setImageUrl(e.target.value)}
 placeholder="https://example.com/image.jpg"
-className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 cursor-pointer"
 />
 </div>
 </div>

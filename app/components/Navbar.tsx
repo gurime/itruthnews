@@ -1074,19 +1074,19 @@ activeAccordion === 'personal-tech'
 }`}
 >
 <div className="px-2 pb-3 space-y-1">
-<a href="/tech/smartphones" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<a href="/technology/smartphones" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Smartphones
 </a>
-<a href="/tech/laptops" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<a href="/technology/laptops" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Laptops & Computers
 </a>
-<a href="/tech/wearables" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<a href="/technology/wearables" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Wearables
 </a>
-<a href="/tech/smart-home" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<a href="/technology/smart-home" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Smart Home
 </a>
-<a href="/tech/audio" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<a href="/technology/audio" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Audio & Headphones
 </a>
 </div>
@@ -1120,16 +1120,16 @@ activeAccordion === 'business-innovation'
 <a href="/tech/artificial-intelligence" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Artificial Intelligence
 </a>
-<a href="/tech/startups" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<a href="/technology/startups" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Startups
 </a>
-<a href="/tech/cybersecurity" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<a href="/technology/cybersecurity" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Cybersecurity
 </a>
-<a href="/tech/internet" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<a href="/technology/internet" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Internet & Social Media
 </a>
-<a href="/tech/silicon-valley" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<a href="/technology/silicon-valley" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Silicon Valley
 </a>
 </div>
@@ -1160,13 +1160,13 @@ activeAccordion === 'reviews-guides'
 }`}
 >
 <div className="px-2 pb-3 space-y-1">
-<a href="/tech/reviews" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<a href="/technology/reviews" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Product Reviews
 </a>
-<a href="/tech/buying-guides" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<a href="/technology/buying-guides" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Buying Guides
 </a>
-<a href="/tech/how-to" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<a href="/technology/how-to" className="block py-2 px-2 hover:bg-blue-600 rounded">
 How-To & Tips
 </a>
 </div>
@@ -1197,16 +1197,16 @@ activeAccordion === 'gaming'
 }`}
 >
 <div className="px-2 pb-3 space-y-1">
-<a href="/tech/gaming" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<a href="/technology/gaming" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Video Games
 </a>
 <a href="/tech/gaming/pc" className="block py-2 px-2 hover:bg-blue-600 rounded">
 PC Gaming
 </a>
-<a href="/tech/gaming/consoles" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<a href="/technology/gaming/consoles" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Consoles
 </a>
-<a href="/tech/gaming/esports" className="block py-2 px-2 hover:bg-blue-600 rounded">
+<a href="/technology/gaming/esports" className="block py-2 px-2 hover:bg-blue-600 rounded">
 Esports
 </a>
 </div>

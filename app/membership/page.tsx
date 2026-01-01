@@ -354,7 +354,7 @@ return (
 <Navbar />
 <Toaster position="top-center" />
 
-<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-16 px-4">
+<div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-indigo-50 py-16 px-4">
 <div className="max-w-7xl mx-auto">
 {/* Hero Section */}
 <div className="text-center mb-16">
@@ -366,7 +366,7 @@ Join 10,000+ Truth Seekers
 <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
 Support Independent
 <br />
-<span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+<span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
 Journalism
 </span>
 </h1>
@@ -434,7 +434,7 @@ billingPeriod === 'yearly' ? 'text-blue-600' : 'text-gray-400'
 Yearly
 </span>
 {billingPeriod === 'yearly' && premiumPlan.billing.yearly && (
-<span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-bold px-4 py-1.5 rounded-full shadow-md animate-pulse">
+<span className="bg-linear-to-r from-green-500 to-emerald-500 text-white text-sm font-bold px-4 py-1.5 rounded-full shadow-md animate-pulse">
 {premiumPlan.billing.yearly.savings || 'Save 17%'}
 </span>
 )}
@@ -472,11 +472,11 @@ Current Plan
 {/* Premium Tier */}
 <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border-4 border-blue-500 transition-all duration-300 hover:shadow-3xl hover:-translate-y-1.5 lg:scale-105 relative">
 {premiumPlan.badge && (
-<div className="absolute top-0 right-0 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs font-bold px-4 py-1 rounded-bl-lg animate-pulse">
+<div className="absolute top-0 right-0 bg-linear-to-r from-blue-500 to-indigo-500 text-white text-xs font-bold px-4 py-1 rounded-bl-lg animate-pulse">
 {premiumPlan.badge}
 </div>
 )}
-<div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-8">
+<div className="bg-linear-to-br from-blue-600 to-indigo-700 text-white p-8">
 <div className="flex items-center gap-2 mb-3">
 <Sparkles className="w-7 h-7 text-blue-100" />
 <h2 className="text-3xl font-bold">{premiumPlan.name}</h2>
@@ -504,7 +504,7 @@ if (!premiumBilling.priceId) return;
 handleSubscribe(premiumBilling.priceId, premiumBilling.status);
 }}
 disabled={loading || !premiumBilling.priceId}
-className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-lg shadow-lg cursor-pointer"
+className="w-full bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-lg shadow-lg cursor-pointer"
 >
 {loading ? 'Processing...' : 'Get Premium →'}
 </button>
@@ -568,7 +568,7 @@ className="px-6 py-3 text-center"
 </div>
 
 {/* Trust Indicators */}
-<div className="mt-12 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-8 border border-gray-200 max-w-4xl mx-auto">
+<div className="mt-12 bg-linear-to-r from-gray-50 to-gray-100 rounded-2xl p-8 border border-gray-200 max-w-4xl mx-auto">
 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
 <div className="transition-all duration-300 hover:-translate-y-1">
 <div className="text-3xl mb-2">🔒</div>

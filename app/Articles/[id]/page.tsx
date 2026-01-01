@@ -11,6 +11,7 @@ import { ARTICLE_TABLES } from '../article_tables';
 import BookmarkButton from '@/app/components/Bookmark';
 import Goback from '@/app/components/Goback';
 import supabase from '@/app/supabase/supabase';
+import Breadcrumb from '@/app/components/Breadcrumb';
 
 interface Article {
 premium: boolean | undefined;
@@ -163,6 +164,7 @@ return (
 
 {/* Main Content */}
 <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <Breadcrumb category={data.category} title={data.title} />
 <div className="pb-8 border-b border-gray-300 mb-8"></div>
 {/* --- Header Section (Always Visible) --- */}
 {data.category && (
@@ -385,17 +387,18 @@ className="rounded-full object-cover"
 )}
 </article>
 
-<div className="pb-8 border-b border-gray-400 mb-8"></div>
+<div className="mt-16 pt-8 border-t border-blue-600"></div>
 
 {/* Comments Section */}
 <ArticleComment
-  articleId={id}
-  articleUrl={`/Articles/${id}`}
-  articleTitle={data.title}
-  articleImage={data.image || ''}
+articleId={id}
+articleUrl={`/Articles/${id}`}
+articleTitle={data.title}
+articleImage={data.image || ''}
 />
 <Footer />
 </div>
+
 </>
 );
 }
