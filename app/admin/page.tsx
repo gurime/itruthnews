@@ -638,7 +638,7 @@ Article Content
 
 <div className="mb-4">
 <label className="block text-sm font-semibold text-gray-700 mb-2">
-Full Content * <span className="text-gray-500 font-normal">(Main article body)</span>
+Intro Content * 
 </label>
 <textarea
 value={content}
@@ -651,7 +651,7 @@ className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus
 
 <div className="mb-4">
 <label className="block text-sm font-semibold text-gray-700 mb-2">
-Body Content <span className="text-gray-500 font-normal">(Optional - for split layout)</span>
+Body Content *
 </label>
 <textarea
 value={bodycontent}
@@ -664,7 +664,7 @@ className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus
 
 <div className="mb-4">
 <label className="block text-sm font-semibold text-gray-700 mb-2">
-End Content <span className="text-gray-500 font-normal">(Optional - concluding paragraphs)</span>
+End Content *
 </label>
 <textarea
 value={endcontent}
